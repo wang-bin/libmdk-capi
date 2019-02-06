@@ -27,6 +27,8 @@
 extern "C" {
 #endif
 
+#define MDK_CALL(p, FN, ...) p->FN(p->object, ##__VA_ARGS__)
+
 static const float MDK_IgnoreAspectRatio = 0; /* stretch, ROI etc.*/
 static const float MDK_KeepAspectRatio = -1;
 static const float MDK_KeepAspectRatioCrop = -2; /* by expending and cropping*/
@@ -61,6 +63,11 @@ enum MDK_MediaStatus
     MDK_MediaStatus_Invalid = 1<<31, /*  invalid media source*/
 };
 
+typedef struct MDK_MediaStatusChangedCallback {
+    bool (*cb)(MDK_MediaStatus, void* opaque);
+    void* opaque;
+} MDK_MediaStatusChangedCallback;
+
 /*!
  * \brief The State enum
  * Defines the current state of a media player. Can be set by user
@@ -73,6 +80,11 @@ enum MDK_State {
     MDK_State_Paused,
 };
 typedef MDK_State MDK_PlaybackState;
+
+typedef struct MDK_StateChangedCallback {
+    void (*cb)(MDK_State, void* opaque);
+    void* opaque;
+} MDK_StateChangedCallback;
 
 enum MDK_BufferMode {
     MDK_BufferTime,
@@ -162,6 +174,7 @@ typedef struct MDK_TimeoutCallback {
     bool (*cb)(int64_t ms, void* opaque);
     void* opaque;
 } MDK_TimeoutCallback;
+
 #ifdef __cplusplus
 }
 #endif

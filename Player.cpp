@@ -4,68 +4,51 @@
 #include "mdk/c/Player.h"
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
-#include <iostream>
 
 using namespace std;
 using namespace MDK_NS;
-struct MDK_Player : Player{
+struct mdkPlayer : Player{
     MediaInfo info;
 };
 
 extern "C" {
 
-MDK_Player* MDK_Player_new()
-{
-    return new MDK_Player();
-}
-
-void MDK_Player_delete(MDK_Player** p) {
-    delete *p;
-    *p = nullptr;
-}
-
-// MUST be called when a foreign OpenGL context previously used is being destroyed to release context resources. The context MUST be current.
-void MDK_foreignGLContextDestroyed()
-{
-    Player::foreignGLContextDestroyed();
-}
-
-void MDK_Player_setMute(MDK_Player* p, bool value)
+void MDK_Player_setMute(mdkPlayer* p, bool value)
 {
     p->setMute(value);
 }
 
-void MDK_Player_setVolume(MDK_Player* p, float value)
+void MDK_Player_setVolume(mdkPlayer* p, float value)
 {
     p->setVolume(value);
 }
 
-void MDK_Player_setMedia(MDK_Player* p, const char* url)
+void MDK_Player_setMedia(mdkPlayer* p, const char* url)
 {
     p->setMedia(url);
 }
 
-void MDK_Player_setMediaForType(MDK_Player* p, const char* url, MDK_MediaType type)
+void MDK_Player_setMediaForType(mdkPlayer* p, const char* url, MDK_MediaType type)
 {
     p->setMedia(url, MediaType(type));
 }
 
-const char* MDK_Player_url(MDK_Player* p)
+const char* MDK_Player_url(mdkPlayer* p)
 {
     return p->url();
 }
 
-void MDK_Player_setPreloadImmediately(MDK_Player* p, bool value)
+void MDK_Player_setPreloadImmediately(mdkPlayer* p, bool value)
 {
     p->setPreloadImmediately(value);
 }
 
-void MDK_Player_setNextMedia(MDK_Player* p, const char* url, int64_t startPosition)
+void MDK_Player_setNextMedia(mdkPlayer* p, const char* url, int64_t startPosition)
 {
     p->setNextMedia(url, startPosition);
 }
 
-void MDK_Player_currentMediaChanged(MDK_Player* p, MDK_CurrentMediaChangedCallback cb)
+void MDK_Player_currentMediaChanged(mdkPlayer* p, MDK_CurrentMediaChangedCallback cb)
 {
     if (!cb.opaque) {
         p->currentMediaChanged(nullptr);
@@ -76,7 +59,7 @@ void MDK_Player_currentMediaChanged(MDK_Player* p, MDK_CurrentMediaChangedCallba
     });
 }
 
-void MDK_Player_setAudioBackends(MDK_Player* p, const char** names)
+void MDK_Player_setAudioBackends(mdkPlayer* p, const char** names)
 {
     if (!names) // TODO: default
         return;
@@ -87,7 +70,7 @@ void MDK_Player_setAudioBackends(MDK_Player* p, const char** names)
     p->setAudioBackends(s);
 }
 
-void MDK_Player_setAudioDecoders(MDK_Player* p, const char** names)
+void MDK_Player_setAudioDecoders(mdkPlayer* p, const char** names)
 {
     if (!names) // TODO: default
         return;
@@ -98,7 +81,7 @@ void MDK_Player_setAudioDecoders(MDK_Player* p, const char** names)
     p->setAudioDecoders(s);
 }
 
-void MDK_Player_setVideoDecoders(MDK_Player* p, const char** names)
+void MDK_Player_setVideoDecoders(mdkPlayer* p, const char** names)
 {
     if (!names) // TODO: default
         return;
@@ -109,7 +92,7 @@ void MDK_Player_setVideoDecoders(MDK_Player* p, const char** names)
     p->setVideoDecoders(s);
 }
 
-void MDK_Player_setTimeout(MDK_Player* p, int64_t value, MDK_TimeoutCallback cb)
+void MDK_Player_setTimeout(mdkPlayer* p, int64_t value, MDK_TimeoutCallback cb)
 {
     if (!cb.opaque) {
         p->setTimeout(value, nullptr);
@@ -120,7 +103,7 @@ void MDK_Player_setTimeout(MDK_Player* p, int64_t value, MDK_TimeoutCallback cb)
     });
 }
 
-void MDK_Player_prepare(MDK_Player* p, int64_t startPosition, MDK_PrepareCallback cb)
+void MDK_Player_prepare(mdkPlayer* p, int64_t startPosition, MDK_PrepareCallback cb)
 {
     if (!cb.opaque) {
         p->prepare(startPosition, nullptr);
@@ -131,19 +114,19 @@ void MDK_Player_prepare(MDK_Player* p, int64_t startPosition, MDK_PrepareCallbac
     });
 }
 
-const MDK_MediaInfo* MDK_Player_mediaInfo(MDK_Player*);
+const mdkMediaInfo* MDK_Player_mediaInfo(mdkPlayer*);
 
-void MDK_Player_setState(MDK_Player* p, MDK_State value)
+void MDK_Player_setState(mdkPlayer* p, MDK_State value)
 {
     p->setState(State(value));
 }
 
-MDK_State MDK_Player_state(MDK_Player* p)
+MDK_State MDK_Player_state(mdkPlayer* p)
 {
     return (MDK_State)p->state();
 }
 
-void MDK_Player_onStateChanged(MDK_Player* p, MDK_StateChangedCallback cb)
+void MDK_Player_onStateChanged(mdkPlayer* p, MDK_StateChangedCallback cb)
 {
     if (!cb.opaque) {
         p->onStateChanged(nullptr);
@@ -154,17 +137,17 @@ void MDK_Player_onStateChanged(MDK_Player* p, MDK_StateChangedCallback cb)
     });
 }
 
-bool MDK_Player_waitFor(MDK_Player* p, MDK_State value, long timeout)
+bool MDK_Player_waitFor(mdkPlayer* p, MDK_State value, long timeout)
 {
     return p->waitFor(State(value), timeout);
 }
 
-MDK_MediaStatus MDK_Player_mediaStatus(MDK_Player* p)
+MDK_MediaStatus MDK_Player_mediaStatus(mdkPlayer* p)
 {
     return (MDK_MediaStatus)p->mediaStatus();
 }
 
-void MDK_Player_onMediaStatusChanged(MDK_Player* p, MDK_MediaStatusChangedCallback cb)
+void MDK_Player_onMediaStatusChanged(mdkPlayer* p, MDK_MediaStatusChangedCallback cb)
 {
     if (!cb.opaque) {
         p->onMediaStatusChanged(nullptr);
@@ -175,59 +158,59 @@ void MDK_Player_onMediaStatusChanged(MDK_Player* p, MDK_MediaStatusChangedCallba
     });
 }
 
-void MDK_Player_updateNativeWindow(MDK_Player* p, void* win, int width, int height, MDK_SurfaceType type)
+void MDK_Player_updateNativeWindow(mdkPlayer* p, void* win, int width, int height, MDK_SurfaceType type)
 {
     p->updateNativeWindow(win, width, height, Player::SurfaceType(type));
 }
 
-void MDK_Player_createWindow(MDK_Player* p, void* nativeHandle, MDK_SurfaceType type)
+void MDK_Player_createWindow(mdkPlayer* p, void* nativeHandle, MDK_SurfaceType type)
 {
     p->createWindow(nativeHandle, Player::SurfaceType(type));
 }
 
-void MDK_Player_resizeWindow(MDK_Player* p, int w, int h)
+void MDK_Player_resizeWindow(mdkPlayer* p, int w, int h)
 {
     p->resizeWindow(w, h);
 }
 
-void MDK_Player_showWindow(MDK_Player* p)
+void MDK_Player_showWindow(mdkPlayer* p)
 {
     p->showWindow();
 }
 
-void MDK_Player_getVideoFrame(MDK_Player* p, MDK_VideoFrame* frame, void* vo_opaque);
+void MDK_Player_getVideoFrame(mdkPlayer* p, mdkVideoFrame* frame, void* vo_opaque);
 
-void MDK_Player_setVideoSurfaceSize(MDK_Player* p, int width, int height, void* vo_opaque)
+void MDK_Player_setVideoSurfaceSize(mdkPlayer* p, int width, int height, void* vo_opaque)
 {
     p->setVideoSurfaceSize(width, height, vo_opaque);
 }
 
-void MDK_Player_setVideoViewport(MDK_Player* p, float x, float y, float w, float h, void* vo_opaque)
+void MDK_Player_setVideoViewport(mdkPlayer* p, float x, float y, float w, float h, void* vo_opaque)
 {
     p->setVideoViewport(x, y, w, h, vo_opaque);
 }
 
-void MDK_Player_setAspectRatio(MDK_Player* p, float value, void* vo_opaque)
+void MDK_Player_setAspectRatio(mdkPlayer* p, float value, void* vo_opaque)
 {
     p->setAspectRatio(value, vo_opaque);
 }
 
-void MDK_Player_rotate(MDK_Player* p, int degree, void* vo_opaque)
+void MDK_Player_rotate(mdkPlayer* p, int degree, void* vo_opaque)
 {
     p->rotate(degree, vo_opaque);
 }
 
-void MDK_Player_scale(MDK_Player* p, float x, float y, void* vo_opaque)
+void MDK_Player_scale(mdkPlayer* p, float x, float y, void* vo_opaque)
 {
     p->scale(x, y, vo_opaque);
 }
 
-double MDK_Player_renderVideo(MDK_Player* p, void* vo_opaque)
+double MDK_Player_renderVideo(mdkPlayer* p, void* vo_opaque)
 {
     return p->renderVideo(vo_opaque);
 }
 
-void MDK_Player_setRenderCallback(MDK_Player* p, MDK_RenderCallback cb)
+void MDK_Player_setRenderCallback(mdkPlayer* p, MDK_RenderCallback cb)
 {
     if (!cb.opaque) {
         p->setRenderCallback(nullptr);
@@ -238,15 +221,15 @@ void MDK_Player_setRenderCallback(MDK_Player* p, MDK_RenderCallback cb)
     });
 }
 
-void MDK_Player_onVideoFrame(MDK_Player*, void (*)(MDK_VideoFrame*));
-void MDK_Player_onAudioFrame(MDK_Player*, void (*)(MDK_AudioFrame*));
+void MDK_Player_onVideoFrame(mdkPlayer*, void (*)(mdkVideoFrame*));
+void MDK_Player_onAudioFrame(mdkPlayer*, void (*)(mdkAudioFrame*));
 
-int64_t MDK_Player_position(MDK_Player* p)
+int64_t MDK_Player_position(mdkPlayer* p)
 {
     return p->position();
 }
 
-bool MDK_Player_seekWithFlags(MDK_Player* p, int64_t pos, MDK_SeekFlag flags, MDK_SeekCallback cb)
+bool MDK_Player_seekWithFlags(mdkPlayer* p, int64_t pos, MDK_SeekFlag flags, MDK_SeekCallback cb)
 {
     if (!cb.opaque) {
         return p->seek(pos, SeekFlag(flags), nullptr);
@@ -256,22 +239,27 @@ bool MDK_Player_seekWithFlags(MDK_Player* p, int64_t pos, MDK_SeekFlag flags, MD
     });
 }
 
-void MDK_Player_setPlaybackRate(MDK_Player* p, float value)
+bool MDK_Player_seek(mdkPlayer* p, int64_t pos, MDK_SeekCallback cb)
+{
+    return MDK_Player_seekWithFlags(p, pos, MDK_SeekFlag_Default, cb);
+}
+
+void MDK_Player_setPlaybackRate(mdkPlayer* p, float value)
 {
     p->setPlaybackRate(value);
 }
 
-float MDK_Player_playbackRate(MDK_Player* p)
+float MDK_Player_playbackRate(mdkPlayer* p)
 {
     return p->playbackRate();
 }
 
-int64_t MDK_Player_buffered(MDK_Player* p, int64_t* bytes)
+int64_t MDK_Player_buffered(mdkPlayer* p, int64_t* bytes)
 {
     return p->buffered(bytes);
 }
 
-void MDK_Player_switchBitrate(MDK_Player* p, const char* url, int64_t delay, SwitchBitrateCallback cb)
+void MDK_Player_switchBitrate(mdkPlayer* p, const char* url, int64_t delay, SwitchBitrateCallback cb)
 {
     if (!cb.opaque) {
         p->switchBitrate(url, delay, nullptr);
@@ -282,7 +270,7 @@ void MDK_Player_switchBitrate(MDK_Player* p, const char* url, int64_t delay, Swi
     });
 }
 
-bool MDK_Player_switchBitrateSingleConnection(MDK_Player* p, const char *url, SwitchBitrateCallback cb)
+bool MDK_Player_switchBitrateSingleConnection(mdkPlayer* p, const char *url, SwitchBitrateCallback cb)
 {
     if (!cb.opaque) {
         return p->switchBitrateSingleConnection(url, nullptr);
@@ -292,7 +280,7 @@ bool MDK_Player_switchBitrateSingleConnection(MDK_Player* p, const char *url, Sw
     });
 }
 
-int64_t MDK_Player_addListener(MDK_Player* p, MDK_MediaEventListener cb)
+int64_t MDK_Player_addListener(mdkPlayer* p, MDK_MediaEventListener cb)
 {
     if (!cb.opaque) {
         return p->addListener(nullptr);
@@ -307,9 +295,73 @@ int64_t MDK_Player_addListener(MDK_Player* p, MDK_MediaEventListener cb)
     });
 }
 
-void MDK_Player_removeListener(MDK_Player* p, int64_t listener)
+void MDK_Player_removeListener(mdkPlayer* p, int64_t listener)
 {
     p->removeListener(listener);
+}
+
+
+mdkPlayerAPI* mdkPlayerAPI_new()
+{
+    mdkPlayerAPI* p = new mdkPlayerAPI();
+    p->object = new mdkPlayer();
+#define SET_API(FN) p->FN = MDK_Player_##FN
+    SET_API(setMute);
+    SET_API(setVolume);
+    SET_API(setMedia);
+    SET_API(setMediaForType);
+    SET_API(url);
+    SET_API(setPreloadImmediately);
+    SET_API(setNextMedia);
+    SET_API(currentMediaChanged);
+    SET_API(setAudioBackends);
+    SET_API(setAudioDecoders);
+    SET_API(setVideoDecoders);
+    SET_API(setTimeout);
+    SET_API(prepare);
+    //SET_API(mediaInfo);
+    SET_API(setState);
+    SET_API(state);
+    SET_API(onStateChanged);
+    SET_API(waitFor);
+    SET_API(mediaStatus);
+    SET_API(onMediaStatusChanged);
+    SET_API(updateNativeWindow);
+    SET_API(createWindow);
+    SET_API(resizeWindow);
+    SET_API(showWindow);
+    //SET_API(getVideoFrame);
+    SET_API(setVideoSurfaceSize);
+    SET_API(setVideoViewport);
+    SET_API(setAspectRatio);
+    SET_API(rotate);
+    SET_API(scale);
+    SET_API(renderVideo);
+    SET_API(setRenderCallback);
+    SET_API(position);
+    SET_API(seekWithFlags);
+    SET_API(seek);
+    SET_API(setPlaybackRate);
+    SET_API(playbackRate);
+    SET_API(buffered);
+    SET_API(switchBitrate);
+    SET_API(switchBitrateSingleConnection);
+#undef SET_API
+    return p;
+}
+
+void mdkPlayerAPI_delete(mdkPlayerAPI** pp)
+{
+    if (!pp || !*pp)
+        return;
+    delete (*pp)->object;
+    delete *pp;
+    *pp = nullptr;
+}
+
+void MDK_foreignGLContextDestroyed()
+{
+    Player::foreignGLContextDestroyed();
 }
 
 } // extern "C"

@@ -6,7 +6,7 @@
 #include <vector>
 #include "global.h"
 #include "../c/Player.h"
-#include <iostream>
+
 MDK_NS_BEGIN
 /*!
  * \brief The Player class
@@ -26,40 +26,40 @@ public:
 
     Player(const Player&) = delete;
     Player& operator=(const Player&) = delete;
-    Player() : p(MDK_Player_new()) {}
+    Player() : p(mdkPlayerAPI_new()) {}
     ~Player() {
-        MDK_Player_delete(&p);
+        mdkPlayerAPI_delete(&p);
     }
 
     void setMute(bool value = true) {
-        MDK_Player_setMute(p, value);
+        MDK_CALL(p, setMute, value);
     }
 
     void setVolume(float value) {
-        MDK_Player_setVolume(p, value);
+        MDK_CALL(p, setVolume, value);
     }
 
     // MUST call setActiveTracks() after setMedia(), otherwise the 1st track in the media is used
     void setMedia(const char* url) {
-        MDK_Player_setMedia(p, url);
+        MDK_CALL(p, setMedia, url);
     }
     // Set individual source for type, e.g. audio track file. If url is not empty, an individual pipeline will be used for 'type' tracks.
     // If url is empty, use 'type' tracks in MediaType::Video url.
     // TODO: default type is Unknown
     void setMedia(const char* url, MediaType type) {
-        MDK_Player_setMediaForType(p, url, (MDK_MediaType)type);
+        MDK_CALL(p, setMediaForType, url, (MDK_MediaType)type);
     }
 
     const char* url() const {
-        return MDK_Player_url(p);
+        return MDK_CALL(p, url);
     }
 
     void setPreloadImmediately(bool value = true) {
-        MDK_Player_setPreloadImmediately(p, value);
+        MDK_CALL(p, setPreloadImmediately, value);
     }
 
     void setNextMedia(const char* url, int64_t startPosition = 0) {
-        MDK_Player_setNextMedia(p, url, startPosition);
+        MDK_CALL(p, setNextMedia, url, startPosition);
     }
 
     void currentMediaChanged(std::function<void()> cb) { // call before setMedia()
@@ -70,7 +70,7 @@ public:
             (*f)();
         };
         callback.opaque = current_cb_ ? (void*)&current_cb_ : nullptr;
-        MDK_Player_currentMediaChanged(p, callback);
+        MDK_CALL(p, currentMediaChanged, callback);
     }
 
     // backends can be: AudioQueue(Apple only), OpenSL(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
@@ -79,7 +79,7 @@ public:
         for (int i = 0; i < names.size(); ++i)
             s[i] = names[i].data();
         s[s.size()] = nullptr;
-        MDK_Player_setAudioBackends(p, s.data());
+        MDK_CALL(p, setAudioBackends, s.data());
     }
 
     void setAudioDecoders(const std::vector<std::string>& names) {
@@ -87,7 +87,7 @@ public:
         for (int i = 0; i < names.size(); ++i)
             s[i] = names[i].data();
         s[s.size()] = nullptr;
-        MDK_Player_setAudioDecoders(p, s.data());
+        MDK_CALL(p, setAudioDecoders, s.data());
     }
 
     void setVideoDecoders(const std::vector<std::string>& names) {
@@ -95,7 +95,7 @@ public:
         for (int i = 0; i < names.size(); ++i)
             s[i] = names[i].data();
         s[s.size()] = nullptr;
-        MDK_Player_setVideoDecoders(p, s.data());
+        MDK_CALL(p, setVideoDecoders, s.data());
     }
 
     void setTimeout(int64_t value, TimeoutCallback cb = nullptr) {
@@ -106,7 +106,7 @@ public:
             return (*f)(ms);
         };
         callback.opaque = timeout_cb_ ? (void*)&timeout_cb_ : nullptr;
-        MDK_Player_setTimeout(p, value, callback);
+        MDK_CALL(p, setTimeout, value, callback);
     }
 
 /*!
@@ -123,7 +123,7 @@ public:
             (*f)(position, boost);
         };
         callback.opaque = prepare_cb_ ? (void*)&prepare_cb_ : nullptr;
-        MDK_Player_prepare(p, startPosition, callback);
+        MDK_CALL(p, prepare, startPosition, callback);
     }
 
     const MediaInfo& mediaInfo() const;
@@ -138,11 +138,11 @@ public:
   Usually no waitFor(State::Playing) because we want async load
 */
     void setState(PlaybackState value) {
-        MDK_Player_setState(p, MDK_State(value));
+        MDK_CALL(p, setState, MDK_State(value));
     }
 
     PlaybackState state() const {
-        return (PlaybackState)MDK_Player_state(p);
+        return (PlaybackState)MDK_CALL(p, state);
     }
 
     void onStateChanged(std::function<void(State)> cb) {
@@ -153,15 +153,15 @@ public:
             (*f)(State(value));
         };
         callback.opaque = state_cb_ ? (void*)&state_cb_ : nullptr;
-        MDK_Player_onStateChanged(p, callback);
+        MDK_CALL(p, onStateChanged, callback);
     }
 
     bool waitFor(State value, long timeout = -1) {
-        return MDK_Player_waitFor(p, (MDK_State)value, timeout);
+        return MDK_CALL(p, waitFor, (MDK_State)value, timeout);
     }
 
     MediaStatus mediaStatus() const {
-        return (MediaStatus)MDK_Player_mediaStatus(p);
+        return (MediaStatus)MDK_CALL(p, mediaStatus);
     }
 
     void onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
@@ -172,7 +172,7 @@ public:
             return (*f)(MediaStatus(value));
         };
         callback.opaque = status_cb_ ? (void*)&status_cb_ : nullptr;
-        MDK_Player_onMediaStatusChanged(p, callback);
+        MDK_CALL(p, onMediaStatusChanged, callback);
     }
 
     enum SurfaceType {
@@ -188,19 +188,19 @@ public:
  */
 // type: ignored if win ptr does not change (request to resize)
     void updateNativeWindow(void* win, int width = -1, int height = -1, SurfaceType type = SurfaceType::Auto) {
-        MDK_Player_updateNativeWindow(p, win, width, height, (MDK_SurfaceType)type);
+        MDK_CALL(p, updateNativeWindow, win, width, height, (MDK_SurfaceType)type);
     }
 
     void createWindow(void* nativeHandle = nullptr, SurfaceType type = SurfaceType::Auto) {
-        MDK_Player_createWindow(p, nativeHandle, (MDK_SurfaceType)type);
+        MDK_CALL(p, createWindow, nativeHandle, (MDK_SurfaceType)type);
     }
 
     void resizeWindow(int w, int h) {
-        MDK_Player_resizeWindow(p, w, h);
+        MDK_CALL(p, resizeWindow, w, h);
     }
 
     void showWindow() {
-        MDK_Player_showWindow(p);
+        MDK_CALL(p, showWindow);
     }
 
 // vo_opaque: a ptr to identify the renderer. cam be null, then it is the default vo/renderer.
@@ -213,24 +213,24 @@ public:
     void getVideoFrame(VideoFrame* frame, void* vo_opaque = nullptr);
 
     void setVideoSurfaceSize(int width, int height, void* vo_opaque = nullptr) {
-        MDK_Player_setVideoSurfaceSize(p, width, height, vo_opaque);
+        MDK_CALL(p, setVideoSurfaceSize, width, height, vo_opaque);
     }
 
     void setVideoViewport(float x, float y, float w, float h, void* vo_opaque = nullptr) {
-        MDK_Player_setVideoViewport(p, x, y, w, h, vo_opaque);
+        MDK_CALL(p, setVideoViewport, x, y, w, h, vo_opaque);
     }
 
 /// IgnoreAspectRatio, KeepAspectRatio, KeepAspectRatio or any positive float
     void setAspectRatio(float value, void* vo_opaque = nullptr) {
-        MDK_Player_setAspectRatio(p, value, vo_opaque);
+        MDK_CALL(p, setAspectRatio, value, vo_opaque);
     }
 
     void rotate(int degree, void* vo_opaque = nullptr) {
-        MDK_Player_rotate(p, degree, vo_opaque);
+        MDK_CALL(p, rotate, degree, vo_opaque);
     }
 
     void scale(float x, float y, void* vo_opaque = nullptr) {
-        MDK_Player_scale(p, x, y, vo_opaque);
+        MDK_CALL(p, scale, x, y, vo_opaque);
     }
 
 /*!
@@ -240,7 +240,7 @@ public:
    \return timestamp of rendered frame, or < 0 if no frame is rendered
  */
     double renderVideo(void* vo_opaque = nullptr) {
-        return MDK_Player_renderVideo(p, vo_opaque);
+        return MDK_CALL(p, renderVideo, vo_opaque);
     }
 
     // callback is invoked when the vo coresponding to vo_opaque needs to update/draw content, e.g. when a new frame is received in the renderer.
@@ -254,7 +254,7 @@ public:
             (*f)(vo_opaque);
         };
         callback.opaque = render_cb_ ? (void*)&render_cb_ : nullptr;
-        MDK_Player_setRenderCallback(p, callback);
+        MDK_CALL(p, setRenderCallback, callback);
     }
 
 /*
@@ -265,7 +265,7 @@ public:
     void onFrame(std::function<void(Frame&)> cb);
 
     int64_t position() const {
-        return MDK_Player_position(p);
+        return MDK_CALL(p, position);
     }
 
     bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t)> cb = nullptr) {
@@ -276,7 +276,7 @@ public:
             (*f)(ms);
         };
         callback.opaque = seek_cb_ ? (void*)&seek_cb_ : nullptr;
-        return MDK_Player_seekWithFlags(p, pos, MDK_SeekFlag(flags), callback);
+        return MDK_CALL(p, seekWithFlags, pos, MDK_SeekFlag(flags), callback);
     }
 
     bool seek(int64_t pos, std::function<void(int64_t)> cb = nullptr) {
@@ -284,11 +284,11 @@ public:
     }
 
     void setPlaybackRate(float value) {
-        MDK_Player_setPlaybackRate(p, value);
+        MDK_CALL(p, setPlaybackRate, value);
     }
 
     float playbackRate() const {
-        return MDK_Player_playbackRate(p);
+        return MDK_CALL(p, playbackRate);
     }
 /*!
  * \brief buffered
@@ -296,7 +296,7 @@ public:
  * \return buffered packets' duration
  */
     int64_t buffered(int64_t* bytes = nullptr) const {
-        return MDK_Player_buffered(p, bytes);
+        return MDK_CALL(p, buffered, bytes);
     }
 /*!
  * \brief switchBitrate
@@ -312,7 +312,7 @@ public:
             (*f)(value);
         };
         callback.opaque = switch_cb_ ? (void*)&switch_cb_ : nullptr;
-        return MDK_Player_switchBitrate(p, url, delay, callback);
+        return MDK_CALL(p, switchBitrate, url, delay, callback);
     }
 /*!
  * \brief switchBitrateSingalConnection
@@ -329,7 +329,7 @@ public:
             (*f)(value);
         };
         callback.opaque = switch_cb_ ? (void*)&switch_cb_ : nullptr;
-        return MDK_Player_switchBitrateSingleConnection(p, url, callback);
+        return MDK_CALL(p, switchBitrateSingleConnection, url, callback);
     }
 
 /*!
@@ -340,7 +340,7 @@ public:
     int64_t addListener(MediaEventListener cb);
     void removeListener(int64_t listener);
 private:
-    MDK_Player* p = nullptr;
+    mdkPlayerAPI* p = nullptr;
     std::function<void()> current_cb_ = nullptr;
     TimeoutCallback timeout_cb_ = nullptr;
     std::function<void(int64_t position, bool* boost)> prepare_cb_ = nullptr;
