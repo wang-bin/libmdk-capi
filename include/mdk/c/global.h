@@ -155,7 +155,7 @@ struct MDK_MediaEvent {
 };
 /*!
  * \brief MediaEventListener
- * return true if event is processed and dispatching.
+ * return true if event is processed and stop dispatching.
  */
 typedef struct MDK_MediaEventListener {
     bool (*cb)(const MDK_MediaEvent*, void* opaque);

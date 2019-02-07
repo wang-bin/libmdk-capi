@@ -346,6 +346,8 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(buffered);
     SET_API(switchBitrate);
     SET_API(switchBitrateSingleConnection);
+    SET_API(addListener);
+    SET_API(removeListener);
 #undef SET_API
     return p;
 }

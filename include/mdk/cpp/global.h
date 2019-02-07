@@ -193,7 +193,7 @@ public:
 };
 /*!
  * \brief MediaEventListener
- * return true if event is processed and dispatching.
+ * return true if event is processed and stop dispatching.
  */
 typedef std::function<bool(const MediaEvent&)> MediaEventListener;
 

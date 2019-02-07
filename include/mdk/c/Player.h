@@ -183,9 +183,10 @@ typedef struct mdkPlayerAPI {
  * \brief addListener
  * listener the events from player, control and FrameReader
  * \return listener id
+ */
     int64_t (*addListener)(mdkPlayer*, MDK_MediaEventListener cb);
     void (*removeListener)(mdkPlayer*, int64_t listener);
- */
+ 
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
