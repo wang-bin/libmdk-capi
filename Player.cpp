@@ -2,13 +2,16 @@
  * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
+#include "mdk/c/MediaInfo.h"
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
+#include "MediaInfoInternal.h"
 
 using namespace std;
 using namespace MDK_NS;
+
 struct mdkPlayer : Player{
-    MediaInfo info;
+    MediaInfoInternal media_info;
 };
 
 extern "C" {
@@ -114,7 +117,11 @@ void MDK_Player_prepare(mdkPlayer* p, int64_t startPosition, MDK_PrepareCallback
     });
 }
 
-const mdkMediaInfo* MDK_Player_mediaInfo(mdkPlayer*);
+const mdkMediaInfo* MDK_Player_mediaInfo(mdkPlayer* p)
+{
+    MediaInfoToC(p->mediaInfo(), &p->media_info);
+    return &p->media_info.info;
+}
 
 void MDK_Player_setState(mdkPlayer* p, MDK_State value)
 {

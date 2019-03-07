@@ -175,6 +175,24 @@ typedef struct MDK_TimeoutCallback {
     void* opaque;
 } MDK_TimeoutCallback;
 
+
+/*
+bool MDK_SomeFunc(SomeStruct*, mdkStringMapEntry* entry)
+entry: in/out, can not be null.
+Input entry->priv is null: 
+The result entry points to the first entry containing the same key as entry->key, or the first entry if entry->key is null.
+The result entry->priv is set to a new value by api. 
+Input entry->priv is not null(set by the api): the result entry points to the next entry.
+return: true if entry is found, false if not. 
+*/
+typedef struct mdkStringMapEntry {
+    const char* key;    /* input: set by user to query .value field if priv is null
+                           output: set by api if priv is not null (set by api) */
+    const char* value;  /* output: set by api, or not touched if no such key */
+
+    void* priv;
+} mdkStringMapEntry;
+
 #ifdef __cplusplus
 }
 #endif
