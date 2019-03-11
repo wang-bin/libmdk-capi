@@ -139,8 +139,9 @@ MDK_API void MDK_setLogHandler(MDK_LogHandler);
 
 /*
   events:
-  "decoder.audio/video" + "open" + stream: decoder of a stream is open, or failed to open if error != 0
-  progress + "reader.buffering": buffering progress
+  "decoder.audio/video" + "open" + stream: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
+  error + "reader.buffering": error is buffering progress
+  error + "thread.audio/video" + stream: decoder thread is started (error = 1) and about to exit(error = 0)
 */
 struct MDK_MediaEvent {
     int64_t error; /* result <0: error code(fourcc?). >=0: special value depending on event*/
