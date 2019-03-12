@@ -266,6 +266,11 @@ int64_t MDK_Player_buffered(mdkPlayer* p, int64_t* bytes)
     return p->buffered(bytes);
 }
 
+void MDK_Player_setBufferRange(mdkPlayer* p, int64_t minMs, int64_t maxMs, bool drop)
+{
+    p->setBufferRange(minMs, maxMs, drop);
+}
+
 void MDK_Player_switchBitrate(mdkPlayer* p, const char* url, int64_t delay, SwitchBitrateCallback cb)
 {
     if (!cb.opaque) {
@@ -351,6 +356,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setPlaybackRate);
     SET_API(playbackRate);
     SET_API(buffered);
+    SET_API(setBufferRange);
     SET_API(switchBitrate);
     SET_API(switchBitrateSingleConnection);
     SET_API(addListener);

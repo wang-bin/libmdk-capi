@@ -159,8 +159,8 @@ typedef struct mdkPlayerAPI {
     float (*playbackRate)(mdkPlayer*);
 /*!
  * \brief buffered
- * get buffered packets' duration and size
- * \return buffered packets' duration
+ * get buffered data(packets) duration and size
+ * \return buffered data duration
  */
     int64_t (*buffered)(mdkPlayer*, int64_t* bytes);
 /*!
@@ -186,7 +186,15 @@ typedef struct mdkPlayerAPI {
  */
     int64_t (*addListener)(mdkPlayer*, MDK_MediaEventListener cb);
     void (*removeListener)(mdkPlayer*, int64_t listener);
- 
+
+/*
+  \brief bufferRange
+  duration range of buffered data.
+  minMs: wait for buffered duration >= minMs when before popping a packet to decode
+  drop = true: drop old non-key frame data to reduce buffered duration until less then maxMs.
+  drop = false: wait for buffered duration less than maxMs before buffering more data
+ */
+    void (*setBufferRange)(mdkPlayer*, int64_t minMs, int64_t maxMs, bool drop);
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
