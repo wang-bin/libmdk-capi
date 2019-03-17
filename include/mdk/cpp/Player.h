@@ -76,26 +76,23 @@ public:
 
     // backends can be: AudioQueue(Apple only), OpenSL(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
     void setAudioBackends(const std::vector<std::string>& names) {
-        std::vector<const char*> s(names.size() + 1);
-        for (int i = 0; i < names.size(); ++i)
+        std::vector<const char*> s(names.size() + 1, nullptr);
+        for (size_t i = 0; i < names.size(); ++i)
             s[i] = names[i].data();
-        s[s.size()] = nullptr;
         MDK_CALL(p, setAudioBackends, s.data());
     }
 
     void setAudioDecoders(const std::vector<std::string>& names) {
-        std::vector<const char*> s(names.size() + 1);
-        for (int i = 0; i < names.size(); ++i)
+        std::vector<const char*> s(names.size() + 1, nullptr);
+        for (size_t i = 0; i < names.size(); ++i)
             s[i] = names[i].data();
-        s[s.size()] = nullptr;
         MDK_CALL(p, setAudioDecoders, s.data());
     }
 
     void setVideoDecoders(const std::vector<std::string>& names) {
-        std::vector<const char*> s(names.size() + 1);
-        for (int i = 0; i < names.size(); ++i)
+        std::vector<const char*> s(names.size() + 1, nullptr);
+        for (size_t i = 0; i < names.size(); ++i)
             s[i] = names[i].data();
-        s[s.size()] = nullptr;
         MDK_CALL(p, setVideoDecoders, s.data());
     }
 
