@@ -343,35 +343,38 @@ public:
         return MDK_CALL(p, switchBitrateSingleConnection, url, callback);
     }
 
-/*!
- * \brief addListener
- * listener the events from player, control and FrameReader
- * \return listener id
- */
-    int64_t addListener(MediaEventListener cb) {
-        static int64_t k = 0;
-        listener_[k] = cb;
-        MDK_MediaEventListener callback;
-        callback.cb = [](const MDK_MediaEvent* me, void* opaque){
-            auto f = (MediaEventListener*)opaque;
-            MediaEvent e;
-            e.error = me->error;
-            e.category = me->category;
-            e.detail = me->detail;
-            e.decoder.stream = me->decoder.stream;
-            return (*f)(e);
-        };
-        callback.opaque = &listener_[k];
-        listener_key_[k] = MDK_CALL(p, addListener, callback);
-        return k++;
+    Player& onEvent(MediaEventListener cb, CallbackToken* token = nullptr) {
+        MDK_MediaEventListener callback{};
+        if (!cb) {
+            MDK_CALL(p, onEvent, callback, token ? &event_cb_key_[*token] : nullptr);
+            if (token) {
+                event_cb_.erase(*token);
+                event_cb_key_.erase(*token);
+            } else {
+                event_cb_.clear();
+                event_cb_key_.clear();
+            }
+        } else {
+            static CallbackToken k = 1;
+            event_cb_[k] = cb;
+            callback.cb = [](const MDK_MediaEvent* me, void* opaque){
+                auto f = (MediaEventListener*)opaque;
+                MediaEvent e;
+                e.error = me->error;
+                e.category = me->category;
+                e.detail = me->detail;
+                e.decoder.stream = me->decoder.stream;
+                return (*f)(e);
+            };
+            callback.opaque = &event_cb_[k];
+            CallbackToken t;
+            MDK_CALL(p, onEvent, callback, &t);
+            event_cb_key_[k] = t;
+            if (token)
+                *token = t;
+        }
+        return *this;
     }
-
-    void removeListener(int64_t listener) {
-        MDK_CALL(p, removeListener, listener_key_[listener]);
-        listener_.erase(listener);
-        listener_key_.erase(listener);
-    }
-
 private:
     mdkPlayerAPI* p = nullptr;
     std::function<void()> current_cb_ = nullptr;
@@ -382,7 +385,7 @@ private:
     std::function<void(void* vo_opaque)> render_cb_ = nullptr;
     std::function<void(int64_t)> seek_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;
-    std::map<int64_t, MediaEventListener> listener_; // rb tree, elements never destroyed
-    std::map<int64_t,int64_t> listener_key_;
+    std::map<CallbackToken, MediaEventListener> event_cb_; // rb tree, elements never destroyed
+    std::map<CallbackToken,CallbackToken> event_cb_key_;
 };
 MDK_NS_END

@@ -182,14 +182,7 @@ typedef struct mdkPlayerAPI {
  */
     bool (*switchBitrateSingleConnection)(mdkPlayer*, const char *url, SwitchBitrateCallback cb);
 
-/*!
- * \brief addListener
- * listener the events from player, control and FrameReader
- * \return listener id
- */
-    int64_t (*addListener)(mdkPlayer*, MDK_MediaEventListener cb);
-    void (*removeListener)(mdkPlayer*, int64_t listener);
-
+    void (*onEvent)(mdkPlayer*, MDK_MediaEventListener cb, MDK_CallbackToken* token);
 /*
   \brief bufferRange
   duration range of buffered data.

@@ -292,26 +292,21 @@ bool MDK_Player_switchBitrateSingleConnection(mdkPlayer* p, const char *url, Swi
     });
 }
 
-int64_t MDK_Player_addListener(mdkPlayer* p, MDK_MediaEventListener cb)
+void MDK_Player_onEvent(mdkPlayer* p, MDK_MediaEventListener cb, MDK_CallbackToken* token)
 {
     if (!cb.opaque) {
-        return p->addListener(nullptr);
+        p->onEvent(nullptr, token);
+        return;
     }
-    return p->addListener([cb](const MediaEvent& e){
+    p->onEvent([cb](const MediaEvent& e){
         MDK_MediaEvent me{};
         me.error = e.error;
         me.category = e.category.data();
         me.detail = e.detail.data();
         me.decoder.stream = e.decoder.stream;
         return cb.cb(&me, cb.opaque);
-    });
+    }, token);
 }
-
-void MDK_Player_removeListener(mdkPlayer* p, int64_t listener)
-{
-    p->removeListener(listener);
-}
-
 
 mdkPlayerAPI* mdkPlayerAPI_new()
 {
@@ -359,8 +354,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setBufferRange);
     SET_API(switchBitrate);
     SET_API(switchBitrateSingleConnection);
-    SET_API(addListener);
-    SET_API(removeListener);
+    SET_API(onEvent);
 #undef SET_API
     return p;
 }

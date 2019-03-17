@@ -36,6 +36,15 @@ static const float MDK_IgnoreAspectRatio = 0; /* stretch, ROI etc.*/
 static const float MDK_KeepAspectRatio = -1;
 static const float MDK_KeepAspectRatioCrop = -2; /* by expending and cropping*/
 
+/*!
+  \brief CallbackToken
+  A callback can be registered by (member)function onXXX(obj, callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
+  Non-null callback(.opaque != null): register a callback and return a token(if not null).
+  Null callback(.opaque == null) + non-null token: can remove then callback of given token.
+  Null callback(.opaque == null) + null token: clear all callbacks.
+ */
+typedef uint64_t MDK_CallbackToken;
+
 enum MDK_MediaType {
     MDK_MediaType_Unknown = -1,
     MDK_MediaType_Video,

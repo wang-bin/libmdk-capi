@@ -25,6 +25,15 @@ static const float IgnoreAspectRatio = 0; // stretch, ROI etc.
 static const float KeepAspectRatio = -1;
 static const float KeepAspectRatioCrop = -2; // by expending and cropping
 
+/*!
+  \brief CallbackToken
+  A callback can be registered by (member)function onXXX(callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
+  Non-null callback: register a callback and return a token(if not null).
+  Null callback + non-null token: can remove then callback of given token.
+  Null callback + null token: clear all callbacks.
+ */
+using CallbackToken = uint64_t;
+
 #if defined(_MSC_VER) && _MSC_VER < 1900
 # ifdef constexpr
 #  undef constexpr
