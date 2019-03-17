@@ -146,7 +146,7 @@ public:
         return (PlaybackState)MDK_CALL(p, state);
     }
 
-    void onStateChanged(std::function<void(State)> cb) {
+    Player& onStateChanged(std::function<void(State)> cb) {
         state_cb_ = cb;
         MDK_StateChangedCallback callback;
         callback.cb = [](MDK_State value, void* opaque){
@@ -155,6 +155,7 @@ public:
         };
         callback.opaque = state_cb_ ? (void*)&state_cb_ : nullptr;
         MDK_CALL(p, onStateChanged, callback);
+        return *this;
     }
 
     bool waitFor(State value, long timeout = -1) {
@@ -165,7 +166,7 @@ public:
         return (MediaStatus)MDK_CALL(p, mediaStatus);
     }
 
-    void onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
+    Player& onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
         status_cb_ = cb;
         MDK_MediaStatusChangedCallback callback;
         callback.cb = [](MDK_MediaStatus value, void* opaque){
@@ -174,6 +175,7 @@ public:
         };
         callback.opaque = status_cb_ ? (void*)&status_cb_ : nullptr;
         MDK_CALL(p, onMediaStatusChanged, callback);
+        return *this;
     }
 
     enum SurfaceType {
@@ -263,7 +265,7 @@ public:
   called before delivering frame to renderers
  */
     template<class Frame>
-    void onFrame(std::function<void(Frame&)> cb);
+    Player& onFrame(std::function<void(Frame&)> cb);
 
     int64_t position() const {
         return MDK_CALL(p, position);
