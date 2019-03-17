@@ -1,5 +1,8 @@
 /*
  * Copyright (c) 2016-2019 WangBin <wbsecg1 at gmail.com>
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
  */
 #pragma once
 #include <cinttypes> //_UINT8_MAX. c++11 <cstdint> defines _STDC_LIMIT_MACROS

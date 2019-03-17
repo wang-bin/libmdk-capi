@@ -1,5 +1,8 @@
 /*
  * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
  */
 #pragma once
 #include <inttypes.h>
