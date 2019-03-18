@@ -63,6 +63,8 @@ struct mdkVideoCodecParameters {
     int width;
     int height;
     int b_frames;
+
+    int rotation;
 };
 
 struct mdkVideoStreamInfo {

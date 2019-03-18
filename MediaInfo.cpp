@@ -22,6 +22,7 @@ void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& out)
     out.width = in.width;
     out.height = in.height;
     out.b_frames = in.b_frames;
+    out.rotation = in.rotation;
 }
 
 void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)
