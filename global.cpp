@@ -17,7 +17,7 @@ MDK_LogLevel MDK_logLevel() {
     return (MDK_LogLevel)logLevel();
 }
 
-void MDK_setLogHandler(MDK_LogHandler h) {
+void MDK_setLogHandler(mdkLogHandler h) {
     if (!h.opaque) {
        setLogHandler(nullptr);
        return; 

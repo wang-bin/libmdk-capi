@@ -68,7 +68,7 @@ public:
 
     void currentMediaChanged(std::function<void()> cb) { // call before setMedia()
         current_cb_ = cb;
-        MDK_CurrentMediaChangedCallback callback;
+        mdkCurrentMediaChangedCallback callback;
         callback.cb = [](void* opaque){
             auto f = (std::function<void()>*)opaque;
             (*f)();
@@ -101,7 +101,7 @@ public:
 
     void setTimeout(int64_t value, TimeoutCallback cb = nullptr) {
         timeout_cb_ = cb;
-        MDK_TimeoutCallback callback;
+        mdkTimeoutCallback callback;
         callback.cb = [](int64_t ms, void* opaque){
             auto f = (TimeoutCallback*)opaque;
             return (*f)(ms);
@@ -118,7 +118,7 @@ public:
  */
     void prepare(int64_t startPosition = 0, std::function<void(int64_t position, bool* boost)> cb = nullptr) {
         prepare_cb_ = cb;
-        MDK_PrepareCallback callback;
+        mdkPrepareCallback callback;
         callback.cb = [](int64_t position, bool* boost, void* opaque){
             auto f = (std::function<void(int64_t position, bool* boost)>*)opaque;
             (*f)(position, boost);
@@ -148,7 +148,7 @@ public:
 
     Player& onStateChanged(std::function<void(State)> cb) {
         state_cb_ = cb;
-        MDK_StateChangedCallback callback;
+        mdkStateChangedCallback callback;
         callback.cb = [](MDK_State value, void* opaque){
             auto f = (std::function<void(PlaybackState)>*)opaque;
             (*f)(State(value));
@@ -168,7 +168,7 @@ public:
 
     Player& onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
         status_cb_ = cb;
-        MDK_MediaStatusChangedCallback callback;
+        mdkMediaStatusChangedCallback callback;
         callback.cb = [](MDK_MediaStatus value, void* opaque){
             auto f = (std::function<bool(MediaStatus)>*)opaque;
             return (*f)(MediaStatus(value));
@@ -251,7 +251,7 @@ public:
     // with vo_opaque, user can know which vo/renderer is rendering, useful for multiple renderers
     void setRenderCallback(std::function<void(void* vo_opaque)> cb) { // per vo?
         render_cb_ = cb;
-        MDK_RenderCallback callback;
+        mdkRenderCallback callback;
         callback.cb = [](void* vo_opaque, void* opaque){
             auto f = (std::function<void(void* vo_opaque)>*)opaque;
             (*f)(vo_opaque);
@@ -273,7 +273,7 @@ public:
 
     bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t)> cb = nullptr) {
         seek_cb_ = cb;
-        MDK_SeekCallback callback;
+        mdkSeekCallback callback;
         callback.cb = [](int64_t ms, void* opaque){
             auto f = (std::function<void(int64_t)>*)opaque;
             (*f)(ms);
@@ -346,7 +346,7 @@ public:
     }
 
     Player& onEvent(MediaEventListener cb, CallbackToken* token = nullptr) {
-        MDK_MediaEventListener callback{};
+        mdkMediaEventListener callback{};
         if (!cb) {
             MDK_CALL(p, onEvent, callback, token ? &event_cb_key_[*token] : nullptr);
             if (token) {
@@ -359,7 +359,7 @@ public:
         } else {
             static CallbackToken k = 1;
             event_cb_[k] = cb;
-            callback.cb = [](const MDK_MediaEvent* me, void* opaque){
+            callback.cb = [](const mdkMediaEvent* me, void* opaque){
                 auto f = (MediaEventListener*)opaque;
                 MediaEvent e;
                 e.error = me->error;

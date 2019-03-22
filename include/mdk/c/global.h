@@ -45,7 +45,7 @@ static const float MDK_KeepAspectRatioCrop = -2; /* by expending and cropping*/
  */
 typedef uint64_t MDK_CallbackToken;
 
-enum MDK_MediaType {
+typedef enum MDK_MediaType {
     MDK_MediaType_Unknown = -1,
     MDK_MediaType_Video,
     MDK_MediaType_Audio,
@@ -53,14 +53,14 @@ enum MDK_MediaType {
     MDK_MediaType_Subtitle,
     MDK_MediaType_Attachment,
     MDK_MediaType_Count
-};
+} MDK_MediaType;
 
 /*!
   \brief The MediaStatus enum
   Defines the io status of a media stream,
   Use flags_added/removed() to check the change, for example buffering after seek is Loaded|Prepared|Buffering, and changes to Loaded|Prepared|Buffered when seek completed
  */
-enum MDK_MediaStatus
+typedef enum MDK_MediaStatus
 {
     MDK_MediaStatus_NoMedia = 0, /* initial status, not invalid. // what if set an empty url and closed?*/
     MDK_MediaStatus_Unloaded = 1, /* unloaded // (TODO: or when a source(url) is set?)*/
@@ -73,38 +73,38 @@ enum MDK_MediaStatus
     MDK_MediaStatus_End = 1<<6, /* Playback has reached the end of the current media. The player is in the State::Stopped.*/
     MDK_MediaStatus_Seeking = 1<<7, /* can be used with Buffering, Loaded. FIXME: NOT IMPLEMENTED*/
     MDK_MediaStatus_Invalid = 1<<31, /*  invalid media source*/
-};
+} MDK_MediaStatus;
 
-typedef struct MDK_MediaStatusChangedCallback {
+typedef struct mdkMediaStatusChangedCallback {
     bool (*cb)(MDK_MediaStatus, void* opaque);
     void* opaque;
-} MDK_MediaStatusChangedCallback;
+} mdkMediaStatusChangedCallback;
 
 /*!
  * \brief The State enum
  * Defines the current state of a media player. Can be set by user
  */
-enum MDK_State {
+typedef enum MDK_State {
     MDK_State_NotRunning,
     MDK_State_Stopped = MDK_State_NotRunning,
     MDK_State_Running,
     MDK_State_Playing = MDK_State_Running, /* start/resume to play*/
     MDK_State_Paused,
-};
+} MDK_State;
 typedef MDK_State MDK_PlaybackState;
 
-typedef struct MDK_StateChangedCallback {
+typedef struct mdkStateChangedCallback {
     void (*cb)(MDK_State, void* opaque);
     void* opaque;
-} MDK_StateChangedCallback;
+} mdkStateChangedCallback;
 
-enum MDK_BufferMode {
+typedef enum MDK_BufferMode {
     MDK_BufferTime,
     MDK_BufferBytes,
     MDK_BufferPackets
-};
+} MDK_BufferMode;
 
-enum MDK_SeekFlag {
+typedef enum MDKSeekFlag {
     /* choose one of SeekFromX */
     MDK_SeekFlag_From0       = 1,    /* relative to time 0*/
     MDK_SeekFlag_FromStart   = 1<<1, /* relative to media start position*/
@@ -118,7 +118,7 @@ enum MDK_SeekFlag {
     /* Useful if seek backward repeatly, .i.e. target < playback(not buffered) position. result positions may be the same repeatly if seek forward w/ this flag, or seek backward w/o this flag*/
     MDK_SeekFlag_Backward    = 1<<16, /* for KeyFrame seek only. NOTE: FrameReader/PacketReader only. It has no effect to (un)set this flag in MediaControl/MediaPlayer and higher level apis*/
     MDK_SeekFlag_Default     = MDK_SeekFlag_KeyFrame|MDK_SeekFlag_FromStart
-};
+} MDK_SeekFlag;
 
 /*!
  * \brief javaVM
@@ -128,14 +128,14 @@ enum MDK_SeekFlag {
  */
 MDK_API void* MDK_javaVM(void* vm);
 
-enum MDK_LogLevel {
+typedef enum MDK_LogLevel {
     MDK_LogLevel_Off,
     MDK_LogLevel_Error,
     MDK_LogLevel_Warning,
     MDK_LogLevel_Info,
     MDK_LogLevel_Debug,
     MDK_LogLevel_All
-};
+} MDK_LogLevel;
 MDK_API void MDK_setLogLevel(MDK_LogLevel value);
 MDK_API MDK_LogLevel MDK_logLevel();
 /* \brief setLogHandler
@@ -143,11 +143,11 @@ MDK_API MDK_LogLevel MDK_logLevel();
   if set to non-null handler, log will be passed to the handler.
   if previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
 */
-typedef struct MDK_LogHandler {
+typedef struct mdkLogHandler {
     void (*cb)(MDK_LogLevel, const char*, void* opaque);
     void* opaque;
-} MDK_LogHandler;
-MDK_API void MDK_setLogHandler(MDK_LogHandler);
+} mdkLogHandler;
+MDK_API void MDK_setLogHandler(mdkLogHandler);
 
 /*
   events:
@@ -155,7 +155,7 @@ MDK_API void MDK_setLogHandler(MDK_LogHandler);
   error + "reader.buffering": error is buffering progress
   error + "thread.audio/video" + stream: decoder thread is started (error = 1) and about to exit(error = 0)
 */
-struct MDK_MediaEvent {
+typedef struct mdkMediaEvent {
     int64_t error; /* result <0: error code(fourcc?). >=0: special value depending on event*/
     const char* category;
     const char* detail; /* if error, detail can be error string*/
@@ -165,15 +165,15 @@ struct MDK_MediaEvent {
             int stream;
         } decoder;
     };
-};
+} mdkMediaEvent;
 /*!
  * \brief MediaEventListener
  * return true if event is processed and stop dispatching.
  */
-typedef struct MDK_MediaEventListener {
-    bool (*cb)(const MDK_MediaEvent*, void* opaque);
+typedef struct mdkMediaEventListener {
+    bool (*cb)(const mdkMediaEvent*, void* opaque);
     void* opaque;
-} MDK_MediaEventListener;
+} mdkMediaEventListener;
 
 static const int64_t kTimeout = 10000;
 /*!
@@ -183,10 +183,10 @@ static const int64_t kTimeout = 10000;
  * A null callback will abort current operation when timeout.
  * Setting a negative timeout value means timeout is inf.
  */
-typedef struct MDK_TimeoutCallback {
+typedef struct mdkTimeoutCallback {
     bool (*cb)(int64_t ms, void* opaque);
     void* opaque;
-} MDK_TimeoutCallback;
+} mdkTimeoutCallback;
 
 
 /*
@@ -203,7 +203,7 @@ typedef struct mdkStringMapEntry {
                            output: set by api if priv is not null (set by api) */
     const char* value;  /* output: set by api, or not touched if no such key */
 
-    void* priv;
+    void* priv; /* input/output: set by api */
 } mdkStringMapEntry;
 
 #ifdef __cplusplus

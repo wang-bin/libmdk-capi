@@ -177,7 +177,7 @@ static inline LogLevel logLevel() {
 static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) {
     static std::function<void(LogLevel, const char*)> scb;
     scb = cb;
-    MDK_LogHandler h;
+    mdkLogHandler h;
     h.cb = [](MDK_LogLevel level, const char* msg, void* opaque){
         auto f = (std::function<void(LogLevel, const char*)>*)opaque;
         (*f)(LogLevel(level), msg);

@@ -51,7 +51,7 @@ void MDK_Player_setNextMedia(mdkPlayer* p, const char* url, int64_t startPositio
     p->setNextMedia(url, startPosition);
 }
 
-void MDK_Player_currentMediaChanged(mdkPlayer* p, MDK_CurrentMediaChangedCallback cb)
+void MDK_Player_currentMediaChanged(mdkPlayer* p, mdkCurrentMediaChangedCallback cb)
 {
     if (!cb.opaque) {
         p->currentMediaChanged(nullptr);
@@ -95,7 +95,7 @@ void MDK_Player_setVideoDecoders(mdkPlayer* p, const char** names)
     p->setVideoDecoders(s);
 }
 
-void MDK_Player_setTimeout(mdkPlayer* p, int64_t value, MDK_TimeoutCallback cb)
+void MDK_Player_setTimeout(mdkPlayer* p, int64_t value, mdkTimeoutCallback cb)
 {
     if (!cb.opaque) {
         p->setTimeout(value, nullptr);
@@ -106,7 +106,7 @@ void MDK_Player_setTimeout(mdkPlayer* p, int64_t value, MDK_TimeoutCallback cb)
     });
 }
 
-void MDK_Player_prepare(mdkPlayer* p, int64_t startPosition, MDK_PrepareCallback cb)
+void MDK_Player_prepare(mdkPlayer* p, int64_t startPosition, mdkPrepareCallback cb)
 {
     if (!cb.opaque) {
         p->prepare(startPosition, nullptr);
@@ -133,7 +133,7 @@ MDK_State MDK_Player_state(mdkPlayer* p)
     return (MDK_State)p->state();
 }
 
-void MDK_Player_onStateChanged(mdkPlayer* p, MDK_StateChangedCallback cb)
+void MDK_Player_onStateChanged(mdkPlayer* p, mdkStateChangedCallback cb)
 {
     if (!cb.opaque) {
         p->onStateChanged(nullptr);
@@ -154,7 +154,7 @@ MDK_MediaStatus MDK_Player_mediaStatus(mdkPlayer* p)
     return (MDK_MediaStatus)p->mediaStatus();
 }
 
-void MDK_Player_onMediaStatusChanged(mdkPlayer* p, MDK_MediaStatusChangedCallback cb)
+void MDK_Player_onMediaStatusChanged(mdkPlayer* p, mdkMediaStatusChangedCallback cb)
 {
     if (!cb.opaque) {
         p->onMediaStatusChanged(nullptr);
@@ -217,7 +217,7 @@ double MDK_Player_renderVideo(mdkPlayer* p, void* vo_opaque)
     return p->renderVideo(vo_opaque);
 }
 
-void MDK_Player_setRenderCallback(mdkPlayer* p, MDK_RenderCallback cb)
+void MDK_Player_setRenderCallback(mdkPlayer* p, mdkRenderCallback cb)
 {
     if (!cb.opaque) {
         p->setRenderCallback(nullptr);
@@ -236,7 +236,7 @@ int64_t MDK_Player_position(mdkPlayer* p)
     return p->position();
 }
 
-bool MDK_Player_seekWithFlags(mdkPlayer* p, int64_t pos, MDK_SeekFlag flags, MDK_SeekCallback cb)
+bool MDK_Player_seekWithFlags(mdkPlayer* p, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback cb)
 {
     if (!cb.opaque) {
         return p->seek(pos, SeekFlag(flags), nullptr);
@@ -246,7 +246,7 @@ bool MDK_Player_seekWithFlags(mdkPlayer* p, int64_t pos, MDK_SeekFlag flags, MDK
     });
 }
 
-bool MDK_Player_seek(mdkPlayer* p, int64_t pos, MDK_SeekCallback cb)
+bool MDK_Player_seek(mdkPlayer* p, int64_t pos, mdkSeekCallback cb)
 {
     return MDK_Player_seekWithFlags(p, pos, MDK_SeekFlag_Default, cb);
 }
@@ -292,14 +292,14 @@ bool MDK_Player_switchBitrateSingleConnection(mdkPlayer* p, const char *url, Swi
     });
 }
 
-void MDK_Player_onEvent(mdkPlayer* p, MDK_MediaEventListener cb, MDK_CallbackToken* token)
+void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventListener cb, MDK_CallbackToken* token)
 {
     if (!cb.opaque) {
         p->onEvent(nullptr, token);
         return;
     }
     p->onEvent([cb](const MediaEvent& e){
-        MDK_MediaEvent me{};
+        mdkMediaEvent me{};
         me.error = e.error;
         me.category = e.category.data();
         me.detail = e.detail.data();

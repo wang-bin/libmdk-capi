@@ -45,7 +45,7 @@ MDK_API void MDK_AudioStreamCodecParameters(const mdkAudioStreamInfo*, mdkAudioC
 /* see document of mdkStringMapEntry */
 MDK_API bool MDK_AudioStreamMetadata(const mdkAudioStreamInfo*, mdkStringMapEntry* entry);
 
-struct mdkVideoCodecParameters {
+typedef struct mdkVideoCodecParameters {
     const char* codec;
     uint32_t codec_tag;
     const uint8_t* extra_data; /* without padding data */
@@ -62,16 +62,16 @@ struct mdkVideoCodecParameters {
     int b_frames;
 
     int rotation;
-};
+} mdkVideoCodecParameters;
 
-struct mdkVideoStreamInfo {
+typedef struct mdkVideoStreamInfo {
     int index;
     int64_t start_time;
     int64_t duration;
     int64_t frames;
     
     const void* priv;
-};
+} mdkVideoStreamInfo;
 
 MDK_API void MDK_VideoStreamCodecParametersGet(const mdkVideoStreamInfo*, mdkVideoCodecParameters* p);
 /* see document of mdkStringMapEntry */

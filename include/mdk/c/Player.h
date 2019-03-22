@@ -23,30 +23,30 @@ enum MDK_SurfaceType {
     MDK_SurfaceType_Wayland,
 };
 
-typedef struct MDK_CurrentMediaChangedCallback {
+typedef struct mdkCurrentMediaChangedCallback {
     void (*cb)(void* opaque);
     void* opaque;
-} MDK_CurrentMediaChangedCallback;
+} mdkCurrentMediaChangedCallback;
 
-typedef struct MDK_PrepareCallback {
+typedef struct mdkPrepareCallback {
     void (*cb)(int64_t position, bool* boost, void* opaque);
     void* opaque;
-} MDK_PrepareCallback;
+} mdkPrepareCallback;
 
-typedef struct MDK_RenderCallback {
+typedef struct mdkRenderCallback {
     void (*cb)(void* vo_opaque, void* opaque);
     void* opaque;
-} MDK_RenderCallback;
+} mdkRenderCallback;
 
 typedef struct SwitchBitrateCallback {
     void (*cb)(bool, void* opaque);
     void* opaque;
 } SwitchBitrateCallback;
 
-typedef struct MDK_SeekCallback {
+typedef struct mdkSeekCallback {
     void (*cb)(int64_t ms, void* opaque);
     void* opaque;
-} MDK_SeekCallback;
+} mdkSeekCallback;
 
 typedef struct mdkPlayerAPI {
     mdkPlayer* object;
@@ -67,7 +67,7 @@ typedef struct mdkPlayerAPI {
     void (*setNextMedia)(mdkPlayer*, const char* url, int64_t startPosition);
 
 /* call before setMedia() */
-    void (*currentMediaChanged)(mdkPlayer*, MDK_CurrentMediaChangedCallback cb);
+    void (*currentMediaChanged)(mdkPlayer*, mdkCurrentMediaChangedCallback cb);
 /* backends can be: AudioQueue(Apple only), OpenSL(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
   ends with NULL
 */
@@ -75,7 +75,7 @@ typedef struct mdkPlayerAPI {
     void (*setAudioDecoders)(mdkPlayer*, const char** names);
     void (*setVideoDecoders)(mdkPlayer*, const char** names);
 
-    void (*setTimeout)(mdkPlayer*, int64_t value, MDK_TimeoutCallback cb);
+    void (*setTimeout)(mdkPlayer*, int64_t value, mdkTimeoutCallback cb);
 /*!
    \brief prepare
    To play a media from a given position, call prepare(ms) then setState(State::Playing)
@@ -83,7 +83,7 @@ typedef struct mdkPlayerAPI {
    parameter boost in callback can be set by user to boost the first frame rendering
  */
 
-    void (*prepare)(mdkPlayer*, int64_t startPosition, MDK_PrepareCallback cb);
+    void (*prepare)(mdkPlayer*, int64_t startPosition, mdkPrepareCallback cb);
     const mdkMediaInfo* (*mediaInfo)(mdkPlayer*); /* NOT IMPLEMENTED*/
 
 /*!
@@ -97,11 +97,11 @@ typedef struct mdkPlayerAPI {
 */
     void (*setState)(mdkPlayer*, MDK_State value);
     MDK_State (*state)(mdkPlayer*);
-    void (*onStateChanged)(mdkPlayer*, MDK_StateChangedCallback);
+    void (*onStateChanged)(mdkPlayer*, mdkStateChangedCallback);
     bool (*waitFor)(mdkPlayer*, MDK_State value, long timeout);
 
     MDK_MediaStatus (*mediaStatus)(mdkPlayer*);
-    void (*onMediaStatusChanged)(mdkPlayer*, MDK_MediaStatusChangedCallback);
+    void (*onMediaStatusChanged)(mdkPlayer*, mdkMediaStatusChangedCallback);
 
 /*!
  * \brief updateNativeWindow
@@ -144,7 +144,7 @@ typedef struct mdkPlayerAPI {
   Also invoked in setVideoSurfaceSize(), setVideoViewport(), setAspectRatio() and rotate(), take care of dead lock in callback and above functions.
   with vo_opaque, user can know which vo/renderer is rendering, useful for multiple renderers
 */
-    void (*setRenderCallback)(mdkPlayer*, MDK_RenderCallback);
+    void (*setRenderCallback)(mdkPlayer*, mdkRenderCallback);
 
 /*
   \brief onFrame
@@ -155,8 +155,8 @@ typedef struct mdkPlayerAPI {
 */
 
     int64_t (*position)(mdkPlayer*);
-    bool (*seekWithFlags)(mdkPlayer*, int64_t pos, MDK_SeekFlag flags, MDK_SeekCallback);
-    bool (*seek)(mdkPlayer*, int64_t pos, MDK_SeekCallback);
+    bool (*seekWithFlags)(mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
+    bool (*seek)(mdkPlayer*, int64_t pos, mdkSeekCallback);
 
     void (*setPlaybackRate)(mdkPlayer*, float value);
     float (*playbackRate)(mdkPlayer*);
@@ -182,7 +182,7 @@ typedef struct mdkPlayerAPI {
  */
     bool (*switchBitrateSingleConnection)(mdkPlayer*, const char *url, SwitchBitrateCallback cb);
 
-    void (*onEvent)(mdkPlayer*, MDK_MediaEventListener cb, MDK_CallbackToken* token);
+    void (*onEvent)(mdkPlayer*, mdkMediaEventListener cb, MDK_CallbackToken* token);
 /*
   \brief bufferRange
   duration range of buffered data.
