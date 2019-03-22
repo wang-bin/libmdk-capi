@@ -41,12 +41,9 @@ typedef struct mdkAudioStreamInfo {
     const void* priv;
 } mdkAudioStreamInfo;
 
-MDK_API const mdkAudioCodecParameters* MDK_AudioStreamCodecParameters(const mdkAudioStreamInfo*);
-/*
-entry: in/out. can be null to return the 1st entry
-return: next entry, or null if no more entry
-*/
-MDK_API mdkStringMapEntry MDK_AudioStreamMetadata(const mdkAudioStreamInfo*, mdkStringMapEntry* entry);
+MDK_API void MDK_AudioStreamCodecParameters(const mdkAudioStreamInfo*, mdkAudioCodecParameters* p);
+/* see document of mdkStringMapEntry */
+MDK_API bool MDK_AudioStreamMetadata(const mdkAudioStreamInfo*, mdkStringMapEntry* entry);
 
 struct mdkVideoCodecParameters {
     const char* codec;
@@ -77,11 +74,8 @@ struct mdkVideoStreamInfo {
 };
 
 MDK_API void MDK_VideoStreamCodecParametersGet(const mdkVideoStreamInfo*, mdkVideoCodecParameters* p);
-/*
-entry: in/out. can be null to return the 1st entry
-return: next entry, or null if no more entry
-*/
-MDK_API mdkStringMapEntry MDK_VideoStreamMetadata(const mdkVideoStreamInfo*, mdkStringMapEntry* entry);
+/* see document of mdkStringMapEntry */
+MDK_API bool MDK_VideoStreamMetadata(const mdkVideoStreamInfo*, mdkStringMapEntry* entry);
 
 typedef struct mdkMediaInfo
 {
