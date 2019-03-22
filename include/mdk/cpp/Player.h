@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 #include "global.h"
+#include "MediaInfo.h"
 #include "../c/Player.h"
 
 MDK_NS_BEGIN
@@ -16,7 +17,6 @@ MDK_NS_BEGIN
  * \brief The Player class
  * High level API with basic playback function.
  */
-class MediaInfo;
 class AudioFrame;
 class VideoFrame;
 class Window;
@@ -127,7 +127,10 @@ public:
         MDK_CALL(p, prepare, startPosition, callback);
     }
 
-    const MediaInfo& mediaInfo() const;
+    const MediaInfo& mediaInfo() const {
+        from_c(MDK_CALL(p, mediaInfo), &info_);
+        return info_;
+    }
 
 /*!
   \brief setState
@@ -389,5 +392,7 @@ private:
     std::function<void(bool)> switch_cb_ = nullptr;
     std::map<CallbackToken, MediaEventListener> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
+
+    mutable MediaInfo info_;
 };
 MDK_NS_END

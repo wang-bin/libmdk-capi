@@ -326,7 +326,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setVideoDecoders);
     SET_API(setTimeout);
     SET_API(prepare);
-    //SET_API(mediaInfo);
+    SET_API(mediaInfo);
     SET_API(setState);
     SET_API(state);
     SET_API(onStateChanged);

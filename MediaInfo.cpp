@@ -89,19 +89,25 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
         from_abi(i, si);
         out->a.push_back(std::move(si));
     }
-    out->info.audio = &out->a[0];
+    out->info.audio = nullptr;
+    if (!out->a.empty())
+        out->info.audio = &out->a[0];
     for (const auto& i : abi.video) {
         mdkVideoStreamInfo si;
         from_abi(i, si);
         out->v.push_back(std::move(si));
     }
-    out->info.video = &out->v[0];
+    out->info.video = nullptr;
+    if (!out->v.empty())
+        out->info.video = &out->v[0];
     from_abi(out->abi, out->info);
 }
 
 template<class InfoAbi, class Info>
 bool MDK_GetMetaData(const Info* info, mdkStringMapEntry* entry)
 {
+    if (!info)
+        return false;
     assert(entry && "entry can not be null");
     auto abi = reinterpret_cast<const InfoAbi*>(info->priv);
     auto it = abi->metadata.cend();
@@ -109,6 +115,7 @@ bool MDK_GetMetaData(const Info* info, mdkStringMapEntry* entry)
         auto pit = (decltype(it)*)entry->priv;
         it = *pit;
         it++;
+        delete pit;
     } else if (entry->key) {
         it = abi->metadata.find(entry->key);
     } else {
@@ -118,7 +125,7 @@ bool MDK_GetMetaData(const Info* info, mdkStringMapEntry* entry)
         return false;
     entry->key = it->first.data();
     entry->value = it->second.data();
-    entry->priv = &it;
+    entry->priv = new decltype(it)(it);
     return true;
 }
 
@@ -130,7 +137,7 @@ void MDK_AudioStreamCodecParameters(const mdkAudioStreamInfo* info, mdkAudioCode
     from_abi(abi->codec, *p);
 }
 
-void MDK_VideoStreamCodecParametersGet(const mdkVideoStreamInfo* info, mdkVideoCodecParameters* p)
+void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo* info, mdkVideoCodecParameters* p)
 {
     auto abi = reinterpret_cast<const VideoStreamInfo*>(info->priv);
     from_abi(abi->codec, *p);

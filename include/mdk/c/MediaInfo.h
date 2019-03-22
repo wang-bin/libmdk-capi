@@ -73,7 +73,7 @@ typedef struct mdkVideoStreamInfo {
     const void* priv;
 } mdkVideoStreamInfo;
 
-MDK_API void MDK_VideoStreamCodecParametersGet(const mdkVideoStreamInfo*, mdkVideoCodecParameters* p);
+MDK_API void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo*, mdkVideoCodecParameters* p);
 /* see document of mdkStringMapEntry */
 MDK_API bool MDK_VideoStreamMetadata(const mdkVideoStreamInfo*, mdkStringMapEntry* entry);
 
