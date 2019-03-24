@@ -84,7 +84,7 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
         return;
     out->abi = abi;
     out->a.clear();
-    for (const auto& i : abi.audio) {
+    for (const auto& i : out->abi.audio) {
         mdkAudioStreamInfo si;
         from_abi(i, si);
         out->a.push_back(std::move(si));
@@ -92,7 +92,7 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
     out->info.audio = nullptr;
     if (!out->a.empty())
         out->info.audio = &out->a[0];
-    for (const auto& i : abi.video) {
+    for (const auto& i : out->abi.video) {
         mdkVideoStreamInfo si;
         from_abi(i, si);
         out->v.push_back(std::move(si));

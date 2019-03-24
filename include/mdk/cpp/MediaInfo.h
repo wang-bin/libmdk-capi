@@ -69,7 +69,7 @@ struct VideoStreamInfo {
     int64_t start_time;
     int64_t duration;
     int64_t frames;
-    
+
     const void* priv = nullptr; // internal
 
     std::unordered_map<std::string, std::string> metadata;
@@ -103,21 +103,21 @@ void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         info->metadata[entry.key] = entry.value;
     for (int i = 0; i < cinfo->nb_audio; ++i) {
         AudioStreamInfo si{};
-        auto a = &cinfo->audio[i];
-        memcpy(&si, a, sizeof(*a));
-        MDK_AudioStreamCodecParameters(a, (mdkAudioCodecParameters*)&si.codec);
+        auto csi = &cinfo->audio[i];
+        memcpy(&si, csi, sizeof(*csi));
+        MDK_AudioStreamCodecParameters(csi, (mdkAudioCodecParameters*)&si.codec);
         mdkStringMapEntry e{};
-        while (MDK_AudioStreamMetadata(a, &e))
+        while (MDK_AudioStreamMetadata(csi, &e))
             si.metadata[e.key] = e.value;
         info->audio.push_back(std::move(si));
     }
-    for (int i = 0; i < cinfo->nb_audio; ++i) {
+    for (int i = 0; i < cinfo->nb_video; ++i) {
         VideoStreamInfo si{};
-        auto a = &cinfo->video[i];
-        memcpy(&si, a, sizeof(*a));
-        MDK_VideoStreamCodecParameters(a, (mdkVideoCodecParameters*)&si.codec);
+        auto csi = &cinfo->video[i];
+        memcpy(&si, csi, sizeof(*csi));
+        MDK_VideoStreamCodecParameters(csi, (mdkVideoCodecParameters*)&si.codec);
         mdkStringMapEntry e{};
-        while (MDK_VideoStreamMetadata(a, &e))
+        while (MDK_VideoStreamMetadata(csi, &e))
             si.metadata[e.key] = e.value;
         info->video.push_back(std::move(si));
     }
