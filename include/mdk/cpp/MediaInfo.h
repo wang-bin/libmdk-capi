@@ -7,6 +7,7 @@
 #pragma once
 #include "global.h"
 #include "../c/MediaInfo.h"
+#include <cstring>
 #include <unordered_map>
 #include <vector>
 
