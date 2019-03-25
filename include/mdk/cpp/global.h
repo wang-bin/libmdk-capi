@@ -188,6 +188,7 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
 
 /*
   events:
+  timestamp(ms) + "render.video" + "1st_frame"
   "decoder.audio/video" + "open" + stream: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
   error + "reader.buffering": error is buffering progress
   error + "thread.audio/video" + stream: decoder thread is started (error = 1) and about to exit(error = 0)
