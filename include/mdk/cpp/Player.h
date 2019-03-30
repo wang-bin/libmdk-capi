@@ -210,6 +210,30 @@ public:
     }
 
 // vo_opaque: a ptr to identify the renderer. cam be null, then it is the default vo/renderer.
+    struct SnapshotRequest {
+        uint8_t* data = nullptr; // rgba data. can be allocated by user, or null to allocate and managed internally
+        // result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
+        // if both requested width and height are < 0, then result image is scaled image of current frame with ratio=width/height. no renderer transform.
+        // if only one of width and height < 0, then the result size is video renderer viewport size, and all transforms will be applied.
+        int width = 0;
+        int height = 0;
+        int stride = 0;
+        bool subtitle = false; // not supported yet
+    };
+/*!
+  \brief snapshot
+  take a snapshot from current renderer. The result is in bgra format, or null on failure.
+*/
+    void snapshot(SnapshotRequest* request, std::function<void(SnapshotRequest*)> cb, void* vo_opaque = nullptr) {
+        snapshot_cb_ = cb;
+        mdkSnapshotCallback callback;
+        callback.cb = [](mdkSnapshotRequest* req, void* opaque){
+            auto f = (std::function<void(SnapshotRequest*)>*)opaque;
+            (*f)((SnapshotRequest*)req);
+        };
+        callback.opaque = snapshot_cb_ ? (void*)&snapshot_cb_ : nullptr;
+        return MDK_CALL(p, snapshot, (mdkSnapshotRequest*)request, callback, vo_opaque);
+    }
 // A vo/renderer (e.g. the default vo/renderer) is gfx context aware, i.e. can render in multiple gfx contexts with a single vo/renderer, but parameters(e.g. surface size)
 // must be updated when switch to a new context. So per gfx context vo/renderer can be better because parameters are stored in vo/renderer.
 /*!
@@ -390,6 +414,7 @@ private:
     std::function<void(void* vo_opaque)> render_cb_ = nullptr;
     std::function<void(int64_t)> seek_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;
+    std::function<void(SnapshotRequest*)> snapshot_cb_ = nullptr;
     std::map<CallbackToken, MediaEventListener> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
 

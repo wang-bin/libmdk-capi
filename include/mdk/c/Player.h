@@ -48,6 +48,24 @@ typedef struct mdkSeekCallback {
     void* opaque;
 } mdkSeekCallback;
 
+typedef struct mdkSnapshotRequest {
+  uint8_t* data; /* rgba data. as input, can be allocated by user, or null to allocate and managed internally */
+/* 
+   result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
+   if both requested width and height are < 0, then result image is scaled image of current frame with ratio=width/height. no renderer transform.
+   if only one of width and height < 0, then the result size is video renderer viewport size, and all transforms will be applied.
+*/
+    int width;
+    int height;
+    int stride;
+    bool subtitle; // not supported yet
+} mdkSnapshotRequest;
+
+typedef struct mdkSnapshotCallback {
+    void (*cb)(mdkSnapshotRequest*, void* opaque);
+    void* opaque;
+} mdkSnapshotCallback;
+
 typedef struct mdkPlayerAPI {
     mdkPlayer* object;
 
@@ -191,6 +209,11 @@ typedef struct mdkPlayerAPI {
   drop = false: wait for buffered duration less than maxMs before buffering more data
  */
     void (*setBufferRange)(mdkPlayer*, int64_t minMs, int64_t maxMs, bool drop);
+/*!
+  \brief snapshot
+  take a snapshot from current renderer. The result is in bgra format, or null on failure.
+*/
+    void (*snapshot)(mdkPlayer*, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque);
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();

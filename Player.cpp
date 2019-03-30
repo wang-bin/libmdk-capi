@@ -6,6 +6,7 @@
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
 #include "MediaInfoInternal.h"
+#include <cassert>
 
 using namespace std;
 using namespace MDK_NS;
@@ -308,6 +309,14 @@ void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventListener cb, MDK_CallbackToke
     }, token);
 }
 
+void MDK_Player_snapshot(mdkPlayer* p, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque)
+{
+    assert(!cb.opaque && "mdkSnapshotCallback.cb can not be null");
+    p->snapshot((Player::SnapshotRequest*)request, [cb](Player::SnapshotRequest* req){
+        cb.cb((mdkSnapshotRequest*)req, cb.opaque);
+    }, vo_opaque);
+}
+
 mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -355,6 +364,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(switchBitrate);
     SET_API(switchBitrateSingleConnection);
     SET_API(onEvent);
+    SET_API(snapshot);
 #undef SET_API
     return p;
 }
