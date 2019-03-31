@@ -32,10 +32,6 @@ extern "C" {
 
 #define MDK_CALL(p, FN, ...) p->FN(p->object, ##__VA_ARGS__)
 
-static const float MDK_IgnoreAspectRatio = 0; /* stretch, ROI etc.*/
-static const float MDK_KeepAspectRatio = -1;
-static const float MDK_KeepAspectRatioCrop = -2; /* by expending and cropping*/
-
 /*!
   \brief CallbackToken
   A callback can be registered by (member)function onXXX(obj, callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
@@ -47,12 +43,9 @@ typedef uint64_t MDK_CallbackToken;
 
 typedef enum MDK_MediaType {
     MDK_MediaType_Unknown = -1,
-    MDK_MediaType_Video,
-    MDK_MediaType_Audio,
-    MDK_MediaType_Data,
-    MDK_MediaType_Subtitle,
-    MDK_MediaType_Attachment,
-    MDK_MediaType_Count
+    MDK_MediaType_Video = 0,
+    MDK_MediaType_Audio = 1,
+    MDK_MediaType_Subtitle = 3,
 } MDK_MediaType;
 
 /*!
@@ -81,8 +74,8 @@ typedef struct mdkMediaStatusChangedCallback {
 } mdkMediaStatusChangedCallback;
 
 /*!
- * \brief The State enum
- * Defines the current state of a media player. Can be set by user
+  \brief The State enum
+  Current playback state. Set/Get by user
  */
 typedef enum MDK_State {
     MDK_State_NotRunning,
@@ -97,12 +90,6 @@ typedef struct mdkStateChangedCallback {
     void (*cb)(MDK_State, void* opaque);
     void* opaque;
 } mdkStateChangedCallback;
-
-typedef enum MDK_BufferMode {
-    MDK_BufferTime,
-    MDK_BufferBytes,
-    MDK_BufferPackets
-} MDK_BufferMode;
 
 typedef enum MDKSeekFlag {
     /* choose one of SeekFromX */
@@ -121,10 +108,10 @@ typedef enum MDKSeekFlag {
 } MDK_SeekFlag;
 
 /*!
- * \brief javaVM
- * Set/Get current java vm
- * \param vm null to get current vm
- * \return current vm
+  \brief javaVM
+  Set/Get current java vm
+  \param vm null to get current vm
+  \return vm before set
  */
 MDK_API void* MDK_javaVM(void* vm);
 
@@ -167,28 +154,6 @@ typedef struct mdkMediaEvent {
         } decoder;
     };
 } mdkMediaEvent;
-/*!
- * \brief MediaEventListener
- * return true if event is processed and stop dispatching.
- */
-typedef struct mdkMediaEventListener {
-    bool (*cb)(const mdkMediaEvent*, void* opaque);
-    void* opaque;
-} mdkMediaEventListener;
-
-static const int64_t kTimeout = 10000;
-/*!
- * \brief TimeoutCallback
- * \param ms elapsed milliseconds since restart
- * return true to abort current operation on timeout.
- * A null callback will abort current operation when timeout.
- * Setting a negative timeout value means timeout is inf.
- */
-typedef struct mdkTimeoutCallback {
-    bool (*cb)(int64_t ms, void* opaque);
-    void* opaque;
-} mdkTimeoutCallback;
-
 
 /*
 bool MDK_SomeFunc(SomeStruct*, mdkStringMapEntry* entry)

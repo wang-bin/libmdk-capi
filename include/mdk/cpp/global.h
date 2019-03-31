@@ -5,8 +5,6 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
-#include <cinttypes> //_UINT8_MAX. c++11 <cstdint> defines _STDC_LIMIT_MACROS
-#include <climits> // INT_MAX
 #include <functional>
 #include <memory>
 #include <string>
@@ -20,11 +18,6 @@
 # define MDK_NS_PREPEND(X) ::MDK_NS::X
 
 MDK_NS_BEGIN
-
-static const float IgnoreAspectRatio = 0; // stretch, ROI etc.
-static const float KeepAspectRatio = -1;
-static const float KeepAspectRatioCrop = -2; // by expending and cropping
-
 /*!
   \brief CallbackToken
   A callback can be registered by (member)function onXXX(callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
@@ -75,12 +68,9 @@ constexpr bool flags_removed(E oldFlags, E newFlags, E testFlags) { return !test
 
 enum class MediaType : int8_t {
     Unknown = -1,
-    Video,
-    Audio,
-    Data, // e.g. timed metadata tracks in ffmpeg 3.2
-    Subtitle,
-    Attachment,
-    Count
+    Video = 0,
+    Audio = 1,
+    Subtitle = 3,
 };
 
 /*!
@@ -106,8 +96,8 @@ template<> struct is_flag<MediaStatus> : std::true_type {};
 // MediaStatusCallback
 
 /*!
- * \brief The State enum
- * Defines the current state of a media player. Can be set by user
+  \brief The State enum
+  Current playback state. Set/Get by user
  */
 enum class State : int8_t {
     NotRunning,
@@ -117,12 +107,6 @@ enum class State : int8_t {
     Paused,
 };
 typedef State PlaybackState;
-
-enum BufferMode { // TODO: scoped
-    BufferTime,
-    BufferBytes,
-    BufferPackets
-};
 
 enum class SeekFlag {
     /// choose one of SeekFromX
@@ -143,12 +127,11 @@ enum class SeekFlag {
 template<> struct is_flag<SeekFlag> : std::true_type {};
 
 /*!
- * \brief javaVM
- * Set/Get current java vm
- * \param vm null to get current vm
- * \return current vm
+  \brief javaVM
+  Set/Get current java vm
+  \param vm null to get current vm
+  \return vm before set
  */
-// TODO: mdk/ugl/ugs set/getGlobal(): XDisplay, JavaVM. use std::any or void*?
 static inline void* javaVM(void* vm = nullptr) {
     return MDK_javaVM(vm);
 }
@@ -193,7 +176,7 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
   error + "reader.buffering": error is buffering progress
   error + "thread.audio/video" + stream: decoder thread is started (error = 1) and about to exit(error = 0)
 */
-class MediaEvent { // why no export?
+class MediaEvent {
 public:
     int64_t error = 0; // result <0: error code(fourcc?). >=0: special value depending on event
     std::string category;
@@ -205,20 +188,4 @@ public:
         } decoder;
     };
 };
-/*!
- * \brief MediaEventListener
- * return true if event is processed and stop dispatching.
- */
-typedef std::function<bool(const MediaEvent&)> MediaEventListener;
-
-static const int64_t kTimeout = 10000;
-/*!
- * \brief TimeoutCallback
- * \param ms elapsed milliseconds since restart
- * return true to abort current operation on timeout.
- * A null callback will abort current operation when timeout.
- * Setting a negative timeout value means timeout is inf.
- */
-typedef std::function<bool(int64_t ms)> TimeoutCallback;
 MDK_NS_END
-

@@ -99,15 +99,23 @@ public:
         MDK_CALL(p, setVideoDecoders, s.data());
     }
 
-    void setTimeout(int64_t value, TimeoutCallback cb = nullptr) {
+/*!
+  \brief setTimeout
+  callback ms: elapsed milliseconds
+  callback return: true to abort current operation on timeout.
+  A null callback can abort current operation.
+  Negative timeout infinit.
+  Default timeout is 10s
+ */
+    void setTimeout(int64_t ms, std::function<bool(int64_t ms)> cb = nullptr) {
         timeout_cb_ = cb;
         mdkTimeoutCallback callback;
         callback.cb = [](int64_t ms, void* opaque){
-            auto f = (TimeoutCallback*)opaque;
+            auto f = (std::function<bool(int64_t ms)>*)opaque;
             return (*f)(ms);
         };
         callback.opaque = timeout_cb_ ? (void*)&timeout_cb_ : nullptr;
-        MDK_CALL(p, setTimeout, value, callback);
+        MDK_CALL(p, setTimeout, ms, callback);
     }
 
 /*!
@@ -250,7 +258,13 @@ public:
         MDK_CALL(p, setVideoViewport, x, y, w, h, vo_opaque);
     }
 
-/// IgnoreAspectRatio, KeepAspectRatio, KeepAspectRatio or any positive float
+/*!
+  \brief setAspectRatio
+  Video display aspect ratio.
+  0: ignore aspect ratio and scale to fit renderer viewport
+  -1(default): keep frame aspect ratio and scale as large as possible inside renderer viewport
+  -2: keep frame aspect ratio and scale as small as possible outside renderer viewport
+ */
     void setAspectRatio(float value, void* vo_opaque = nullptr) {
         MDK_CALL(p, setAspectRatio, value, vo_opaque);
     }
@@ -372,8 +386,12 @@ public:
         return MDK_CALL(p, switchBitrateSingleConnection, url, callback);
     }
 
-    Player& onEvent(MediaEventListener cb, CallbackToken* token = nullptr) {
-        mdkMediaEventListener callback{};
+/*!
+  \brief onEvent
+  callback return: true if event is processed and should stop dispatching.
+ */
+    Player& onEvent(std::function<bool(const MediaEvent&)> cb, CallbackToken* token = nullptr) {
+        mdkMediaEventCallback callback{};
         if (!cb) {
             MDK_CALL(p, onEvent, callback, token ? &event_cb_key_[*token] : nullptr);
             if (token) {
@@ -387,7 +405,7 @@ public:
             static CallbackToken k = 1;
             event_cb_[k] = cb;
             callback.cb = [](const mdkMediaEvent* me, void* opaque){
-                auto f = (MediaEventListener*)opaque;
+                auto f = (std::function<bool(const MediaEvent&)>*)opaque;
                 MediaEvent e;
                 e.error = me->error;
                 e.category = me->category;
@@ -407,7 +425,7 @@ public:
 private:
     mdkPlayerAPI* p = nullptr;
     std::function<void()> current_cb_ = nullptr;
-    TimeoutCallback timeout_cb_ = nullptr;
+    std::function<bool(int64_t ms)> timeout_cb_ = nullptr;
     std::function<void(int64_t position, bool* boost)> prepare_cb_ = nullptr;
     std::function<void(State)> state_cb_ = nullptr;
     std::function<bool(MediaStatus)> status_cb_ = nullptr;
@@ -415,7 +433,7 @@ private:
     std::function<void(int64_t)> seek_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;
     std::function<void(SnapshotRequest*)> snapshot_cb_ = nullptr;
-    std::map<CallbackToken, MediaEventListener> event_cb_; // rb tree, elements never destroyed
+    std::map<CallbackToken, std::function<bool(const MediaEvent&)>> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
 
     mutable MediaInfo info_;

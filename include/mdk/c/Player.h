@@ -48,6 +48,28 @@ typedef struct mdkSeekCallback {
     void* opaque;
 } mdkSeekCallback;
 
+/*!
+  \brief TimeoutCallback
+  \param ms elapsed milliseconds
+  \return true to abort current operation on timeout.
+  A null callback can abort current operation.
+  Negative timeout infinit.
+  Default timeout is 10s
+ */
+typedef struct mdkTimeoutCallback {
+    bool (*cb)(int64_t ms, void* opaque);
+    void* opaque;
+} mdkTimeoutCallback;
+
+/*!
+  \brief MediaEventCallback
+  \return true if event is processed and should stop dispatching.
+ */
+typedef struct mdkMediaEventCallback {
+    bool (*cb)(const mdkMediaEvent*, void* opaque);
+    void* opaque;
+} mdkMediaEventCallback;
+
 typedef struct mdkSnapshotRequest {
   uint8_t* data; /* rgba data. as input, can be allocated by user, or null to allocate and managed internally */
 /* 
@@ -146,6 +168,13 @@ typedef struct mdkPlayerAPI {
 
     void (*setVideoSurfaceSize)(mdkPlayer*, int width, int height, void* vo_opaque);
     void (*setVideoViewport)(mdkPlayer*, float x, float y, float w, float h, void* vo_opaque);
+/*!
+  \brief setAspectRatio
+  Video display aspect ratio.
+  0: ignore aspect ratio and scale to fit renderer viewport
+  -1(default): keep frame aspect ratio and scale as large as possible inside renderer viewport
+  -2: keep frame aspect ratio and scale as small as possible outside renderer viewport
+ */
     void (*setAspectRatio)(mdkPlayer*, float value, void* vo_opaque);
     void (*rotate)(mdkPlayer*, int degree, void* vo_opaque);
     void (*scale)(mdkPlayer*, float x, float y, void* vo_opaque);
@@ -200,7 +229,7 @@ typedef struct mdkPlayerAPI {
  */
     bool (*switchBitrateSingleConnection)(mdkPlayer*, const char *url, SwitchBitrateCallback cb);
 
-    void (*onEvent)(mdkPlayer*, mdkMediaEventListener cb, MDK_CallbackToken* token);
+    void (*onEvent)(mdkPlayer*, mdkMediaEventCallback cb, MDK_CallbackToken* token);
 /*
   \brief bufferRange
   duration range of buffered data.

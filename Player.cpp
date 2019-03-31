@@ -293,7 +293,7 @@ bool MDK_Player_switchBitrateSingleConnection(mdkPlayer* p, const char *url, Swi
     });
 }
 
-void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventListener cb, MDK_CallbackToken* token)
+void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventCallback cb, MDK_CallbackToken* token)
 {
     if (!cb.opaque) {
         p->onEvent(nullptr, token);
