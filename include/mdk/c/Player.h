@@ -14,7 +14,6 @@ extern "C" {
 struct mdkMediaInfo;
 struct mdkAudioFrame;
 struct mdkVideoFrame;
-struct mdkWindow;
 struct mdkPlayer;
 
 enum MDK_SurfaceType {
@@ -145,16 +144,16 @@ typedef struct mdkPlayerAPI {
     void (*onMediaStatusChanged)(mdkPlayer*, mdkMediaStatusChangedCallback);
 
 /*!
- * \brief updateNativeWindow
- * If window is not created, create rendering context internally by createWindow() and attached to native window
- * native window MUST be not null before destroying player
+ * \brief updateNativeSurface
+ * If surface is not created, create rendering context internally by createSurface() and attached to native surface
+ * native surface MUST be not null before destroying player
  type: ignored if win ptr does not change (request to resize)
  */
-    void (*updateNativeWindow)(mdkPlayer*, void* win, int width, int height, MDK_SurfaceType type);
+    void (*updateNativeSurface)(mdkPlayer*, void* win, int width, int height, MDK_SurfaceType type);
 
-    void (*createWindow)(mdkPlayer*, void* nativeHandle, MDK_SurfaceType type);
-    void (*resizeWindow)(mdkPlayer*, int w, int h);
-    void (*showWindow)(mdkPlayer*);
+    void (*createSurface)(mdkPlayer*, void* nativeHandle, MDK_SurfaceType type);
+    void (*resizeSurface)(mdkPlayer*, int w, int h);
+    void (*showSurface)(mdkPlayer*);
 
 /*
   vo_opaque: a ptr to identify the renderer. cam be null, then it is the default vo/renderer.
@@ -181,7 +180,7 @@ typedef struct mdkPlayerAPI {
     void (*scale)(mdkPlayer*, float x, float y, void* vo_opaque);
 /*!
    \brief renderVideo
-   Render the next/current frame. Call only in Window.onDraw() (not created by createWindow()/updateNativeWindow()) or external graphics context's rendering function.
+   Render the next/current frame. Call only in RenderLoop.onDraw() (not created by createSurface()/updateNativeSurface()) or external graphics context's rendering function.
    Can be called in multiple foreign gfx contexts for the same vo_opaque.
    \return timestamp of rendered frame, or < 0 if no frame is rendered
  */

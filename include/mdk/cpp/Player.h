@@ -20,7 +20,6 @@ MDK_NS_BEGIN
  */
 class AudioFrame;
 class VideoFrame;
-class Window;
 class Player
 {
 public:
@@ -197,25 +196,25 @@ public:
         Wayland,
     };
 /*!
- * \brief updateNativeWindow
- * If window is not created, create rendering context internally by createWindow() and attached to native window
- * native window MUST be not null before destroying player
+ * \brief updateNativeSurface
+ * If surface is not created, create rendering context internally by createSurface() and attached to native surface
+ * native surface MUST be not null before destroying player
  */
 // type: ignored if win ptr does not change (request to resize)
-    void updateNativeWindow(void* win, int width = -1, int height = -1, SurfaceType type = SurfaceType::Auto) {
-        MDK_CALL(p, updateNativeWindow, win, width, height, (MDK_SurfaceType)type);
+    void updateNativeSurface(void* win, int width = -1, int height = -1, SurfaceType type = SurfaceType::Auto) {
+        MDK_CALL(p, updateNativeSurface, win, width, height, (MDK_SurfaceType)type);
     }
 
-    void createWindow(void* nativeHandle = nullptr, SurfaceType type = SurfaceType::Auto) {
-        MDK_CALL(p, createWindow, nativeHandle, (MDK_SurfaceType)type);
+    void createSurface(void* nativeHandle = nullptr, SurfaceType type = SurfaceType::Auto) {
+        MDK_CALL(p, createSurface, nativeHandle, (MDK_SurfaceType)type);
     }
 
-    void resizeWindow(int w, int h) {
-        MDK_CALL(p, resizeWindow, w, h);
+    void resizeSurface(int w, int h) {
+        MDK_CALL(p, resizeSurface, w, h);
     }
 
-    void showWindow() {
-        MDK_CALL(p, showWindow);
+    void showSurface() {
+        MDK_CALL(p, showSurface);
     }
 
 // vo_opaque: a ptr to identify the renderer. cam be null, then it is the default vo/renderer.
@@ -280,7 +279,7 @@ public:
 
 /*!
    \brief renderVideo
-   Render the next/current frame. Call only in Window.onDraw() (not created by createWindow()/updateNativeWindow()) or external graphics context's rendering function.
+   Render the next/current frame. Call only in RenderLoop.onDraw() (not created by createSurface()/updateNativeSurface()) or external graphics context's rendering function.
    Can be called in multiple foreign gfx contexts for the same vo_opaque.
    \return timestamp of rendered frame, or < 0 if no frame is rendered
  */

@@ -166,24 +166,24 @@ void MDK_Player_onMediaStatusChanged(mdkPlayer* p, mdkMediaStatusChangedCallback
     });
 }
 
-void MDK_Player_updateNativeWindow(mdkPlayer* p, void* win, int width, int height, MDK_SurfaceType type)
+void MDK_Player_updateNativeSurface(mdkPlayer* p, void* win, int width, int height, MDK_SurfaceType type)
 {
-    p->updateNativeWindow(win, width, height, Player::SurfaceType(type));
+    p->updateNativeSurface(win, width, height, Player::SurfaceType(type));
 }
 
-void MDK_Player_createWindow(mdkPlayer* p, void* nativeHandle, MDK_SurfaceType type)
+void MDK_Player_createSurface(mdkPlayer* p, void* nativeHandle, MDK_SurfaceType type)
 {
-    p->createWindow(nativeHandle, Player::SurfaceType(type));
+    p->createSurface(nativeHandle, Player::SurfaceType(type));
 }
 
-void MDK_Player_resizeWindow(mdkPlayer* p, int w, int h)
+void MDK_Player_resizeSurface(mdkPlayer* p, int w, int h)
 {
-    p->resizeWindow(w, h);
+    p->resizeSurface(w, h);
 }
 
-void MDK_Player_showWindow(mdkPlayer* p)
+void MDK_Player_showSurface(mdkPlayer* p)
 {
-    p->showWindow();
+    p->showSurface();
 }
 
 void MDK_Player_getVideoFrame(mdkPlayer* p, mdkVideoFrame* frame, void* vo_opaque);
@@ -347,10 +347,10 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(waitFor);
     SET_API(mediaStatus);
     SET_API(onMediaStatusChanged);
-    SET_API(updateNativeWindow);
-    SET_API(createWindow);
-    SET_API(resizeWindow);
-    SET_API(showWindow);
+    SET_API(updateNativeSurface);
+    SET_API(createSurface);
+    SET_API(resizeSurface);
+    SET_API(showSurface);
     //SET_API(getVideoFrame);
     SET_API(setVideoSurfaceSize);
     SET_API(setVideoViewport);
