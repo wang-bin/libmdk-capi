@@ -31,6 +31,8 @@ typedef struct mdkAudioCodecParameters {
     int sample_rate;
     int block_align;
     int frame_size; /* const samples per channel in a frame */
+
+    char reserved[128]; // color info etc.
 } mdkAudioCodecParameters;
 
 typedef struct mdkAudioStreamInfo {
@@ -63,6 +65,7 @@ typedef struct mdkVideoCodecParameters {
     int b_frames;
 
     int rotation;
+    char reserved[128];
 } mdkVideoCodecParameters;
 
 typedef struct mdkVideoStreamInfo {

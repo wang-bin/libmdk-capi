@@ -200,12 +200,21 @@ typedef struct mdkPlayerAPI {
     void (*setRenderCallback)(mdkPlayer*, mdkRenderCallback);
 
 /*
-  \brief onFrame
-  called before delivering frame to renderers
- 
-    void (*onVideoFrame)(mdkPlayer*, void (*)(mdkVideoFrame*));
-    void (*onAudioFrame)(mdkPlayer*, void (*)(mdkAudioFrame*));
-*/
+  \brief onVideo onAudio
+  NOT IMPLEMENTED. Called before delivering frame to renderers. Can be used to apply filters.
+ */
+    void (*onVideo)(mdkPlayer*, void (*)(mdkVideoFrame*));
+    void (*onAudio)(mdkPlayer*, void (*)(mdkAudioFrame*));
+/*
+  \brief beforeVideoRender
+  NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to apply GPU filters.
+ */
+    void (*beforeVideoRender)(mdkPlayer*, void (*)(mdkVideoFrame*, void* vo_opaque));
+/*
+  \brief beforeVideoRender
+  NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to draw a watermark.
+ */
+    void (*afterVideoRender)(mdkPlayer*, void (*)(mdkVideoFrame*, void* vo_opaque));
 
     int64_t (*position)(mdkPlayer*);
     bool (*seekWithFlags)(mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
@@ -249,6 +258,18 @@ typedef struct mdkPlayerAPI {
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
 */
     void (*snapshot)(mdkPlayer*, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque);
+
+/*!
+  \brief setProperty
+  NOT IMPLEMENTED
+ */
+    void (*setProperty)();
+    void (*getProperty)();
+/*!
+  \brief onPacket
+  NOT IMPLEMENTED. Can be used to record media when playing
+ */
+    void (*onPacket)();
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
