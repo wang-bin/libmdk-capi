@@ -186,7 +186,12 @@ typedef struct mdkPlayerAPI {
    \return timestamp of rendered frame, or < 0 if no frame is rendered
  */
     double (*renderVideo)(mdkPlayer*, void* vo_opaque);
-
+/*!
+  \brief setBackgroundColor
+  r, g, b, a range is [0, 1]. default is 0. if out of range, background color will not be filled
+ */
+    void (*setBackgroundColor)(mdkPlayer*, float r, float g, float b, float a, void* vo_opaque);
+    
 /*
   callback is invoked when the vo coresponding to vo_opaque needs to update/draw content, e.g. when a new frame is received in the renderer.
   Also invoked in setVideoSurfaceSize(), setVideoViewport(), setAspectRatio() and rotate(), take care of dead lock in callback and above functions.

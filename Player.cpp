@@ -218,6 +218,11 @@ double MDK_Player_renderVideo(mdkPlayer* p, void* vo_opaque)
     return p->renderVideo(vo_opaque);
 }
 
+void MDK_Player_setBackgroundColor(mdkPlayer* p, float r, float g, float b, float a, void* vo_opaque)
+{
+    p->setBackgroundColor(r, g, b, a, vo_opaque);
+}
+
 void MDK_Player_setRenderCallback(mdkPlayer* p, mdkRenderCallback cb)
 {
     if (!cb.opaque) {
@@ -353,6 +358,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(rotate);
     SET_API(scale);
     SET_API(renderVideo);
+    SET_API(setBackgroundColor);
     SET_API(setRenderCallback);
     SET_API(position);
     SET_API(seekWithFlags);
