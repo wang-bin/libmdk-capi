@@ -93,7 +93,7 @@ struct MediaInfo
     std::vector<VideoStreamInfo> video;
 };
 
-void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
+static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
 {
     if (!cinfo) {
         *info = MediaInfo();
