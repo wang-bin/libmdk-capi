@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2016-2019 WangBin <wbsecg1 at gmail.com>
- * Free for non-commercial use.
+ * This file is part of MDK
+ * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
+ * Free for GPL softwares or non-commercial use.
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
@@ -168,6 +170,16 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
     };
     h.opaque = scb ? (void*)&scb : nullptr;
     MDK_setLogHandler(h);
+}
+
+void SetGlobalOption(const char* key, const char* value)
+{
+    MDK_setGlobalOptionString(key, value);
+}
+
+void SetGlobalOption(const char* key, int value)
+{
+    MDK_setGlobalOptionInt32(key, value);
 }
 
 /*

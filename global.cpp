@@ -27,4 +27,14 @@ void MDK_setLogHandler(mdkLogHandler h) {
     });
 }
 
+void MDK_setGlobalOptionString(const char* key, const char* value)
+{
+    SetGlobalOption(key, value);
+}
+
+void MDK_setGlobalOptionInt32(const char* key, int value)
+{
+    SetGlobalOption(key, value);
+}
+
 } // extern "C"

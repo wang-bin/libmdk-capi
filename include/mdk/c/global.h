@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
- * Free for non-commercial use.
+ * This file is part of MDK
+ * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
+ * Free for GPL softwares or non-commercial use.
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
@@ -137,6 +139,8 @@ typedef struct mdkLogHandler {
 } mdkLogHandler;
 MDK_API void MDK_setLogHandler(mdkLogHandler);
 
+MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
+MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
 /*
   events:
   timestamp(ms) + "render.video" + "1st_frame"
