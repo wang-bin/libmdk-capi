@@ -172,12 +172,12 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
     MDK_setLogHandler(h);
 }
 
-void SetGlobalOption(const char* key, const char* value)
+static inline void SetGlobalOption(const char* key, const char* value)
 {
     MDK_setGlobalOptionString(key, value);
 }
 
-void SetGlobalOption(const char* key, int value)
+static inline void SetGlobalOption(const char* key, int value)
 {
     MDK_setGlobalOptionInt32(key, value);
 }
