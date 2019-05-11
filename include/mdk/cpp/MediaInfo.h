@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
- * Free for non-commercial use.
+ * This file is part of MDK
+ * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
+ * Free for GPL softwares or non-commercial use.
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
@@ -62,8 +64,6 @@ struct VideoCodecParameters {
     int width;
     int height;
     int b_frames;
-
-    int rotation;
 };
 
 struct VideoStreamInfo {
@@ -71,6 +71,7 @@ struct VideoStreamInfo {
     int64_t start_time;
     int64_t duration;
     int64_t frames;
+    int rotation;
 
     const void* priv = nullptr; // internal
 
