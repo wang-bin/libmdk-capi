@@ -123,7 +123,7 @@ enum class SeekFlag {
     AnyFrame    = 1<<9, // fast, broken image if video format has key frames. TODO: remove?
 
     // Useful if seek backward repeatly, .i.e. target < playback(not buffered) position. result positions may be the same repeatly if seek forward w/ this flag, or seek backward w/o this flag
-    Backward    = 1<<16, // for KeyFrame seek only. NOTE: FrameReader/PacketReader only. It has no effect to (un)set this flag in MediaControl/MediaPlayer and higher level apis
+    Backward    = 1<<16, // for KeyFrame seek only. NOTE: FrameReader/PacketIO only. It has no effect to (un)set this flag in MediaControl/MediaPlayer and higher level apis
     /// default values
     Default     = KeyFrame|FromStart
 };
