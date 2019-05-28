@@ -66,7 +66,7 @@ typedef enum MDK_MediaStatus
     MDK_MediaStatus_Stalled = 1<<3, /* insufficient buffering or other interruptions (timeout, user interrupt)*/
     MDK_MediaStatus_Buffering = 1<<4, /* NOT IMPLEMENTED*/
     MDK_MediaStatus_Buffered = 1<<5, /* when playing //NOT IMPLEMENTED*/
-    MDK_MediaStatus_End = 1<<6, /* Playback has reached the end of the current media. The player is in the State::Stopped.*/
+    MDK_MediaStatus_End = 1<<6, /* Playback has reached the end of the current media.*/
     MDK_MediaStatus_Seeking = 1<<7, /* can be used with Buffering, Loaded. FIXME: NOT IMPLEMENTED*/
     MDK_MediaStatus_Invalid = 1<<31, /*  invalid media source*/
 } MDK_MediaStatus;

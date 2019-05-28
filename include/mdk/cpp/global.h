@@ -91,7 +91,7 @@ enum MediaStatus
     Stalled = 1<<3, // insufficient buffering or other interruptions (timeout, user interrupt)
     Buffering = 1<<4, // NOT IMPLEMENTED
     Buffered = 1<<5, // when playing //NOT IMPLEMENTED
-    End = 1<<6, // Playback has reached the end of the current media. The player is in the State::Stopped.
+    End = 1<<6, // Playback has reached the end of the current media.
     Seeking = 1<<7, // can be used with Buffering, Loaded. FIXME: NOT IMPLEMENTED
     Invalid = 1<<31, //  invalid media source
 };
