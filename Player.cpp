@@ -316,7 +316,7 @@ void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventCallback cb, MDK_CallbackToke
 
 void MDK_Player_snapshot(mdkPlayer* p, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque)
 {
-    assert(!cb.opaque && "mdkSnapshotCallback.cb can not be null");
+    assert(cb.cb && "mdkSnapshotCallback.cb can not be null");
     p->snapshot((Player::SnapshotRequest*)request, [cb](Player::SnapshotRequest* req){
         cb.cb((mdkSnapshotRequest*)req, cb.opaque);
     }, vo_opaque);
