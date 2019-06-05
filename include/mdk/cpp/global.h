@@ -29,13 +29,6 @@ MDK_NS_BEGIN
   Null callback + null token: clear all callbacks.
  */
 using CallbackToken = uint64_t;
-
-#if defined(_MSC_VER) && _MSC_VER < 1900
-# ifdef constexpr
-#  undef constexpr
-# endif
-# define constexpr //inline // constexpr implies inline. but we can not declare a var as inline like constexpr
-#endif
 /*!
  * \brief is_flag
  * if enum E is of enum type, to enable flag(bit) operators, define
@@ -172,6 +165,10 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
     MDK_setLogHandler(h);
 }
 
+/*
+ keys:
+ - path to ffmpeg runtime libraries: avutil_lib, avcodec_lib, avformat_lib, swresample_lib, avfilter_lib
+*/
 static inline void SetGlobalOption(const char* key, const char* value)
 {
     MDK_setGlobalOptionString(key, value);

@@ -139,6 +139,10 @@ typedef struct mdkLogHandler {
 } mdkLogHandler;
 MDK_API void MDK_setLogHandler(mdkLogHandler);
 
+/*
+ keys:
+ - path to ffmpeg runtime libraries: avutil_lib, avcodec_lib, avformat_lib, swresample_lib, avfilter_lib
+*/
 MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
 MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
 /*
