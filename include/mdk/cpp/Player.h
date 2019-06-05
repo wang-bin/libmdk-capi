@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2016-2019 WangBin <wbsecg1 at gmail.com>
- * Free for non-commercial use.
+ * This file is part of MDK
+ * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
+ * Free for GPL softwares or non-commercial use.
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
@@ -428,6 +430,15 @@ public:
                 *token = t;
         }
         return *this;
+    }
+/*
+  \brief record
+  Start to record or stop recording current media by remuxing packets read. If media is not loaded, recorder will start when playback starts
+  \param url destination. null or the same value as recording one to stop recording
+  \param format forced format if unable to guess from url suffix
+ */
+    void record(const char* url = nullptr, const char* format = nullptr) {
+        MDK_CALL(p, record, url, format);
     }
 private:
     mdkPlayerAPI* p = nullptr;

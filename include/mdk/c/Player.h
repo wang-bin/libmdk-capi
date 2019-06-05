@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
- * Free for non-commercial use.
+ * This file is part of MDK
+ * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
+ * Free for GPL softwares or non-commercial use.
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
@@ -264,11 +266,13 @@ typedef struct mdkPlayerAPI {
  */
     void (*setProperty)();
     void (*getProperty)();
-/*!
-  \brief onPacket
-  NOT IMPLEMENTED. Can be used to record media when playing
+/*
+  \brief record
+  Start to record or stop recording current media by remuxing packets read. If media is not loaded, recorder will start when playback starts
+  \param url destination. null or the same value as recording one to stop recording
+  \param format forced format if unable to guess from url suffix
  */
-    void (*onPacket)();
+    void (*record)(mdkPlayer*, const char* url, const char* format);
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();

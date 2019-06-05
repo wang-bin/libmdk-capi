@@ -322,6 +322,11 @@ void MDK_Player_snapshot(mdkPlayer* p, mdkSnapshotRequest* request, mdkSnapshotC
     }, vo_opaque);
 }
 
+void MDK_Player_record(mdkPlayer* p, const char* url, const char* format)
+{
+    p->record(url, format);
+}
+
 mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -371,6 +376,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(switchBitrateSingleConnection);
     SET_API(onEvent);
     SET_API(snapshot);
+    SET_API(record);
 #undef SET_API
     return p;
 }
