@@ -21,6 +21,10 @@
 # define MDK_NS_PREPEND(X) ::MDK_NS::X
 
 MDK_NS_BEGIN
+constexpr double TimeScaleForInt = 1000.0; // ms
+constexpr float IgnoreAspectRatio = 0; // stretch, ROI etc.
+constexpr float KeepAspectRatio = -1;
+constexpr float KeepAspectRatioCrop = -2; // expand and crop
 /*!
   \brief CallbackToken
   A callback can be registered by (member)function onXXX(callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
