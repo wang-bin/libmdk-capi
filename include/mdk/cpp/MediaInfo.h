@@ -96,11 +96,16 @@ struct MediaInfo
 
 static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
 {
-    if (!cinfo) {
-        *info = MediaInfo();
+    *info = MediaInfo();
+    if (!cinfo)
         return;
-    }
-    memcpy(info, cinfo, sizeof(*cinfo));
+    info->start_time = cinfo->start_time;
+    info->duration = cinfo->duration;
+    info->bit_rate = cinfo->bit_rate;
+    info->size = cinfo->size;
+    info->format = cinfo->format;
+    info->streams = cinfo->streams;
+
     mdkStringMapEntry entry{};
     while (MDK_MediaMetadata(cinfo, &entry))
         info->metadata[entry.key] = entry.value;
