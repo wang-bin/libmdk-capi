@@ -11,6 +11,7 @@ using namespace MDK_NS;
 struct MediaInfoInternal {
     MediaInfo abi;
     mdkMediaInfo info;
+    vector<mdkChapterInfo> c;
     vector<mdkAudioStreamInfo> a;
     vector<mdkVideoStreamInfo> v;
 };

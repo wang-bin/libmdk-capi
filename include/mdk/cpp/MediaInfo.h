@@ -79,6 +79,12 @@ struct VideoStreamInfo {
     VideoCodecParameters codec;
 };
 
+struct ChapterInfo {
+    int64_t start_time = 0;
+    int64_t end_time = 0;
+    std::string title;
+};
+
 struct MediaInfo
 {
     int64_t start_time; // ms
@@ -88,12 +94,15 @@ struct MediaInfo
     const char* format;
     int streams;
 
-    const void* priv = nullptr; // internal
+    std::vector<ChapterInfo> chapters;
     std::unordered_map<std::string, std::string> metadata;
     std::vector<AudioStreamInfo> audio;
     std::vector<VideoStreamInfo> video;
+
+    const void* priv = nullptr; // internal
 };
 
+// stable c sdk abi is enough
 static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
 {
     *info = MediaInfo();
@@ -109,6 +118,13 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
     mdkStringMapEntry entry{};
     while (MDK_MediaMetadata(cinfo, &entry))
         info->metadata[entry.key] = entry.value;
+    for (int i = 0; i < cinfo->nb_chapters; ++i) {
+        auto cci = &cinfo->chapters[i];
+        std::string title;
+        if (cci->title)
+            title = cci->title;
+        info->chapters.push_back({cci->start_time, cci->end_time, title});
+    }
     for (int i = 0; i < cinfo->nb_audio; ++i) {
         AudioStreamInfo si{};
         auto csi = &cinfo->audio[i];
@@ -130,4 +146,5 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         info->video.push_back(std::move(si));
     }
 }
+
 MDK_NS_END

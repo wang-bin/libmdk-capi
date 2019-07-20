@@ -69,7 +69,7 @@ void MDK_Player_setAudioBackends(mdkPlayer* p, const char** names)
         return;
     vector<string> s;
     while (*names) {
-        s.push_back(*names++);
+        s.emplace_back(*names++);
     }
     p->setAudioBackends(s);
 }
@@ -80,7 +80,7 @@ void MDK_Player_setAudioDecoders(mdkPlayer* p, const char** names)
         return;
     vector<string> s;
     while (*names) {
-        s.push_back(*names++);
+        s.emplace_back(*names++);
     }
     p->setAudioDecoders(s);
 }
@@ -91,7 +91,7 @@ void MDK_Player_setVideoDecoders(mdkPlayer* p, const char** names)
         return;
     vector<string> s;
     while (*names) {
-        s.push_back(*names++);
+        s.emplace_back(*names++);
     }
     p->setVideoDecoders(s);
 }

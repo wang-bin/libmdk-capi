@@ -65,6 +65,17 @@ void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)
     out.priv = &in;
 }
 
+void from_abi(const ChapterInfo& in, mdkChapterInfo& out)
+{
+    out.start_time = in.start_time;
+    out.end_time = in.end_time;
+    if (in.title.empty())
+        out.title = nullptr;
+    else
+        out.title = in.title.data();
+    out.priv = &in;
+}
+
 void from_abi(const MediaInfo& in, mdkMediaInfo& out)
 {
     out.start_time = in.start_time;
@@ -72,6 +83,7 @@ void from_abi(const MediaInfo& in, mdkMediaInfo& out)
     out.bit_rate = in.bit_rate;
     out.format = in.format.data();
     out.streams = in.streams;
+    out.nb_chapters = (int)in.chapters.size();
     out.nb_audio = (int)in.audio.size();
     out.nb_video = (int)in.video.size();
 
@@ -83,6 +95,15 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
     if (!out)
         return;
     out->abi = abi;
+    out->c.clear();
+    for (const auto& i : out->abi.chapters) {
+        mdkChapterInfo ci;
+        from_abi(i, ci);
+        out->c.push_back(std::move(ci));
+    }
+    out->info.chapters = nullptr;
+    if (!out->c.empty())
+        out->info.chapters = &out->c[0];
     out->a.clear();
     for (const auto& i : out->abi.audio) {
         mdkAudioStreamInfo si;

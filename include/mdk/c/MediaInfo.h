@@ -83,6 +83,14 @@ MDK_API void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo*, mdkVideoC
 /* see document of mdkStringMapEntry */
 MDK_API bool MDK_VideoStreamMetadata(const mdkVideoStreamInfo*, mdkStringMapEntry* entry);
 
+typedef struct mdkChapterInfo {
+    int64_t start_time;
+    int64_t end_time;
+    const char* title; // NULL if no title
+
+    const void* priv;
+} mdkChapterInfo;
+
 typedef struct mdkMediaInfo
 {
     int64_t start_time; // ms
@@ -98,6 +106,9 @@ typedef struct mdkMediaInfo
     int nb_video;
 
     const void* priv;
+
+    mdkChapterInfo* chapters;
+    int nb_chapters;
 } mdkMediaInfo;
 
 /* see document of mdkStringMapEntry */
