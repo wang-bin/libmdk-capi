@@ -94,6 +94,7 @@ public:
         MDK_CALL(p, setAudioDecoders, s.data());
     }
 
+// see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#setdecodernamesconst-stdvectorstdstring-names
     void setVideoDecoders(const std::vector<std::string>& names) {
         std::vector<const char*> s(names.size() + 1, nullptr);
         for (size_t i = 0; i < names.size(); ++i)

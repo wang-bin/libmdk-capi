@@ -102,7 +102,8 @@ struct MediaInfo
     const void* priv = nullptr; // internal
 };
 
-// stable c sdk abi is enough
+// the following functions MUST be built into user's code because user's c++ stl abi is unknown
+// used by Player.mediaInfo()
 static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
 {
     *info = MediaInfo();
