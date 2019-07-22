@@ -43,8 +43,6 @@ struct AudioStreamInfo {
     int64_t duration; /* ms */
     int64_t frames;
 
-    const void* priv = nullptr; // internal
-
     std::unordered_map<std::string, std::string> metadata;
     AudioCodecParameters codec;
 };
@@ -72,8 +70,6 @@ struct VideoStreamInfo {
     int64_t duration;
     int64_t frames;
     int rotation;
-
-    const void* priv = nullptr; // internal
 
     std::unordered_map<std::string, std::string> metadata;
     VideoCodecParameters codec;
@@ -126,21 +122,28 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
     }
     for (int i = 0; i < cinfo->nb_audio; ++i) {
         AudioStreamInfo si{};
-        auto csi = &cinfo->audio[i];
-        memcpy(&si, csi, sizeof(*csi));
-        MDK_AudioStreamCodecParameters(csi, (mdkAudioCodecParameters*)&si.codec);
+        const auto& csi = cinfo->audio[i];
+        si.index = csi.index;
+        si.start_time = csi.start_time;
+        si.duration = csi.duration;
+        si.frames = csi.frames;
+        MDK_AudioStreamCodecParameters(&csi, (mdkAudioCodecParameters*)&si.codec);
         mdkStringMapEntry e{};
-        while (MDK_AudioStreamMetadata(csi, &e))
+        while (MDK_AudioStreamMetadata(&csi, &e))
             si.metadata[e.key] = e.value;
         info->audio.push_back(std::move(si));
     }
     for (int i = 0; i < cinfo->nb_video; ++i) {
         VideoStreamInfo si{};
-        auto csi = &cinfo->video[i];
-        memcpy(&si, csi, sizeof(*csi));
-        MDK_VideoStreamCodecParameters(csi, (mdkVideoCodecParameters*)&si.codec);
+        const auto& csi = cinfo->video[i];
+        si.index = csi.index;
+        si.start_time = csi.start_time;
+        si.duration = csi.duration;
+        si.frames = csi.frames;
+        si.rotation = csi.rotation;
+        MDK_VideoStreamCodecParameters(&csi, (mdkVideoCodecParameters*)&si.codec);
         mdkStringMapEntry e{};
-        while (MDK_VideoStreamMetadata(csi, &e))
+        while (MDK_VideoStreamMetadata(&csi, &e))
             si.metadata[e.key] = e.value;
         info->video.push_back(std::move(si));
     }
