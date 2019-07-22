@@ -98,8 +98,6 @@ struct MediaInfo
     std::unordered_map<std::string, std::string> metadata;
     std::vector<AudioStreamInfo> audio;
     std::vector<VideoStreamInfo> video;
-
-    const void* priv = nullptr; // internal
 };
 
 // the following functions MUST be built into user's code because user's c++ stl abi is unknown
