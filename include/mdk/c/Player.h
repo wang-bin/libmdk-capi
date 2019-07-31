@@ -282,6 +282,8 @@ typedef struct mdkPlayerAPI {
   \param b loop position end, in ms. -1, INT64_MAX or numeric_limit<int64_t>::max() indicates b is the end of media
  */
     void (*setLoop)(mdkPlayer*, int count, int64_t a, int64_t b);
+
+    void* reserved[16];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
