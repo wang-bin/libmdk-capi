@@ -8,12 +8,12 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
-#include <functional>
-#include <map>
-#include <vector>
 #include "global.h"
 #include "MediaInfo.h"
 #include "../c/Player.h"
+#include <cinttypes>
+#include <map>
+#include <vector>
 
 MDK_NS_BEGIN
 /*!
@@ -440,6 +440,17 @@ public:
  */
     void record(const char* url = nullptr, const char* format = nullptr) {
         MDK_CALL(p, record, url, format);
+    }
+
+/*!
+  \brief setLoop
+  Set A-B loop range and repeat count.
+  \param count repeat count
+  \param a loop position begin, in ms.
+  \param b loop position end, in ms. -1, INT64_MAX or numeric_limit<int64_t>::max() indicates b is the end of media
+ */
+    void setLoop(int count, int64_t a = 0, int64_t b = INT64_MAX) {
+        MDK_CALL(p, setLoop, count, a, b);
     }
 private:
     mdkPlayerAPI* p = nullptr;

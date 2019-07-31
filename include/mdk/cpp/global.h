@@ -8,10 +8,10 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
+#include "../c/global.h"
 #include <functional>
 #include <memory>
 #include <string>
-#include "../c/global.h"
 
 #ifndef MDK_NS
 #define MDK_NS mdk

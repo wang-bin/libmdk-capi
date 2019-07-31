@@ -327,6 +327,11 @@ void MDK_Player_record(mdkPlayer* p, const char* url, const char* format)
     p->record(url, format);
 }
 
+void MDK_Player_setLoop(mdkPlayer* p, int count, int64_t a, int64_t b)
+{
+    p->setLoop(count, a, b);
+}
+
 mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -377,6 +382,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(onEvent);
     SET_API(snapshot);
     SET_API(record);
+    SET_API(setLoop);
 #undef SET_API
     return p;
 }

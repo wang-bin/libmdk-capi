@@ -273,6 +273,15 @@ typedef struct mdkPlayerAPI {
   \param format forced format if unable to guess from url suffix
  */
     void (*record)(mdkPlayer*, const char* url, const char* format);
+
+/*!
+  \brief setLoop
+  Set A-B loop range and repeat count.
+  \param count repeat count
+  \param a loop position begin, in ms.
+  \param b loop position end, in ms. -1, INT64_MAX or numeric_limit<int64_t>::max() indicates b is the end of media
+ */
+    void (*setLoop)(mdkPlayer*, int count, int64_t a, int64_t b);
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
