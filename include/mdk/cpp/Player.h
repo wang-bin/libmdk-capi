@@ -445,7 +445,7 @@ public:
 /*!
   \brief setLoop
   Set A-B loop range and repeat count.
-  \param count repeat count
+  \param count repeat count. 0 to disable looping
   \param a loop position begin, in ms.
   \param b loop position end, in ms. -1, INT64_MAX or numeric_limit<int64_t>::max() indicates b is the end of media
  */
