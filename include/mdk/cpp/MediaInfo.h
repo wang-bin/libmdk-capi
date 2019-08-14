@@ -118,7 +118,11 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         std::string title;
         if (cci->title)
             title = cci->title;
-        info->chapters.push_back({cci->start_time, cci->end_time, title});
+        ChapterInfo ci;
+        ci.start_time = cci->start_time;
+        ci.end_time = cci->end_time;
+        ci.title = cci->title;
+        info->chapters.emplace_back(std::move(ci));
     }
     for (int i = 0; i < cinfo->nb_audio; ++i) {
         AudioStreamInfo si{};
