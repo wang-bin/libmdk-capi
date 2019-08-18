@@ -29,7 +29,7 @@ constexpr float KeepAspectRatioCrop = -2; // expand and crop
   \brief CallbackToken
   A callback can be registered by (member)function onXXX(callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
   Non-null callback: register a callback and return a token(if not null).
-  Null callback + non-null token: can remove then callback of given token.
+  Null callback + non-null token: can remove the callback of given token.
   Null callback + null token: clear all callbacks.
  */
 using CallbackToken = uint64_t;

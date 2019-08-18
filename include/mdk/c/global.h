@@ -39,7 +39,7 @@ extern "C" {
   \brief CallbackToken
   A callback can be registered by (member)function onXXX(obj, callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
   Non-null callback(.opaque != null): register a callback and return a token(if not null).
-  Null callback(.opaque == null) + non-null token: can remove then callback of given token.
+  Null callback(.opaque == null) + non-null token: can remove the callback of given token.
   Null callback(.opaque == null) + null token: clear all callbacks.
  */
 typedef uint64_t MDK_CallbackToken;
