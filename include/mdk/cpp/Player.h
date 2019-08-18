@@ -179,7 +179,11 @@ public:
     MediaStatus mediaStatus() const {
         return (MediaStatus)MDK_CALL(p, mediaStatus);
     }
-
+/*!
+  \brief onMediaStatusChanged
+  Add a callback to be invoked when MediaStatus is changed
+  \param cb null to clear callbacks
+ */
     Player& onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
         status_cb_ = cb;
         mdkMediaStatusChangedCallback callback;

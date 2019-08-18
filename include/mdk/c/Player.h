@@ -143,6 +143,12 @@ typedef struct mdkPlayerAPI {
     bool (*waitFor)(mdkPlayer*, MDK_State value, long timeout);
 
     MDK_MediaStatus (*mediaStatus)(mdkPlayer*);
+/*!
+  \brief onMediaStatusChanged
+  Add a callback to be invoked when MediaStatus is changed
+  \param cb null to clear callbacks
+  TODO: callback token
+ */
     void (*onMediaStatusChanged)(mdkPlayer*, mdkMediaStatusChangedCallback);
 
 /*!
