@@ -333,6 +333,17 @@ void MDK_Player_setLoopRange(mdkPlayer* p, int count, int64_t a, int64_t b)
     p->setRange(a, b);
 }
 
+void MDK_Player_onLoop(mdkPlayer* p, mdkLoopCallback cb, MDK_CallbackToken* token)
+{
+    if (!cb.opaque) {
+        p->onLoop(nullptr, token);
+        return;
+    }
+    p->onLoop([cb](int count){
+        cb.cb(count, cb.opaque);
+    }, token);
+}
+
 void MDK_Player_setLoop(mdkPlayer* p, int count)
 {
     p->setLoop(count);
@@ -395,6 +406,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(record);
     SET_API(setLoopRange);
     SET_API(setLoop);
+    SET_API(onLoop);
     SET_API(setRange);
 #undef SET_API
     return p;

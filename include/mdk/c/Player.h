@@ -72,6 +72,11 @@ typedef struct mdkMediaEventCallback {
     void* opaque;
 } mdkMediaEventCallback;
 
+typedef struct mdkLoopCallback {
+    void (*cb)(int, void* opaque);
+    void* opaque;
+} mdkLoopCallback;
+
 typedef struct mdkSnapshotRequest {
   uint8_t* data; /* rgba data. as input, can be allocated by user, or null to allocate and managed internally */
 /* 
@@ -291,6 +296,12 @@ typedef struct mdkPlayerAPI {
   \param count repeat count. 0 to disable looping and stop when out of range(B)
  */
     void (*setLoop)(mdkPlayer*, int count);
+/*
+  \brief onLoop
+  add/remove a callback which will be invoked right before a new A-B loop
+  \param cb callback with current loop count elapsed
+ */
+    void (*onLoop)(mdkPlayer*, mdkLoopCallback cb, MDK_CallbackToken* token);
 /*!
   \brief setRange
   Set A-B loop range, or playback range
@@ -299,7 +310,7 @@ typedef struct mdkPlayerAPI {
  */
     void (*setRange)(mdkPlayer*, int64_t a, int64_t b);
 
-    void* reserved[14];
+    void* reserved[13];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();

@@ -463,6 +463,39 @@ public:
     void setLoop(int count) {
         MDK_CALL(p, setLoop, count);
     }
+/*
+  \brief onLoop
+  add/remove a callback which will be invoked right before a new A-B loop
+  \param cb callback with current loop count elapsed
+ */
+    Player& onLoop(std::function<void(int)> cb, CallbackToken* token = nullptr) {
+        mdkLoopCallback callback{};
+        if (!cb) {
+            MDK_CALL(p, onLoop, callback, token ? &loop_cb_key_[*token] : nullptr);
+            if (token) {
+                loop_cb_.erase(*token);
+                loop_cb_key_.erase(*token);
+            } else {
+                loop_cb_.clear();
+                loop_cb_key_.clear();
+            }
+        } else {
+            static CallbackToken k = 1;
+            loop_cb_[k] = cb;
+            callback.cb = [](int countNow, void* opaque){
+                auto f = (std::function<void(int)>*)opaque;
+                return (*f)(countNow);
+            };
+            callback.opaque = &loop_cb_[k];
+            CallbackToken t;
+            MDK_CALL(p, onLoop, callback, &t);
+            loop_cb_key_[k] = t;
+            if (token)
+                *token = t;
+            k++;
+        }
+        return *this;
+    }
 /*!
   \brief setRange
   Set A-B loop range, or playback range
@@ -485,6 +518,8 @@ private:
     std::function<void(SnapshotRequest*)> snapshot_cb_ = nullptr;
     std::map<CallbackToken, std::function<bool(const MediaEvent&)>> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
+    std::map<CallbackToken, std::function<void(int)>> loop_cb_; // rb tree, elements never destroyed
+    std::map<CallbackToken,CallbackToken> loop_cb_key_;
 
     mutable MediaInfo info_;
 };
