@@ -327,9 +327,20 @@ void MDK_Player_record(mdkPlayer* p, const char* url, const char* format)
     p->record(url, format);
 }
 
-void MDK_Player_setLoop(mdkPlayer* p, int count, int64_t a, int64_t b)
+void MDK_Player_setLoopRange(mdkPlayer* p, int count, int64_t a, int64_t b)
 {
-    p->setLoop(count, a, b);
+    p->setLoop(count);
+    p->setRange(a, b);
+}
+
+void MDK_Player_setLoop(mdkPlayer* p, int count)
+{
+    p->setLoop(count);
+}
+
+void MDK_Player_setRange(mdkPlayer* p, int64_t a, int64_t b)
+{
+    p->setRange(a, b);
 }
 
 mdkPlayerAPI* mdkPlayerAPI_new()
@@ -382,7 +393,9 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(onEvent);
     SET_API(snapshot);
     SET_API(record);
+    SET_API(setLoopRange);
     SET_API(setLoop);
+    SET_API(setRange);
 #undef SET_API
     return p;
 }

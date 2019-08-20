@@ -448,13 +448,28 @@ public:
 
 /*!
   \brief setLoop
-  Set A-B loop range and repeat count.
-  \param count repeat count. 0 to disable looping
+  DEPRECATED! use setLoop+setRange instead
+ */
+    void setLoop(int count, int64_t a, int64_t b = INT64_MAX) {
+        setLoop(count);
+        setRange(a, b);
+    }
+/*!
+  \brief setLoop
+  Set A-B loop repeat count.
+  \param count repeat count. 0 to disable looping and stop when out of range(B)
+ */
+    void setLoop(int count) {
+        MDK_CALL(p, setLoop, count);
+    }
+/*!
+  \brief setRange
+  Set A-B loop range, or playback range
   \param a loop position begin, in ms.
   \param b loop position end, in ms. -1, INT64_MAX or numeric_limit<int64_t>::max() indicates b is the end of media
  */
-    void setLoop(int count, int64_t a = 0, int64_t b = INT64_MAX) {
-        MDK_CALL(p, setLoop, count, a, b);
+    void setRange(int64_t a, int64_t b = INT64_MAX) {
+        MDK_CALL(p, setRange, a, b);
     }
 private:
     mdkPlayerAPI* p = nullptr;

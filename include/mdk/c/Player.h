@@ -281,15 +281,25 @@ typedef struct mdkPlayerAPI {
     void (*record)(mdkPlayer*, const char* url, const char* format);
 
 /*!
+  \brief setLoopRange
+  DEPRECATED! use setLoop+setRange instead
+ */
+    void (*setLoopRange)(mdkPlayer*, int count, int64_t a, int64_t b);
+/*!
   \brief setLoop
-  Set A-B loop range and repeat count.
-  \param count repeat count. 0 to disable looping
+  Set A-B loop repeat count.
+  \param count repeat count. 0 to disable looping and stop when out of range(B)
+ */
+    void (*setLoop)(mdkPlayer*, int count);
+/*!
+  \brief setRange
+  Set A-B loop range, or playback range
   \param a loop position begin, in ms.
   \param b loop position end, in ms. -1, INT64_MAX or numeric_limit<int64_t>::max() indicates b is the end of media
  */
-    void (*setLoop)(mdkPlayer*, int count, int64_t a, int64_t b);
+    void (*setRange)(mdkPlayer*, int64_t a, int64_t b);
 
-    void* reserved[16];
+    void* reserved[14];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
