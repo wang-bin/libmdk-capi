@@ -433,6 +433,7 @@ public:
             event_cb_key_[k] = t;
             if (token)
                 *token = t;
+            k++;
         }
         return *this;
     }
