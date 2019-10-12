@@ -11,6 +11,14 @@
 #include <inttypes.h>
 #include <limits.h>
 
+#define MDK_VERSION_INT(major, minor, patch) \
+    (((major&0xff)<<16) | ((minor&0xff)<<8) | (patch&0xff))
+#define MDK_MAJOR 0
+#define MDK_MINOR 5
+#define MDK_MICRO 0
+#define MDK_VERSION MDK_VERSION_INT(MDK_MAJOR, MDK_MINOR, MDK_MICRO)
+#define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c)) 
+
 #if defined(_WIN32)
 #define MDK_EXPORT __declspec(dllexport)
 #define MDK_IMPORT __declspec(dllimport)
