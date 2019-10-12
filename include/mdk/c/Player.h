@@ -30,8 +30,15 @@ typedef struct mdkCurrentMediaChangedCallback {
     void* opaque;
 } mdkCurrentMediaChangedCallback;
 
+/*!
+  \brief mdkPrepareCallback
+  \param position in callback is the actual position, or <0 (TODO: error code as position) if prepare() failed.
+  \param boost in callback can be set by user to boost the first frame rendering
+  \return false to unload media immediately when media is loaded and MediaInfo is ready, true to continue.
+    example: always return false can be used as media information reader
+ */
 typedef struct mdkPrepareCallback {
-    void (*cb)(int64_t position, bool* boost, void* opaque);
+    bool (*cb)(int64_t position, bool* boost, void* opaque);
     void* opaque;
 } mdkPrepareCallback;
 
@@ -95,6 +102,7 @@ typedef struct mdkSnapshotCallback {
     void* opaque;
 } mdkSnapshotCallback;
 
+
 typedef struct mdkPlayerAPI {
     mdkPlayer* object;
 
@@ -125,9 +133,8 @@ typedef struct mdkPlayerAPI {
     void (*setTimeout)(mdkPlayer*, int64_t value, mdkTimeoutCallback cb);
 /*!
    \brief prepare
-   To play a media from a given position, call prepare(ms) then setState(State::Playing)
-   parameter position in callback is the actual position, or <0 (TODO: error code as position) if prepare() failed.
-   parameter boost in callback can be set by user to boost the first frame rendering
+    Preload a media. \sa PrepareCallback
+    To play a media from a given position, call prepare(ms) then setState(State::Playing)
  */
 
     void (*prepare)(mdkPlayer*, int64_t startPosition, mdkPrepareCallback cb);
@@ -162,7 +169,7 @@ typedef struct mdkPlayerAPI {
  * native surface MUST be not null before destroying player
  type: ignored if win ptr does not change (request to resize)
  */
-    void (*updateNativeSurface)(mdkPlayer*, void* win, int width, int height, MDK_SurfaceType type);
+    void (*updateNativeSurface)(mdkPlayer*, void* surface, int width, int height, MDK_SurfaceType type);
 
     void (*createSurface)(mdkPlayer*, void* nativeHandle, MDK_SurfaceType type);
     void (*resizeSurface)(mdkPlayer*, int w, int h);

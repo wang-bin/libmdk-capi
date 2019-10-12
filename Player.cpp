@@ -114,7 +114,7 @@ void MDK_Player_prepare(mdkPlayer* p, int64_t startPosition, mdkPrepareCallback 
         return;
     }
     p->prepare(startPosition, [cb](int64_t position, bool* boost){
-        cb.cb(position, boost, cb.opaque);
+        return cb.cb(position, boost, cb.opaque);
     });
 }
 

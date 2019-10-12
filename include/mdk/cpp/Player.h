@@ -16,6 +16,16 @@
 #include <vector>
 
 MDK_NS_BEGIN
+
+/*!
+  \brief PrepareCallback
+  \param position in callback is the actual position, or <0 (TODO: error code as position) if prepare() failed.
+  \param boost in callback can be set by user to boost the first frame rendering
+  \return false to unload media immediately when media is loaded and MediaInfo is ready, true to continue.
+    example: always return false can be used as media information reader
+ */
+using PrepareCallback = std::function<bool(int64_t position, bool* boost)>;
+
 /*!
  * \brief The Player class
  * High level API with basic playback function.
@@ -123,16 +133,15 @@ public:
 
 /*!
    \brief prepare
+   Preload a media. \sa PrepareCallback
    To play a media from a given position, call prepare(ms) then setState(State::Playing)
-   parameter position in callback is the actual position, or <0 (TODO: error code as position) if prepare() failed.
-   parameter boost in callback can be set by user to boost the first frame rendering
  */
-    void prepare(int64_t startPosition = 0, std::function<void(int64_t position, bool* boost)> cb = nullptr) {
+    void prepare(int64_t startPosition = 0, PrepareCallback cb = nullptr) {
         prepare_cb_ = cb;
         mdkPrepareCallback callback;
         callback.cb = [](int64_t position, bool* boost, void* opaque){
-            auto f = (std::function<void(int64_t position, bool* boost)>*)opaque;
-            (*f)(position, boost);
+            auto f = (PrepareCallback*)opaque;
+            return (*f)(position, boost);
         };
         callback.opaque = prepare_cb_ ? (void*)&prepare_cb_ : nullptr;
         MDK_CALL(p, prepare, startPosition, callback);
@@ -208,8 +217,8 @@ public:
  * native surface MUST be not null before destroying player
  */
 // type: ignored if win ptr does not change (request to resize)
-    void updateNativeSurface(void* win, int width = -1, int height = -1, SurfaceType type = SurfaceType::Auto) {
-        MDK_CALL(p, updateNativeSurface, win, width, height, (MDK_SurfaceType)type);
+    void updateNativeSurface(void* surface, int width = -1, int height = -1, SurfaceType type = SurfaceType::Auto) {
+        MDK_CALL(p, updateNativeSurface, surface, width, height, (MDK_SurfaceType)type);
     }
 
     void createSurface(void* nativeHandle = nullptr, SurfaceType type = SurfaceType::Auto) {
