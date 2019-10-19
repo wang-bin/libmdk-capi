@@ -156,6 +156,8 @@ public:
   \brief setState
   request a new state.
   setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) before stop to disable next media.
+  setState(State::Stopped) will release all resouces and clear video renderer viewport. While a normal playback end will keep renderer resources
+  and the last video frame. Manually call setState(State::Stopped) to clear them.
   NOTE: the requested state is not queued. so set one state immediately after another may have no effect.
   e.g. State::Playing after State::Stopped may have no effect if playback have not been stopped and still in Playing state
   so the final state is State::Stopped. Current solution is waitFor(State::Stopped) before setState(State::Playing).
