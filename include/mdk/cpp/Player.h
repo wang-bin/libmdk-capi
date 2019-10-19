@@ -518,7 +518,7 @@ private:
     mdkPlayerAPI* p = nullptr;
     std::function<void()> current_cb_ = nullptr;
     std::function<bool(int64_t ms)> timeout_cb_ = nullptr;
-    std::function<void(int64_t position, bool* boost)> prepare_cb_ = nullptr;
+    std::function<bool(int64_t position, bool* boost)> prepare_cb_ = nullptr;
     std::function<void(State)> state_cb_ = nullptr;
     std::function<bool(MediaStatus)> status_cb_ = nullptr;
     std::function<void(void* vo_opaque)> render_cb_ = nullptr;
