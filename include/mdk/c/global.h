@@ -103,18 +103,14 @@ typedef struct mdkStateChangedCallback {
 } mdkStateChangedCallback;
 
 typedef enum MDKSeekFlag {
-    /* choose one of SeekFromX */
+    /* choose one of FromX */
     MDK_SeekFlag_From0       = 1,    /* relative to time 0*/
     MDK_SeekFlag_FromStart   = 1<<1, /* relative to media start position*/
     MDK_SeekFlag_FromNow     = 1<<2, /* relative to current position, the seek position can be negative*/
-    MDK_SeekFlag_Byte        = 1<<5,
     /* combine the above values with one of the following*/
     MDK_SeekFlag_KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. If not set, it's accurate seek but slow, implies backward seek internally*/
     MDK_SeekFlag_Fast        = MDK_SeekFlag_KeyFrame,
-    MDK_SeekFlag_AnyFrame    = 1<<9, /* fast, broken image if video format has key frames. TODO: remove?*/
 
-    /* Useful if seek backward repeatly, .i.e. target < playback(not buffered) position. result positions may be the same repeatly if seek forward w/ this flag, or seek backward w/o this flag*/
-    MDK_SeekFlag_Backward    = 1<<16, /* for KeyFrame seek only. NOTE: FrameReader/PacketIO only. It has no effect to (un)set this flag in MediaControl/MediaPlayer and higher level apis*/
     MDK_SeekFlag_Default     = MDK_SeekFlag_KeyFrame|MDK_SeekFlag_FromStart
 } MDK_SeekFlag;
 

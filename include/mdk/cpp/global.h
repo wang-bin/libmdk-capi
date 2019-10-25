@@ -109,19 +109,14 @@ enum class State : int8_t {
 typedef State PlaybackState;
 
 enum class SeekFlag {
-    /// choose one of SeekFromX
+    /// choose one of FromX
     From0       = 1,    /// relative to time 0
     FromStart   = 1<<1, /// relative to media start position
     FromNow     = 1<<2, /// relative to current position, the seek position can be negative
-    Byte        = 1<<5,
     /// combine the above values with one of the following
     KeyFrame    = 1<<8, // fast key-frame seek, forward if Backward is not set. If not set, it's accurate seek but slow, implies backward seek internally
     Fast        = KeyFrame,
-    AnyFrame    = 1<<9, // fast, broken image if video format has key frames. TODO: remove?
 
-    // Useful if seek backward repeatly, .i.e. target < playback(not buffered) position. result positions may be the same repeatly if seek forward w/ this flag, or seek backward w/o this flag
-    Backward    = 1<<16, // for KeyFrame seek only. NOTE: FrameReader/PacketIO only. It has no effect to (un)set this flag in MediaControl/MediaPlayer and higher level apis
-    /// default values
     Default     = KeyFrame|FromStart
 };
 template<> struct is_flag<SeekFlag> : std::true_type {};
