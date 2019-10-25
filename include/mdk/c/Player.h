@@ -98,7 +98,8 @@ typedef struct mdkSnapshotRequest {
 } mdkSnapshotRequest;
 
 typedef struct mdkSnapshotCallback {
-    void (*cb)(mdkSnapshotRequest*, void* opaque);
+  /* returns null, or a file path to save as a file. memory is allocated by malloc family apis, and freed internally */
+    char* (*cb)(mdkSnapshotRequest*, double frameTime, void* opaque);
     void* opaque;
 } mdkSnapshotCallback;
 

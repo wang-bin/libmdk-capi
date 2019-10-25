@@ -7,6 +7,7 @@
 #include "mdk/MediaInfo.h"
 #include "MediaInfoInternal.h"
 #include <cassert>
+#include <cstdlib>
 
 using namespace std;
 using namespace MDK_NS;
@@ -317,8 +318,13 @@ void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventCallback cb, MDK_CallbackToke
 void MDK_Player_snapshot(mdkPlayer* p, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque)
 {
     assert(cb.cb && "mdkSnapshotCallback.cb can not be null");
-    p->snapshot((Player::SnapshotRequest*)request, [cb](Player::SnapshotRequest* req){
-        cb.cb((mdkSnapshotRequest*)req, cb.opaque);
+    p->snapshot((Player::SnapshotRequest*)request, [cb](Player::SnapshotRequest* req, double frameTime){
+        auto filec = cb.cb((mdkSnapshotRequest*)req, frameTime, cb.opaque);
+        if (!filec)
+            return string();
+        string file(filec);
+        free(filec);
+        return file;
     }, vo_opaque);
 }
 

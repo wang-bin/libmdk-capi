@@ -12,6 +12,7 @@
 #include "MediaInfo.h"
 #include "../c/Player.h"
 #include <cinttypes>
+#include <cstdlib>
 #include <map>
 #include <vector>
 
@@ -249,13 +250,21 @@ public:
 /*!
   \brief snapshot
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
+  \param cb the callback called when video frame is captured, with result request and captured frame time. return a file path to save as file, or empty to do nothing
 */
-    void snapshot(SnapshotRequest* request, std::function<void(SnapshotRequest*)> cb, void* vo_opaque = nullptr) {
+    using SnapshotCallback = std::function<std::string(SnapshotRequest*, double frameTime)>;
+    void snapshot(SnapshotRequest* request, SnapshotCallback cb, void* vo_opaque = nullptr) {
         snapshot_cb_ = cb;
         mdkSnapshotCallback callback;
-        callback.cb = [](mdkSnapshotRequest* req, void* opaque){
-            auto f = (std::function<void(SnapshotRequest*)>*)opaque;
-            (*f)((SnapshotRequest*)req);
+        callback.cb = [](mdkSnapshotRequest* req, double frameTime, void* opaque){
+            auto f = (SnapshotCallback*)opaque;
+            auto file = (*f)((SnapshotRequest*)req, frameTime);
+            if (file.empty())
+                return (char*)nullptr;
+            auto filec = (char*)malloc(file.size() + 1);
+            memcpy(filec, file.data(), file.size());
+            filec[-1] = 0;
+            return filec;
         };
         callback.opaque = snapshot_cb_ ? (void*)&snapshot_cb_ : nullptr;
         return MDK_CALL(p, snapshot, (mdkSnapshotRequest*)request, callback, vo_opaque);
@@ -526,7 +535,7 @@ private:
     std::function<void(void* vo_opaque)> render_cb_ = nullptr;
     std::function<void(int64_t)> seek_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;
-    std::function<void(SnapshotRequest*)> snapshot_cb_ = nullptr;
+    SnapshotCallback snapshot_cb_ = nullptr;
     std::map<CallbackToken, std::function<bool(const MediaEvent&)>> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
     std::map<CallbackToken, std::function<void(int)>> loop_cb_; // rb tree, elements never destroyed
