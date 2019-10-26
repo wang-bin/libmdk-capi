@@ -321,9 +321,13 @@ public:
         return MDK_CALL(p, setBackgroundColor, r, g, b, a, vo_opaque);
     }
 
-    // callback is invoked when the vo coresponding to vo_opaque needs to update/draw content, e.g. when a new frame is received in the renderer.
-    // Also invoked in setVideoSurfaceSize(), setVideoViewport(), setAspectRatio() and rotate(), take care of dead lock in callback and above functions.
-    // with vo_opaque, user can know which vo/renderer is rendering, useful for multiple renderers
+/*!
+  \brief setRenderCallback
+  set a callback which is invoked when the vo coresponding to vo_opaque needs to update/draw content, e.g. when a new frame is received in the renderer.
+  Also invoked in setVideoSurfaceSize(), setVideoViewport(), setAspectRatio() and rotate(), take care of dead lock in callback and above functions.
+  with vo_opaque, user can know which vo/renderer is rendering, useful for multiple renderers
+  There may be no frames or playback not even started, but renderer update is required internally
+*/
     void setRenderCallback(std::function<void(void* vo_opaque)> cb) { // per vo?
         render_cb_ = cb;
         mdkRenderCallback callback;
