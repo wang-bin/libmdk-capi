@@ -74,9 +74,14 @@ public:
     void setPreloadImmediately(bool value = true) {
         MDK_CALL(p, setPreloadImmediately, value);
     }
-
-    void setNextMedia(const char* url, int64_t startPosition = 0) {
-        MDK_CALL(p, setNextMedia, url, startPosition);
+/*!
+  \brief setNextMedia
+  Gapless play the next media after current media playback end
+  \param flags seek flags if startPosition > 0, accurate or fast
+  setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) first to disable next media.
+ */
+    void setNextMedia(const char* url, int64_t startPosition = 0, SeekFlag flags = SeekFlag::FromStart) {
+        MDK_CALL(p, setNextMedia, url, startPosition, MDKSeekFlag(flags));
     }
 
     void currentMediaChanged(std::function<void()> cb) { // call before setMedia()
@@ -133,11 +138,15 @@ public:
     }
 
 /*!
-   \brief prepare
-   Preload a media. \sa PrepareCallback
-   To play a media from a given position, call prepare(ms) then setState(State::Playing)
+  \brief prepare
+  Preload a media. \sa PrepareCallback
+  To play a media from a given position, call prepare(ms) then setState(State::Playing)
+  \param startPosition start from position, relative to media start position, i.e. MediaInfo.start_time
+  \param flags seek flag if startPosition != 0.
+  For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
+  For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
  */
-    void prepare(int64_t startPosition = 0, PrepareCallback cb = nullptr) {
+    void prepare(int64_t startPosition = 0, PrepareCallback cb = nullptr, SeekFlag flags = SeekFlag::FromStart) {
         prepare_cb_ = cb;
         mdkPrepareCallback callback;
         callback.cb = [](int64_t position, bool* boost, void* opaque){
@@ -145,7 +154,7 @@ public:
             return (*f)(position, boost);
         };
         callback.opaque = prepare_cb_ ? (void*)&prepare_cb_ : nullptr;
-        MDK_CALL(p, prepare, startPosition, callback);
+        MDK_CALL(p, prepare, startPosition, callback, MDKSeekFlag(flags));
     }
 
     const MediaInfo& mediaInfo() const {
@@ -391,10 +400,11 @@ public:
         MDK_CALL(p, setBufferRange, minMs, maxMs, drop);
     }
 /*!
- * \brief switchBitrate
- * A new media will be played later
- * \param delay switch after at least delay ms. TODO: determined by buffered time, e.g. from high bit rate without enough buffered samples to low bit rate
- * \param cb (true/false) called when finished/failed
+  \brief switchBitrate
+  A new media will be played later
+  \param delay switch after at least delay ms. TODO: determined by buffered time, e.g. from high bit rate without enough buffered samples to low bit rate
+  \param cb (true/false) called when finished/failed
+  \param flags seek flags for the next url, accurate or fast
  */
     void switchBitrate(const char* url, int64_t delay = -1, std::function<void(bool)> cb = nullptr) {
         switch_cb_ = cb;

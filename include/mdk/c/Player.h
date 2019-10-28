@@ -120,7 +120,13 @@ typedef struct mdkPlayerAPI {
     const char* (*url)(mdkPlayer*);
 
     void (*setPreloadImmediately)(mdkPlayer*, bool value);
-    void (*setNextMedia)(mdkPlayer*, const char* url, int64_t startPosition);
+/*!
+  \brief setNextMedia
+  Gapless play the next media after current media playback end
+  \param flags seek flags if startPosition > 0, accurate or fast
+  setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) first to disable next media.
+ */
+    void (*setNextMedia)(mdkPlayer*, const char* url, int64_t startPosition, MDKSeekFlag flags);
 
 /* call before setMedia() */
     void (*currentMediaChanged)(mdkPlayer*, mdkCurrentMediaChangedCallback cb);
@@ -133,12 +139,15 @@ typedef struct mdkPlayerAPI {
 
     void (*setTimeout)(mdkPlayer*, int64_t value, mdkTimeoutCallback cb);
 /*!
-   \brief prepare
-    Preload a media. \sa PrepareCallback
-    To play a media from a given position, call prepare(ms) then setState(State::Playing)
+  \brief prepare
+  Preload a media. \sa PrepareCallback
+  To play a media from a given position, call prepare(ms) then setState(State::Playing)
+  \param startPosition start from position, relative to media start position, i.e. MediaInfo.start_time
+  \param flags seek flag if startPosition != 0.
+  For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
+  For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
  */
-
-    void (*prepare)(mdkPlayer*, int64_t startPosition, mdkPrepareCallback cb);
+    void (*prepare)(mdkPlayer*, int64_t startPosition, mdkPrepareCallback cb, MDKSeekFlag flags);
     const mdkMediaInfo* (*mediaInfo)(mdkPlayer*); /* NOT IMPLEMENTED*/
 
 /*!
@@ -253,10 +262,11 @@ typedef struct mdkPlayerAPI {
  */
     int64_t (*buffered)(mdkPlayer*, int64_t* bytes);
 /*!
- * \brief switchBitrate
- * A new media will be played later
- * \param delay (default -1) switch after at least delay ms. TODO: determined by buffered time, e.g. from high bit rate without enough buffered samples to low bit rate
- * \param cb (true/false) called when finished/failed
+  \brief switchBitrate
+  A new media will be played later
+  \param delay switch after at least delay ms. TODO: determined by buffered time, e.g. from high bit rate without enough buffered samples to low bit rate
+  \param cb (true/false) called when finished/failed
+  \param flags seek flags for the next url, accurate or fast
  */
     void (*switchBitrate)(mdkPlayer*, const char* url, int64_t delay, SwitchBitrateCallback cb);
 /*!

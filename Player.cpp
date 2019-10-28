@@ -48,9 +48,9 @@ void MDK_Player_setPreloadImmediately(mdkPlayer* p, bool value)
     p->setPreloadImmediately(value);
 }
 
-void MDK_Player_setNextMedia(mdkPlayer* p, const char* url, int64_t startPosition)
+void MDK_Player_setNextMedia(mdkPlayer* p, const char* url, int64_t startPosition, MDKSeekFlag flag)
 {
-    p->setNextMedia(url, startPosition);
+    p->setNextMedia(url, startPosition, SeekFlag(flag));
 }
 
 void MDK_Player_currentMediaChanged(mdkPlayer* p, mdkCurrentMediaChangedCallback cb)
@@ -108,15 +108,15 @@ void MDK_Player_setTimeout(mdkPlayer* p, int64_t value, mdkTimeoutCallback cb)
     });
 }
 
-void MDK_Player_prepare(mdkPlayer* p, int64_t startPosition, mdkPrepareCallback cb)
+void MDK_Player_prepare(mdkPlayer* p, int64_t startPosition, mdkPrepareCallback cb, MDKSeekFlag flag)
 {
     if (!cb.opaque) {
-        p->prepare(startPosition, nullptr);
+        p->prepare(startPosition, nullptr, SeekFlag(flag));
         return;
     }
     p->prepare(startPosition, [cb](int64_t position, bool* boost){
         return cb.cb(position, boost, cb.opaque);
-    });
+    }, SeekFlag(flag));
 }
 
 const mdkMediaInfo* MDK_Player_mediaInfo(mdkPlayer* p)
