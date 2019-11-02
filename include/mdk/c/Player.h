@@ -9,6 +9,7 @@
  */
 #pragma once
 #include "global.h"
+#include "RenderAPI.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -332,7 +333,26 @@ typedef struct mdkPlayerAPI {
  */
     void (*setRange)(mdkPlayer*, int64_t a, int64_t b);
 
-    void* reserved[13];
+/*
+  RenderAPI
+  RenderAPI provides platform/api dependent resources for video renderer and rendering context corresponding to vo_opaque. It's used by
+  1. create internal render context via updateNativeSurface() using given api. MUST be called before any other functions have parameter vo_opaque and updateNativeSurface()!
+    If multiple native surfaces are used(No supported now), vo_opaque MUST be the surface, and setRenderAPI() MUST be called before add/updateNativeSurface()
+    If only 1 surface is used(currently supported), vo_opaque can be the default null.
+    RenderAPI members will be initialized when a rendering context for surface is created, and is valid in rendering functions like renderVideo()
+  2. render. renderVideo() will use the given api for vo_opaque
+
+  If setRenderAPI() is not called by user, a default one (usually GLRenderAPI) is used, thus renderAPI() always not null.
+  setRenderAPI() is not thread safe, so usually called before rendering starts, or native surface is set
+*/
+    void (*setRenderAPI)(mdkPlayer*, mdkRenderAPI* api, void* vo_opaque);
+/*!
+  \brief renderApi()
+  get render api. For offscreen rendering, may only api type be valid in setRenderAPI(), and other members are filled internally, and used by user after renderVideo()
+ */
+    mdkRenderAPI* (*renderAPI)(mdkPlayer*, void* vo_opaque);
+
+    void* reserved[11];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();

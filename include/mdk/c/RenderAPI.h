@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ */
+#pragma once
+#include "global.h"
+
+enum MDK_RenderAPI {
+    MDK_RenderAPI_Invalid,
+    MDK_RenderAPI_OpenGL = 1,
+    MDK_RenderAPI_D3D11 = 4,
+};
+
+/*!
+  \brief mdkRenderAPI
+  use concrete types in user code, for example mdkD3D11RenderAPI
+ */
+typedef struct mdkRenderAPI mdkRenderAPI;
+
+/*!
+  NOTE: include d3d11.h first to use D3D11RenderAPI 
+ */
+#if defined(D3D11_SDK_VERSION)
+struct mdkD3D11RenderAPI {
+    MDK_RenderAPI type;
+/*
+  context and rtv can be set by user if user can provide. then rendering becomes foreign context mode.
+  \sa Player.setRenderAPI()
+ */
+    ID3D11DeviceContext* context;
+    ID3D11RenderTargetView* rtv;
+    void* reserved[2];
+};
+#endif

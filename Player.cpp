@@ -214,6 +214,16 @@ void MDK_Player_scale(mdkPlayer* p, float x, float y, void* vo_opaque)
     p->scale(x, y, vo_opaque);
 }
 
+void MDK_Player_setRenderAPI(mdkPlayer* p, mdkRenderAPI* api, void* vo_opaque)
+{
+    p->setRenderAPI(reinterpret_cast<RenderAPI*>(api), vo_opaque);
+}
+
+mdkRenderAPI* MDK_Player_renderAPI(mdkPlayer* p, void* vo_opaque)
+{
+    return reinterpret_cast<mdkRenderAPI*>(p->renderAPI(vo_opaque));
+}
+
 double MDK_Player_renderVideo(mdkPlayer* p, void* vo_opaque)
 {
     return p->renderVideo(vo_opaque);
@@ -414,6 +424,8 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setLoop);
     SET_API(onLoop);
     SET_API(setRange);
+    SET_API(setRenderAPI);
+    SET_API(renderAPI);
 #undef SET_API
     return p;
 }
