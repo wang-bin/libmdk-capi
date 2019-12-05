@@ -99,7 +99,7 @@ typedef struct mdkSnapshotRequest {
 } mdkSnapshotRequest;
 
 typedef struct mdkSnapshotCallback {
-  /* returns null, or a file path to save as a file. memory is allocated by malloc family apis, and freed internally */
+  /* returns null, or a file path to save as a file(NOT IMPLEMENTED). memory is allocated by malloc family apis, and freed internally */
     char* (*cb)(mdkSnapshotRequest*, double frameTime, void* opaque);
     void* opaque;
 } mdkSnapshotCallback;
@@ -340,7 +340,8 @@ typedef struct mdkPlayerAPI {
     If multiple native surfaces are used(No supported now), vo_opaque MUST be the surface, and setRenderAPI() MUST be called before add/updateNativeSurface()
     If only 1 surface is used(currently supported), vo_opaque can be the default null.
     RenderAPI members will be initialized when a rendering context for surface is created, and is valid in rendering functions like renderVideo()
-  2. render. renderVideo() will use the given api for vo_opaque
+  2. Set foreign context provided by user. setRenderAPI() and other functions with vo_opaque parameter can be called in any order
+  3. render. renderVideo() will use the given api for vo_opaque
 
   If setRenderAPI() is not called by user, a default one (usually GLRenderAPI) is used, thus renderAPI() always not null.
   setRenderAPI() is not thread safe, so usually called before rendering starts, or native surface is set
