@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
  * Free for GPL softwares or non-commercial use.
@@ -99,7 +99,7 @@ typedef struct mdkSnapshotRequest {
 } mdkSnapshotRequest;
 
 typedef struct mdkSnapshotCallback {
-  /* returns null, or a file path to save as a file(NOT IMPLEMENTED). memory is allocated by malloc family apis, and freed internally */
+  /* returns null, or a file path to save as a file(jpeg is recommended, other formats depends on ffmpeg runtime). Returned string will be freed internally(assume allocated by malloc family apis)*/
     char* (*cb)(mdkSnapshotRequest*, double frameTime, void* opaque);
     void* opaque;
 } mdkSnapshotCallback;

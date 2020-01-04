@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2016-2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
  * Free for GPL softwares or non-commercial use.
@@ -142,7 +142,7 @@ public:
   \brief prepare
   Preload a media. \sa PrepareCallback
   To play a media from a given position, call prepare(ms) then setState(State::Playing)
-  \param startPosition start from position, relative to media start position, i.e. MediaInfo.start_time
+  \param startPosition start from position, relative to media start position(i.e. MediaInfo.start_time)
   \param flags seek flag if startPosition != 0.
   For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
@@ -260,7 +260,7 @@ public:
 /*!
   \brief snapshot
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
-  \param cb the callback called when video frame is captured, with result request and captured frame time. return a file path to save as file(NOT IMPLEMENTED), or empty to do nothing
+  \param cb the callback called when video frame is captured, with result request and captured frame time. return a file path to save as file(jpeg is recommended, other formats depends on ffmpeg runtime), or empty to do nothing
 */
     using SnapshotCallback = std::function<std::string(SnapshotRequest*, double frameTime)>;
     void snapshot(SnapshotRequest* request, SnapshotCallback cb, void* vo_opaque = nullptr) {
