@@ -273,7 +273,7 @@ public:
                 return (char*)nullptr;
             auto filec = (char*)malloc(file.size() + 1);
             memcpy(filec, file.data(), file.size());
-            filec[-1] = 0;
+            filec[file.size()] = 0;
             return filec;
         };
         callback.opaque = snapshot_cb_ ? (void*)&snapshot_cb_ : nullptr;
