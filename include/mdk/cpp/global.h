@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2016-2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
  * Free for GPL softwares or non-commercial use.
@@ -38,7 +38,7 @@ using CallbackToken = uint64_t;
  * if enum E is of enum type, to enable flag(bit) operators, define
  * \code template<> struct is_flag<E> : std::true_type {}; \endcode
  */
-template<typename T> struct is_flag; // 
+template<typename T> struct is_flag; //
 template<typename T>
 using if_flag = std::enable_if<std::is_enum<T>::value && is_flag<T>::value>;
 template<typename E, typename = if_flag<E>>

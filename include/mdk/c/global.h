@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
  * Free for GPL softwares or non-commercial use.
@@ -15,9 +15,9 @@
     (((major&0xff)<<16) | ((minor&0xff)<<8) | (patch&0xff))
 #define MDK_MAJOR 0
 #define MDK_MINOR 6
-#define MDK_MICRO 0
+#define MDK_MICRO 1
 #define MDK_VERSION MDK_VERSION_INT(MDK_MAJOR, MDK_MINOR, MDK_MICRO)
-#define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c)) 
+#define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c))
 
 #if defined(_WIN32)
 #define MDK_EXPORT __declspec(dllexport)
@@ -171,11 +171,11 @@ typedef struct mdkMediaEvent {
 /*
 bool MDK_SomeFunc(SomeStruct*, mdkStringMapEntry* entry)
 entry: in/out, can not be null.
-Input entry->priv is null: 
+Input entry->priv is null:
 The result entry points to the first entry containing the same key as entry->key, or the first entry if entry->key is null.
-The result entry->priv is set to a new value by api. 
+The result entry->priv is set to a new value by api.
 Input entry->priv is not null(set by the api): the result entry points to the next entry.
-return: true if entry is found, false if not. 
+return: true if entry is found, false if not.
 */
 typedef struct mdkStringMapEntry {
     const char* key;    /* input: set by user to query .value field if priv is null

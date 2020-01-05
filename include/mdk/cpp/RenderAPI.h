@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
  */
 #pragma once
 #include "global.h"
@@ -23,7 +23,7 @@ protected:
 };
 
 /*!
-  NOTE: include d3d11.h first to use D3D11RenderAPI 
+  NOTE: include d3d11.h first to use D3D11RenderAPI
  */
 #if defined(D3D11_SDK_VERSION)
 struct D3D11RenderAPI : RenderAPI {
