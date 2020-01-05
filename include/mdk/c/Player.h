@@ -86,7 +86,7 @@ typedef struct mdkLoopCallback {
 } mdkLoopCallback;
 
 typedef struct mdkSnapshotRequest {
-  uint8_t* data; /* rgba data. as input, can be allocated by user, or null to allocate and managed internally */
+    uint8_t* data; /*rgba data. If provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot is called.*/
 /* 
    result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
    if both requested width and height are < 0, then result image is scaled image of current frame with ratio=width/height. no renderer transform.

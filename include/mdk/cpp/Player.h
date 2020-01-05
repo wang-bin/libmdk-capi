@@ -248,7 +248,7 @@ public:
 
 // vo_opaque: a ptr to identify the renderer. cam be null, then it is the default vo/renderer.
     struct SnapshotRequest {
-        uint8_t* data = nullptr; // rgba data. can be allocated by user, or null to allocate and managed internally
+        uint8_t* data = nullptr; // rgba data. If provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot is called.
         // result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
         // if both requested width and height are < 0, then result image is scaled image of current frame with ratio=width/height. no renderer transform.
         // if only one of width and height < 0, then the result size is video renderer viewport size, and all transforms will be applied.

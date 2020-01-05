@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -328,8 +328,21 @@ void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventCallback cb, MDK_CallbackToke
 void MDK_Player_snapshot(mdkPlayer* p, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque)
 {
     assert(cb.cb && "mdkSnapshotCallback.cb can not be null");
-    p->snapshot((Player::SnapshotRequest*)request, [cb](Player::SnapshotRequest* req, double frameTime){
-        auto filec = cb.cb((mdkSnapshotRequest*)req, frameTime, cb.opaque);
+    Player::SnapshotRequest r;
+    r.width = request->width;
+    r.height = request->height;
+    r.stride = request->stride;
+    r.subtitle = request->subtitle;
+    if (request->data)
+        r.buf = make_shared<Buffer2DView>(request->stride, request->height, request->data);
+    p->snapshot(&r, [cb](Player::SnapshotRequest* req, double frameTime){
+        mdkSnapshotRequest q;
+        q.data = (uint8_t*)req->buf->constData();
+        q.width = req->width;
+        q.height = req->height;
+        q.stride = req->stride;
+        q.subtitle = req->subtitle;
+        auto filec = cb.cb(&q, frameTime, cb.opaque);
         if (!filec)
             return string();
         string file(filec);
