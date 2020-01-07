@@ -246,7 +246,7 @@ public:
         MDK_CALL(p, showSurface);
     }
 
-// vo_opaque: a ptr to identify the renderer. cam be null, then it is the default vo/renderer.
+// vo_opaque: a ptr to identify the renderer. can be null, then it is the default vo/renderer.
     struct SnapshotRequest {
         uint8_t* data = nullptr; // rgba data. If provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot is called.
         // result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
@@ -318,14 +318,15 @@ public:
   RenderAPI
   RenderAPI provides platform/api dependent resources for video renderer and rendering context corresponding to vo_opaque. It's used by
   1. create internal render context via updateNativeSurface() using given api. MUST be called before any other functions have parameter vo_opaque and updateNativeSurface()!
-    If multiple native surfaces are used(No supported now), vo_opaque MUST be the surface, and setRenderAPI() MUST be called before add/updateNativeSurface()
-    If only 1 surface is used(currently supported), vo_opaque can be the default null.
-    RenderAPI members will be initialized when a rendering context for surface is created, and is valid in rendering functions like renderVideo()
+    To use RenderAPI other than OpenGL, setRenderAPI() MUST be called before add/updateNativeSurface(), and vo_opaque MUST be the surface or nullptr.
+    If vo_opaque is nullptr, i.e. the default, then all context will have the same RenderAPI type, and call setRenderAPI() once is enough.
+    If vo_opaque is surface(not null), each surface can have it's own RenderAPI type.
+    RenderAPI members will be initialized when a rendering context for surface is created, and keep valid in rendering functions like renderVideo()
   2. Set foreign context provided by user. setRenderAPI() and other functions with vo_opaque parameter can be called in any order
   3. render. renderVideo() will use the given api for vo_opaque
 
   If setRenderAPI() is not called by user, a default one (usually GLRenderAPI) is used, thus renderAPI() always not null.
-  setRenderAPI() is not thread safe, so usually called before rendering starts, or native surface is set
+  setRenderAPI() is not thread safe, so usually called before rendering starts, or native surface is set.
 */
     Player& setRenderAPI(RenderAPI* api, void* vo_opaque = nullptr) {
         MDK_CALL(p, setRenderAPI, reinterpret_cast<mdkRenderAPI*>(api), vo_opaque);
