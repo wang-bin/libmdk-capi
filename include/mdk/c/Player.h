@@ -198,7 +198,11 @@ typedef struct mdkPlayerAPI {
   get current rendered frame, i.e. the decoded video frame rendered by renderVideo()
  */
     void (*getVideoFrame)(mdkPlayer*, mdkVideoFrame* frame, void* vo_opaque); /* NOT IMPLEMENTED*/
-
+/*
+  \brief setVideoSurfaceSize
+  Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.
+  If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed. But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
+ */
     void (*setVideoSurfaceSize)(mdkPlayer*, int width, int height, void* vo_opaque);
     void (*setVideoViewport)(mdkPlayer*, float x, float y, float w, float h, void* vo_opaque);
 /*!

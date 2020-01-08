@@ -286,7 +286,11 @@ public:
   get current rendered frame, i.e. the decoded video frame rendered by renderVideo()
  */
     void getVideoFrame(VideoFrame* frame, void* vo_opaque = nullptr);
-
+/*
+  \brief setVideoSurfaceSize
+  Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.
+  If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed. But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
+ */
     void setVideoSurfaceSize(int width, int height, void* vo_opaque = nullptr) {
         MDK_CALL(p, setVideoSurfaceSize, width, height, vo_opaque);
     }
