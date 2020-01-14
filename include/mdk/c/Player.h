@@ -300,10 +300,13 @@ typedef struct mdkPlayerAPI {
 
 /*!
   \brief setProperty
-  NOT IMPLEMENTED
  */
-    void (*setProperty)();
-    void (*getProperty)();
+    void (*setProperty)(mdkPlayer*, const char* key, const char* value);
+/*!
+  \brief setProperty
+  \return value for key, or null if no such key
+ */
+    const char* (*getProperty)(mdkPlayer*, const char* key);
 /*
   \brief record
   Start to record or stop recording current media by remuxing packets read. If media is not loaded, recorder will start when playback starts

@@ -279,6 +279,17 @@ public:
         callback.opaque = snapshot_cb_ ? (void*)&snapshot_cb_ : nullptr;
         return MDK_CALL(p, snapshot, (mdkSnapshotRequest*)request, callback, vo_opaque);
     }
+
+    void setProperty(const std::string& key, const std::string& value) {
+        MDK_CALL(p, setProperty, key.data(), value.data());
+    }
+
+    std::string property(const std::string& key, const std::string& defaultValue = std::string()) const {
+        auto value = MDK_CALL(p, getProperty, key.data());
+        if (!value)
+            return defaultValue;
+        return value;
+    }
 // A vo/renderer (e.g. the default vo/renderer) is gfx context aware, i.e. can render in multiple gfx contexts with a single vo/renderer, but parameters(e.g. surface size)
 // must be updated when switch to a new context. So per gfx context vo/renderer can be better because parameters are stored in vo/renderer.
 /*!

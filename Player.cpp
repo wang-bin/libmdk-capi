@@ -351,6 +351,19 @@ void MDK_Player_snapshot(mdkPlayer* p, mdkSnapshotRequest* request, mdkSnapshotC
     }, vo_opaque);
 }
 
+void MDK_Player_setProperty(mdkPlayer* p, const char* key, const char* value)
+{
+    p->setProperty(key, value);
+}
+
+const char* MDK_Player_getProperty(mdkPlayer* p, const char* key)
+{
+    auto value = p->property(key);
+    if (value.empty())
+        return nullptr;
+    return value.data();
+}
+
 void MDK_Player_record(mdkPlayer* p, const char* url, const char* format)
 {
     p->record(url, format);
@@ -432,6 +445,8 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(switchBitrateSingleConnection);
     SET_API(onEvent);
     SET_API(snapshot);
+    SET_API(setProperty);
+    SET_API(getProperty);
     SET_API(record);
     SET_API(setLoopRange);
     SET_API(setLoop);
