@@ -82,15 +82,15 @@ enum MediaStatus
 {
     NoMedia = 0, // initial status, not invalid. // what if set an empty url and closed?
     Unloaded = 1, // unloaded // (TODO: or when a source(url) is set?)
-    Loading = 1<<1, // when source is set
-    Loaded = 1<<2, // if auto load and source is set. player is stopped state
+    Loading = 1<<1, // opening and parsing the media
+    Loaded = 1<<2, // media is loaded and parsed. player is stopped state. mediaInfo() is available now
     Prepared = 1<<8, // all tracks are buffered and ready to decode frames. tracks failed to open decoder are ignored
     Stalled = 1<<3, // insufficient buffering or other interruptions (timeout, user interrupt)
-    Buffering = 1<<4, // NOT IMPLEMENTED
-    Buffered = 1<<5, // when playing //NOT IMPLEMENTED
-    End = 1<<6, // Playback has reached the end of the current media.
-    Seeking = 1<<7, // can be used with Buffering, Loaded. FIXME: NOT IMPLEMENTED
-    Invalid = 1<<31, //  invalid media source
+    Buffering = 1<<4, // when buffering ends
+    Buffered = 1<<5, // when buffering ends
+    End = 1<<6, // reached the end of the current media, no more data to read
+    Seeking = 1<<7,
+    Invalid = 1<<31, // failed to load media because of unsupport format or invalid media source
 };
 template<> struct is_flag<MediaStatus> : std::true_type {};
 // MediaStatusCallback

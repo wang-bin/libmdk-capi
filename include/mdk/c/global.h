@@ -68,15 +68,15 @@ typedef enum MDK_MediaStatus
 {
     MDK_MediaStatus_NoMedia = 0, /* initial status, not invalid. // what if set an empty url and closed?*/
     MDK_MediaStatus_Unloaded = 1, /* unloaded // (TODO: or when a source(url) is set?)*/
-    MDK_MediaStatus_Loading = 1<<1, /* when source is set*/
-    MDK_MediaStatus_Loaded = 1<<2, /* if auto load and source is set. player is stopped state*/
+    MDK_MediaStatus_Loading = 1<<1, /* opening and parsing the media */
+    MDK_MediaStatus_Loaded = 1<<2, /* media is loaded and parsed. player is stopped state. mediaInfo() is available now */
     MDK_MediaStatus_Prepared = 1<<8, /* all tracks are buffered and ready to decode frames. tracks failed to open decoder are ignored*/
     MDK_MediaStatus_Stalled = 1<<3, /* insufficient buffering or other interruptions (timeout, user interrupt)*/
-    MDK_MediaStatus_Buffering = 1<<4, /* NOT IMPLEMENTED*/
-    MDK_MediaStatus_Buffered = 1<<5, /* when playing //NOT IMPLEMENTED*/
-    MDK_MediaStatus_End = 1<<6, /* Playback has reached the end of the current media.*/
-    MDK_MediaStatus_Seeking = 1<<7, /* can be used with Buffering, Loaded. FIXME: NOT IMPLEMENTED*/
-    MDK_MediaStatus_Invalid = 1<<31, /*  invalid media source*/
+    MDK_MediaStatus_Buffering = 1<<4, /* when buffering starts */
+    MDK_MediaStatus_Buffered = 1<<5, /* when buffering ends */
+    MDK_MediaStatus_End = 1<<6, /* reached the end of the current media, no more data to read */
+    MDK_MediaStatus_Seeking = 1<<7,
+    MDK_MediaStatus_Invalid = 1<<31, /* failed to load media because of unsupport format or invalid media source */
 } MDK_MediaStatus;
 
 typedef struct mdkMediaStatusChangedCallback {
