@@ -298,8 +298,12 @@ typedef struct mdkPlayerAPI {
 */
     void (*snapshot)(mdkPlayer*, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque);
 
-/*!
+/*
   \brief setProperty
+  Set additional properties. Can be used to store user data, or change player behavior if the property is defined internally.
+  Predefined properties are:
+  - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
+  - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
  */
     void (*setProperty)(mdkPlayer*, const char* key, const char* value);
 /*!

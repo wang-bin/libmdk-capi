@@ -280,6 +280,13 @@ public:
         return MDK_CALL(p, snapshot, (mdkSnapshotRequest*)request, callback, vo_opaque);
     }
 
+/*
+  \brief setProperty
+  Set additional properties. Can be used to store user data, or change player behavior if the property is defined internally.
+  Predefined properties are:
+  - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
+  - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
+ */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
     }
