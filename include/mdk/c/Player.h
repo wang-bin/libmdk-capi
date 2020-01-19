@@ -86,7 +86,10 @@ typedef struct mdkLoopCallback {
 } mdkLoopCallback;
 
 typedef struct mdkSnapshotRequest {
-    uint8_t* data; /*rgba data. If provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot is called.*/
+/* data: rgba data. Created internally or provided by user.
+   If data is provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot callback is finished.
+ */
+    uint8_t* data;
 /*
    result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
    if both requested width and height are < 0, then result image is scaled image of current frame with ratio=width/height. no renderer transform.
@@ -99,8 +102,16 @@ typedef struct mdkSnapshotRequest {
 } mdkSnapshotRequest;
 
 typedef struct mdkSnapshotCallback {
-  /* returns null, or a file path to save as a file(jpeg is recommended, other formats depends on ffmpeg runtime). Returned string will be freed internally(assume allocated by malloc family apis)*/
-    char* (*cb)(mdkSnapshotRequest*, double frameTime, void* opaque);
+/* \brief cb
+   snapshot callback.
+   \param req result request. If null, snapshot failed. Otherwise req.width, height and stride are always >0, data is never null.
+   \param frameTime captured frame timestamp(seconds)
+   \param opaque user data
+   \returns null, or a file path to save as a file(jpeg is recommended, other formats depends on ffmpeg runtime).
+   Returned string will be freed internally(assume allocated by malloc family apis).
+   Callback is called in a dedicated thread, so time-consuming operations(encode, file io etc.) are allowed in the callback.
+ */
+    char* (*cb)(mdkSnapshotRequest* req, double frameTime, void* opaque);
     void* opaque;
 } mdkSnapshotCallback;
 

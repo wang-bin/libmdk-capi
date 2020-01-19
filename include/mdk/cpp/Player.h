@@ -248,7 +248,10 @@ public:
 
 // vo_opaque: a ptr to identify the renderer. can be null, then it is the default vo/renderer.
     struct SnapshotRequest {
-        uint8_t* data = nullptr; // rgba data. If provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot is called.
+/* data: rgba data. Created internally or provided by user.
+   If data is provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot callback is finished.
+ */
+        uint8_t* data = nullptr;
         // result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
         // if both requested width and height are < 0, then result image is scaled image of current frame with ratio=width/height. no renderer transform.
         // if only one of width and height < 0, then the result size is video renderer viewport size, and all transforms will be applied.
@@ -257,12 +260,20 @@ public:
         int stride = 0;
         bool subtitle = false; // not supported yet
     };
+/* \brief SnapshotCallback
+   snapshot callback.
+   \param req result request. If null, snapshot failed. Otherwise req.width, height and stride are always >0, data is never null.
+   \param frameTime captured frame timestamp(seconds)
+   \param opaque user data
+   \returns a file path to save as a file(jpeg is recommended, other formats depends on ffmpeg runtime). or empty to do nothing.
+   Returned string will be freed internally(assume allocated by malloc family apis).
+   Callback is called in a dedicated thread, so time-consuming operations(encode, file io etc.) are allowed in the callback.
+ */
+    using SnapshotCallback = std::function<std::string(SnapshotRequest*, double frameTime)>;
 /*!
   \brief snapshot
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
-  \param cb the callback called when video frame is captured, with result request and captured frame time. return a file path to save as file(jpeg is recommended, other formats depends on ffmpeg runtime), or empty to do nothing
 */
-    using SnapshotCallback = std::function<std::string(SnapshotRequest*, double frameTime)>;
     void snapshot(SnapshotRequest* request, SnapshotCallback cb, void* vo_opaque = nullptr) {
         snapshot_cb_ = cb;
         mdkSnapshotCallback callback;
