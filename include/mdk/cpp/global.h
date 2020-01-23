@@ -184,6 +184,7 @@ static inline void SetGlobalOption(const char* key, int value)
   "decoder.audio/video" + "open" + stream: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
   error + "reader.buffering": error is buffering progress
   error + "thread.audio/video" + stream: decoder thread is started (error = 1) and about to exit(error = 0)
+  error + "snapshot" + saved_file if no error and error string if error < 0
 */
 class MediaEvent {
 public:
