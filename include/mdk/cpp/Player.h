@@ -12,6 +12,7 @@
 #include "MediaInfo.h"
 #include "RenderAPI.h"
 #include "../c/Player.h"
+#include "VideoFrame.h"
 #include <cinttypes>
 #include <cstdlib>
 #include <map>
@@ -140,7 +141,7 @@ public:
 
 /*!
   \brief prepare
-  Preload a media. \sa PrepareCallback
+  Preload a media and then becomes State::Paused. \sa PrepareCallback
   To play a media from a given position, call prepare(ms) then setState(State::Playing)
   \param startPosition start from position, relative to media start position(i.e. MediaInfo.start_time)
   \param flags seek flag if startPosition != 0.
@@ -273,6 +274,8 @@ public:
 /*!
   \brief snapshot
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
+  When `snapshot()` is called, redraw is scheduled for `vo_opaque`'s renderer, then renderer will take a snapshot in rendering thread.
+  So for a foreign context, if renderer's surface/window/widget is invisible or minimized, snapshot may do nothing because of system or gui toolkit painting optimization.
 */
     void snapshot(SnapshotRequest* request, SnapshotCallback cb, void* vo_opaque = nullptr) {
         snapshot_cb_ = cb;
@@ -375,8 +378,8 @@ public:
 
 /*!
    \brief renderVideo
-   Render the next/current frame. Call only in RenderLoop.onDraw() (not created by createSurface()/updateNativeSurface()) or external graphics context's rendering function.
-   Can be called in multiple foreign gfx contexts for the same vo_opaque.
+  Render the next or current(redraw) frame. Foreign render context only (i.e. not created by createSurface()/updateNativeSurface()).
+  OpenGL: Can be called in multiple foreign contexts for the same vo_opaque.
    \return timestamp of rendered frame, or < 0 if no frame is rendered
  */
     double renderVideo(void* vo_opaque = nullptr) {
@@ -413,7 +416,7 @@ public:
   called before delivering frame to renderers
  */
     template<class Frame>
-    Player& onFrame(std::function<void(Frame&)> cb);
+    Player& onFrame(std::function<int(Frame&, int/*track*/)> cb);
 
     int64_t position() const {
         return MDK_CALL(p, position);
@@ -610,6 +613,7 @@ private:
     std::function<void(int64_t)> seek_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;
     SnapshotCallback snapshot_cb_ = nullptr;
+    std::function<int(VideoFrame&, int/*track*/)> video_cb_ = nullptr;
     std::map<CallbackToken, std::function<bool(const MediaEvent&)>> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
     std::map<CallbackToken, std::function<void(int)>> loop_cb_; // rb tree, elements never destroyed
@@ -617,4 +621,24 @@ private:
 
     mutable MediaInfo info_;
 };
+
+
+template<>
+Player& Player::onFrame(std::function<int(VideoFrame&, int/*track*/)> cb)
+{
+    video_cb_ = cb;
+    mdkVideoCallback callback;
+    callback.cb = [](mdkVideoFrameAPI** pFrame/*in/out*/, int track, void* opaque){
+        VideoFrame frame;
+        frame.attach(*pFrame);
+        auto f = (std::function<int(VideoFrame&, int)>*)opaque;
+        auto penddings = (*f)(frame, track);
+        *pFrame = frame.detach();
+        return penddings;
+    };
+    callback.opaque = video_cb_ ? (void*)&video_cb_ : nullptr;
+    MDK_CALL(p, onVideo, callback);
+    return *this;
+}
+
 MDK_NS_END

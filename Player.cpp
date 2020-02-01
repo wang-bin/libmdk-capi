@@ -5,12 +5,16 @@
 #include "mdk/c/MediaInfo.h"
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
+#include "mdk/VideoFrame.h"
 #include "MediaInfoInternal.h"
 #include <cassert>
 #include <cstdlib>
 
 using namespace std;
 using namespace MDK_NS;
+
+extern mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame);
+extern VideoFrame MDK_VideoFrame_fromC(mdkVideoFrameAPI* p);
 
 struct mdkPlayer : Player{
     MediaInfoInternal media_info;
@@ -245,8 +249,24 @@ void MDK_Player_setRenderCallback(mdkPlayer* p, mdkRenderCallback cb)
     });
 }
 
-void MDK_Player_onVideoFrame(mdkPlayer*, void (*)(mdkVideoFrame*));
-void MDK_Player_onAudioFrame(mdkPlayer*, void (*)(mdkAudioFrame*));
+void MDK_Player_onVideo(mdkPlayer* p, mdkVideoCallback cb)
+{
+    if (!cb.opaque) {
+        p->onFrame<VideoFrame>(nullptr);
+        return;
+    }
+    p->onFrame<VideoFrame>([cb](VideoFrame& frame, int track){
+        auto f = MDK_VideoFrame_toC(frame);
+        auto f0 = f;
+        auto ret = cb.cb(&f, track, cb.opaque);
+        if (f != f0)
+            frame = MDK_VideoFrame_fromC(f);
+        mdkVideoFrameAPI_delete(&f);
+        return ret;
+    });
+}
+
+void MDK_Player_onAudio(mdkPlayer*);
 
 int64_t MDK_Player_position(mdkPlayer* p)
 {
@@ -454,6 +474,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setRange);
     SET_API(setRenderAPI);
     SET_API(renderAPI);
+    SET_API(onVideo);
 #undef SET_API
     return p;
 }

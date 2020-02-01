@@ -10,6 +10,7 @@
 #pragma once
 #include "global.h"
 #include "RenderAPI.h"
+#include "VideoFrame.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,6 +48,11 @@ typedef struct mdkRenderCallback {
     void (*cb)(void* vo_opaque, void* opaque);
     void* opaque;
 } mdkRenderCallback;
+
+typedef struct mdkVideoCallback {
+    int (*cb)(mdkVideoFrameAPI** pFrame/*in/out*/, int track, void* opaque);
+    void* opaque;
+} mdkVideoCallback;
 
 typedef struct SwitchBitrateCallback {
     void (*cb)(bool, void* opaque);
@@ -152,7 +158,7 @@ typedef struct mdkPlayerAPI {
     void (*setTimeout)(mdkPlayer*, int64_t value, mdkTimeoutCallback cb);
 /*!
   \brief prepare
-  Preload a media. \sa PrepareCallback
+  Preload a media and then becomes State::Paused. \sa PrepareCallback
   To play a media from a given position, call prepare(ms) then setState(State::Playing)
   \param startPosition start from position, relative to media start position, i.e. MediaInfo.start_time
   \param flags seek flag if startPosition != 0.
@@ -228,8 +234,8 @@ typedef struct mdkPlayerAPI {
     void (*scale)(mdkPlayer*, float x, float y, void* vo_opaque);
 /*!
    \brief renderVideo
-   Render the next/current frame. Call only in RenderLoop.onDraw() (not created by createSurface()/updateNativeSurface()) or external graphics context's rendering function.
-   Can be called in multiple foreign gfx contexts for the same vo_opaque.
+  Render the next or current(redraw) frame. Foreign render context only (i.e. not created by createSurface()/updateNativeSurface()).
+  OpenGL: Can be called in multiple foreign contexts for the same vo_opaque.
    \return timestamp of rendered frame, or < 0 if no frame is rendered
  */
     double (*renderVideo)(mdkPlayer*, void* vo_opaque);
@@ -249,11 +255,11 @@ typedef struct mdkPlayerAPI {
     void (*setRenderCallback)(mdkPlayer*, mdkRenderCallback);
 
 /*
-  \brief onVideo onAudio
-  NOT IMPLEMENTED. Called before delivering frame to renderers. Can be used to apply filters.
+  \brief onVideo
+  Called before delivering frame to renderers. Can be used to apply filters.
  */
-    void (*onVideo)(mdkPlayer*, void (*)(mdkVideoFrame*));
-    void (*onAudio)(mdkPlayer*, void (*)(mdkAudioFrame*));
+    void (*onVideo)(mdkPlayer*, mdkVideoCallback);
+    void (*onAudio)(mdkPlayer*); // NOT IMPLEMENTED
 /*
   \brief beforeVideoRender
   NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to apply GPU filters.
@@ -306,6 +312,8 @@ typedef struct mdkPlayerAPI {
 /*!
   \brief snapshot
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
+  When `snapshot()` is called, redraw is scheduled for `vo_opaque`'s renderer, then renderer will take a snapshot in rendering thread.
+  So for a foreign context, if renderer's surface/window/widget is invisible or minimized, snapshot may do nothing because of system or gui toolkit painting optimization.
 */
     void (*snapshot)(mdkPlayer*, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque);
 
