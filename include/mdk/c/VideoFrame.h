@@ -22,9 +22,22 @@ enum MDK_PixelFormat {
     MDK_PixelFormat_Unknown = -1,
     MDK_PixelFormat_YUV420P,
     MDK_PixelFormat_NV12,
+    MDK_PixelFormat_YUV422P,
+    MDK_PixelFormat_YUV444P,
     MDK_PixelFormat_P010LE,
+    MDK_PixelFormat_P016LE,
+    MDK_PixelFormat_YUV420P10LE,
+    MDK_PixelFormat_UYVY422,
     MDK_PixelFormat_RGB24,
     MDK_PixelFormat_RGBA,
+    MDK_PixelFormat_RGBX,
+    MDK_PixelFormat_BGRA,
+    MDK_PixelFormat_BGRX,
+    MDK_PixelFormat_RGB565LE,
+    MDK_PixelFormat_RGB48LE,
+    MDK_PixelFormat_GBRP,
+    MDK_PixelFormat_GBRP10LE,
+    MDK_PixelFormat_XYZ12LE,
 };
 
 typedef struct mdkVideoFrameAPI {

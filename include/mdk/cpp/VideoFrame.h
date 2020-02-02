@@ -19,9 +19,22 @@ enum class PixelFormat
     Unknown = -1,
     YUV420P,
     NV12,
+    YUV422P,
+    YUV444P,
     P010LE,
+    P016LE,
+    YUV420P10LE,
+    UYVY422,
     RGB24,
     RGBA,
+    RGBX,
+    BGRA,
+    BGRX,
+    RGB565LE,
+    RGB48LE,
+    GBRP,
+    GBRP10LE,
+    XYZ12LE,
 };
 
 class VideoFrame

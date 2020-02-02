@@ -19,9 +19,22 @@ PixelFormat fromC(MDK_PixelFormat fmt)
     switch (fmt) {
     CASE_FMT(YUV420P);
     CASE_FMT(NV12);
+    CASE_FMT(YUV422P);
+    CASE_FMT(YUV444P);
     CASE_FMT(P010LE);
+    CASE_FMT(P016LE);
+    CASE_FMT(YUV420P10LE);
+    CASE_FMT(UYVY422);
     CASE_FMT(RGB24);
     CASE_FMT(RGBA);
+    CASE_FMT(RGBX);
+    CASE_FMT(BGRA);
+    CASE_FMT(BGRX);
+    CASE_FMT(RGB565LE);
+    CASE_FMT(RGB48LE);
+    CASE_FMT(GBRP);
+    CASE_FMT(GBRP10LE);
+    CASE_FMT(XYZ12LE);
     default: return PixelFormat::Unknown;
     }
 #undef CASE_FMT
@@ -33,9 +46,22 @@ MDK_PixelFormat toC(PixelFormat fmt)
     switch (fmt) {
     CASE_FMT(YUV420P);
     CASE_FMT(NV12);
+    CASE_FMT(YUV422P);
+    CASE_FMT(YUV444P);
     CASE_FMT(P010LE);
+    CASE_FMT(P016LE);
+    CASE_FMT(YUV420P10LE);
+    CASE_FMT(UYVY422);
     CASE_FMT(RGB24);
     CASE_FMT(RGBA);
+    CASE_FMT(RGBX);
+    CASE_FMT(BGRA);
+    CASE_FMT(BGRX);
+    CASE_FMT(RGB565LE);
+    CASE_FMT(RGB48LE);
+    CASE_FMT(GBRP);
+    CASE_FMT(GBRP10LE);
+    CASE_FMT(XYZ12LE);
     default: return MDK_PixelFormat_Unknown;
     }
 #undef CASE_FMT
