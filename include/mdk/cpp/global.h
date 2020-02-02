@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
  * Free for GPL softwares or non-commercial use.
@@ -180,11 +180,11 @@ static inline void SetGlobalOption(const char* key, int value)
 
 /*
   events:
-  timestamp(ms) + "render.video" + "1st_frame"
-  "decoder.audio/video" + "open" + stream: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
-  error + "reader.buffering": error is buffering progress
-  error + "thread.audio/video" + stream: decoder thread is started (error = 1) and about to exit(error = 0)
-  error + "snapshot" + saved_file if no error and error string if error < 0
+  {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd
+  {error, "decoder.audio/video/subtitle", "open", stream}: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
+  {progress 0~100, "reader.buffering"}: error is buffering progress
+  {0/1, "thread.audio/video/subtitle", stream}: decoder thread is started (error = 1) and about to exit(error = 0)
+  {error, "snapshot", saved_file if no error and error string if error < 0}
 */
 class MediaEvent {
 public:

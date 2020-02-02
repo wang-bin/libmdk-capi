@@ -411,9 +411,13 @@ public:
         MDK_CALL(p, setRenderCallback, callback);
     }
 
-/*
+/*!
   \brief onFrame
-  called before delivering frame to renderers
+  A callback to be invoked before delivering a frame to renderers. Frame can be VideoFrame and AudioFrame(NOT IMPLEMENTED).
+  The callback can be used as a filter.
+  TODO: frames not in host memory
+  \param cb callback to be invoked. returns pendding number of frames. callback parameter is input and output frame. if input frame is an invalid frame, output a pendding frame.
+  For most filters, 1 input frame generates 1 output frame, then return 0.
  */
     template<class Frame>
     Player& onFrame(std::function<int(Frame&, int/*track*/)> cb);
