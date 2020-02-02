@@ -66,6 +66,11 @@ MDK_PixelFormat MDK_VideoFrame_format(mdkVideoFrame* p)
     return toC(p->frame.format());
 }
 
+bool MDK_VideoFrame_addBuffer(mdkVideoFrame* p, const uint8_t* data, int stride, void* buf, void (*bufDeleter)(void** pBuf), int plane)
+{
+    return p->frame.addBuffer(data, stride, buf, bufDeleter, plane);
+}
+
 void MDK_VideoFrame_setBuffers(mdkVideoFrame* p, uint8_t const** const data, int* strides/*in/out = nullptr*/)
 {
     p->frame.setBuffers(data, strides);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
  * Free for GPL softwares or non-commercial use.
@@ -34,6 +34,7 @@ typedef struct mdkVideoFrameAPI {
     int (*width)(mdkVideoFrame*, int plane /*=-1*/);
     int (*height)(mdkVideoFrame*, int plane /*=-1*/);
     MDK_PixelFormat (*format)(mdkVideoFrame*);
+    bool (*addBuffer)(mdkVideoFrame*, const uint8_t* data, int stride, void* buf, void (*bufDeleter)(void** pBuf), int plane);
     void (*setBuffers)(mdkVideoFrame*, uint8_t const** const data, int* strides/*in/out = nullptr*/);
     const uint8_t* (*bufferData)(mdkVideoFrame*, int plane);
     int (*bytesPerLine)(mdkVideoFrame*, int plane);
