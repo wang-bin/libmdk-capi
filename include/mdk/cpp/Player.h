@@ -628,7 +628,7 @@ private:
 
 
 template<>
-Player& Player::onFrame(std::function<int(VideoFrame&, int/*track*/)> cb)
+inline Player& Player::onFrame(std::function<int(VideoFrame&, int/*track*/)> cb)
 {
     video_cb_ = cb;
     mdkVideoCallback callback;
