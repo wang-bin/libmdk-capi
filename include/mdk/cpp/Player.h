@@ -300,6 +300,7 @@ public:
   Predefined properties are:
   - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
   - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
+  - "continue_at_end": do not stop playback when decode and render to end of stream. only setState(State::Stopped) can stop playback
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
@@ -416,7 +417,7 @@ public:
   A callback to be invoked before delivering a frame to renderers. Frame can be VideoFrame and AudioFrame(NOT IMPLEMENTED).
   The callback can be used as a filter.
   TODO: frames not in host memory
-  \param cb callback to be invoked. returns pendding number of frames. callback parameter is input and output frame. if input frame is an invalid frame, output a pendding frame.
+  \param cb callback to be invoked. returns pending number of frames. callback parameter is input and output frame. if input frame is an invalid frame, output a pending frame.
   For most filters, 1 input frame generates 1 output frame, then return 0.
  */
     template<class Frame>
@@ -458,12 +459,15 @@ public:
     }
 /*
   \brief bufferRange
-  duration range of buffered data.
-  minMs: wait for buffered duration >= minMs when before popping a packet to decode
-  drop = true: drop old non-key frame data to reduce buffered duration until less then maxMs.
-  drop = false: wait for buffered duration less than maxMs before buffering more data
+  set duration range of buffered data.
+  minMs: default 4000. wait for buffered duration >= minMs when before popping a packet from to decode
+  maxMs: default 16000. max buffered duration.
+  drop = true: drop old non-key frame packets to reduce buffered duration until < maxMs.
+  drop = false: wait for buffered duration < maxMs before pushing packets
+
+  Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, 1000, true) will decode as soon as possible when media data received, also it ensures the max delay of rendered video is 1s, and no accumulated delay.
  */
-    void setBufferRange(int64_t minMs, int64_t maxMs, bool drop = false) {
+    void setBufferRange(int64_t minMs = 4000, int64_t maxMs = 16000, bool drop = false) {
         MDK_CALL(p, setBufferRange, minMs, maxMs, drop);
     }
 /*!
@@ -636,9 +640,9 @@ inline Player& Player::onFrame(std::function<int(VideoFrame&, int/*track*/)> cb)
         VideoFrame frame;
         frame.attach(*pFrame);
         auto f = (std::function<int(VideoFrame&, int)>*)opaque;
-        auto penddings = (*f)(frame, track);
+        auto pendings = (*f)(frame, track);
         *pFrame = frame.detach();
-        return penddings;
+        return pendings;
     };
     callback.opaque = video_cb_ ? (void*)&video_cb_ : nullptr;
     MDK_CALL(p, onVideo, callback);

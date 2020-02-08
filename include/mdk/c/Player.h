@@ -10,14 +10,13 @@
 #pragma once
 #include "global.h"
 #include "RenderAPI.h"
-#include "VideoFrame.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 struct mdkMediaInfo;
 struct mdkAudioFrame;
-struct mdkVideoFrame;
+struct mdkVideoFrameAPI;
 struct mdkPlayer;
 
 enum MDK_SurfaceType {
@@ -214,7 +213,7 @@ typedef struct mdkPlayerAPI {
   \brief getVideoFrame
   get current rendered frame, i.e. the decoded video frame rendered by renderVideo()
  */
-    void (*getVideoFrame)(mdkPlayer*, mdkVideoFrame* frame, void* vo_opaque); /* NOT IMPLEMENTED*/
+    void (*getVideoFrame)(); /* NOT IMPLEMENTED*/
 /*
   \brief setVideoSurfaceSize
   Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.
@@ -264,12 +263,12 @@ typedef struct mdkPlayerAPI {
   \brief beforeVideoRender
   NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to apply GPU filters.
  */
-    void (*beforeVideoRender)(mdkPlayer*, void (*)(mdkVideoFrame*, void* vo_opaque));
+    void (*beforeVideoRender)(mdkPlayer*, void (*)(mdkVideoFrameAPI*, void* vo_opaque));
 /*
   \brief beforeVideoRender
   NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to draw a watermark.
  */
-    void (*afterVideoRender)(mdkPlayer*, void (*)(mdkVideoFrame*, void* vo_opaque));
+    void (*afterVideoRender)(mdkPlayer*, void (*)(mdkVideoFrameAPI*, void* vo_opaque));
 
     int64_t (*position)(mdkPlayer*);
     bool (*seekWithFlags)(mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
@@ -303,10 +302,13 @@ typedef struct mdkPlayerAPI {
     void (*onEvent)(mdkPlayer*, mdkMediaEventCallback cb, MDK_CallbackToken* token);
 /*
   \brief bufferRange
-  duration range of buffered data.
-  minMs: wait for buffered duration >= minMs when before popping a packet to decode
-  drop = true: drop old non-key frame data to reduce buffered duration until less then maxMs.
-  drop = false: wait for buffered duration less than maxMs before buffering more data
+  set duration range of buffered data.
+  minMs: default 4000. wait for buffered duration >= minMs when before popping a packet from to decode
+  maxMs: default 16000. max buffered duration.
+  drop = true: drop old non-key frame packets to reduce buffered duration until < maxMs.
+  drop = false: wait for buffered duration < maxMs before pushing packets
+
+  Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, 1000, true) will decode as soon as possible when media data received, also it ensures the max delay of rendered video is 1s, and no accumulated delay.
  */
     void (*setBufferRange)(mdkPlayer*, int64_t minMs, int64_t maxMs, bool drop);
 /*!
@@ -323,6 +325,7 @@ typedef struct mdkPlayerAPI {
   Predefined properties are:
   - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
   - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
+  - "continue_at_end": do not stop playback when decode and render to end of stream. only setState(State::Stopped) can stop playback
  */
     void (*setProperty)(mdkPlayer*, const char* key, const char* value);
 /*!

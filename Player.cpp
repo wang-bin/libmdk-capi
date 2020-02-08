@@ -3,6 +3,7 @@
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
+#include "mdk/c/VideoFrame.h"
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
 #include "mdk/VideoFrame.h"
@@ -378,7 +379,7 @@ void MDK_Player_setProperty(mdkPlayer* p, const char* key, const char* value)
 
 const char* MDK_Player_getProperty(mdkPlayer* p, const char* key)
 {
-    auto value = p->property(key);
+    const auto& value = p->property(key);
     if (value.empty())
         return nullptr;
     return value.data();
