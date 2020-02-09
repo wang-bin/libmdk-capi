@@ -7,6 +7,7 @@
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
 #include "mdk/VideoFrame.h"
+#include "mdk/RenderAPI.h"
 #include "MediaInfoInternal.h"
 #include <cassert>
 #include <cstdlib>
@@ -16,6 +17,7 @@ using namespace MDK_NS;
 
 extern mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame);
 extern VideoFrame MDK_VideoFrame_fromC(mdkVideoFrameAPI* p);
+extern unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data);
 
 struct mdkPlayer : Player{
     MediaInfoInternal media_info;
@@ -221,7 +223,7 @@ void MDK_Player_scale(mdkPlayer* p, float x, float y, void* vo_opaque)
 
 void MDK_Player_setRenderAPI(mdkPlayer* p, mdkRenderAPI* api, void* vo_opaque)
 {
-    p->setRenderAPI(reinterpret_cast<RenderAPI*>(api), vo_opaque);
+    p->setRenderAPI(from_c(*reinterpret_cast<MDK_RenderAPI*>(api), api).get(), vo_opaque);
 }
 
 mdkRenderAPI* MDK_Player_renderAPI(mdkPlayer* p, void* vo_opaque)
