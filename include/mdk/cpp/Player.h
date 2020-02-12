@@ -426,7 +426,10 @@ public:
     int64_t position() const {
         return MDK_CALL(p, position);
     }
-
+/*!
+  \brief seek
+  \param cb callback to be invoked when seek finished(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
+ */
     bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t)> cb = nullptr) {
         seek_cb_ = cb;
         mdkSeekCallback callback;

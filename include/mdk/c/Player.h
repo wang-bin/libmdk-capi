@@ -271,6 +271,10 @@ typedef struct mdkPlayerAPI {
     void (*afterVideoRender)(mdkPlayer*, void (*)(mdkVideoFrameAPI*, void* vo_opaque));
 
     int64_t (*position)(mdkPlayer*);
+/*!
+  \brief seekWithFlags
+  \param cb callback to be invoked when seek finished(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
+ */
     bool (*seekWithFlags)(mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
     bool (*seek)(mdkPlayer*, int64_t pos, mdkSeekCallback);
 
