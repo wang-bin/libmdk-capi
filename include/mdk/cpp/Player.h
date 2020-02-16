@@ -388,7 +388,7 @@ public:
     }
 /*!
   \brief setBackgroundColor
-  r, g, b, a range is [0, 1]. default is 0. if out of range, background color will not be filled
+  r, g, b, a range is [0, 1]. default is 0. if out of range or a == 0, background color will not be filled
  */
     void setBackgroundColor(float r, float g, float b, float a, void* vo_opaque = nullptr) {
         return MDK_CALL(p, setBackgroundColor, r, g, b, a, vo_opaque);
