@@ -9,6 +9,7 @@
  */
 #pragma once
 #include "../c/global.h"
+#include <cassert>
 #include <functional>
 #include <memory>
 #include <string>
@@ -19,6 +20,8 @@
 # define MDK_NS_BEGIN namespace MDK_NS {
 # define MDK_NS_END }
 # define MDK_NS_PREPEND(X) ::MDK_NS::X
+
+#define MDK_CALL(p, FN, ...) (assert(p->FN && "NOT IMPLEMENTED"), p->FN(p->object, ##__VA_ARGS__))
 
 MDK_NS_BEGIN
 constexpr double TimeScaleForInt = 1000.0; // ms
@@ -110,7 +113,7 @@ typedef State PlaybackState;
 
 enum class SeekFlag {
     /// choose one of FromX
-    From0       = 1,    /// relative to time 0
+    From0       = 1,    /// relative to time 0. TODO: remove from api
     FromStart   = 1<<1, /// relative to media start position
     FromNow     = 1<<2, /// relative to current position, the seek position can be negative
     /// combine the above values with one of the following

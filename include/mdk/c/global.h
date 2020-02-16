@@ -41,8 +41,6 @@
 extern "C" {
 #endif
 
-#define MDK_CALL(p, FN, ...) p->FN(p->object, ##__VA_ARGS__)
-
 /*!
   \brief CallbackToken
   A callback can be registered by (member)function onXXX(obj, callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).
