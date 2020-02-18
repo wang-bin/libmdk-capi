@@ -335,9 +335,9 @@ public:
 /*!
   \brief setAspectRatio
   Video display aspect ratio.
-  0: ignore aspect ratio and scale to fit renderer viewport
-  -1(default): keep frame aspect ratio and scale as large as possible inside renderer viewport
-  -2: keep frame aspect ratio and scale as small as possible outside renderer viewport
+  IgnoreAspectRatio(0): ignore aspect ratio and scale to fit renderer viewport
+  KeepAspectRatio(-1, default): keep frame aspect ratio and scale as large as possible inside renderer viewport
+  KeepAspectRatioCrop(-2): keep frame aspect ratio and scale as small as possible outside renderer viewport
  */
     void setAspectRatio(float value, void* vo_opaque = nullptr) {
         MDK_CALL(p, setAspectRatio, value, vo_opaque);
@@ -388,7 +388,7 @@ public:
     }
 /*!
   \brief setBackgroundColor
-  r, g, b, a range is [0, 1]. default is 0. if out of range or a == 0, background color will not be filled
+  r, g, b, a range is [0, 1]. default is 0. if out of range, background color will not be filled
  */
     void setBackgroundColor(float r, float g, float b, float a, void* vo_opaque = nullptr) {
         return MDK_CALL(p, setBackgroundColor, r, g, b, a, vo_opaque);
