@@ -10,6 +10,7 @@
 #pragma once
 #include "../c/global.h"
 #include <cassert>
+#include <cfloat>
 #include <functional>
 #include <memory>
 #include <string>
@@ -26,8 +27,11 @@
 MDK_NS_BEGIN
 constexpr double TimeScaleForInt = 1000.0; // ms
 constexpr float IgnoreAspectRatio = 0; // stretch, ROI etc.
-constexpr float KeepAspectRatio = -1;
-constexpr float KeepAspectRatioCrop = -2; // expand and crop
+// aspect ratio > 0: keep the given aspect ratio and scale as large as possible inside target rectangle
+constexpr float KeepAspectRatio = FLT_EPSILON; // expand using original aspect ratio
+// aspect ratio < 0: keep the given aspect ratio and scale as small as possible outside renderer viewport
+constexpr float KeepAspectRatioCrop = -FLT_EPSILON; // expand and crop using original aspect ratio
+
 /*!
   \brief CallbackToken
   A callback can be registered by (member)function onXXX(callback, CallbackToken* token = nullptr). With the returned token we can remove the callback by onXXX(nullptr, token).

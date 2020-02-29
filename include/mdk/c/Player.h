@@ -225,8 +225,10 @@ typedef struct mdkPlayerAPI {
   \brief setAspectRatio
   Video display aspect ratio.
   0: ignore aspect ratio and scale to fit renderer viewport
-  -1(default): keep frame aspect ratio and scale as large as possible inside renderer viewport
-  -2: keep frame aspect ratio and scale as small as possible outside renderer viewport
+  FLT_EPSILON(default): keep frame aspect ratio and scale as large as possible inside renderer viewport
+  -FLT_EPSILON: keep frame aspect ratio and scale as small as possible outside renderer viewport
+  other value > 0: keep given aspect ratio and scale as large as possible inside renderer viewport
+  other value < 0: keep given aspect ratio and scale as small as possible inside renderer viewport
  */
     void (*setAspectRatio)(mdkPlayer*, float value, void* vo_opaque);
     void (*rotate)(mdkPlayer*, int degree, void* vo_opaque);

@@ -336,8 +336,10 @@ public:
   \brief setAspectRatio
   Video display aspect ratio.
   IgnoreAspectRatio(0): ignore aspect ratio and scale to fit renderer viewport
-  KeepAspectRatio(-1, default): keep frame aspect ratio and scale as large as possible inside renderer viewport
-  KeepAspectRatioCrop(-2): keep frame aspect ratio and scale as small as possible outside renderer viewport
+  KeepAspectRatio(default): keep frame aspect ratio and scale as large as possible inside renderer viewport
+  KeepAspectRatioCrop: keep frame aspect ratio and scale as small as possible outside renderer viewport
+  other value > 0: like KeepAspectRatio, but keep given aspect ratio and scale as large as possible inside renderer viewport
+  other value < 0: like KeepAspectRatioCrop, but keep given aspect ratio and scale as small as possible inside renderer viewport
  */
     void setAspectRatio(float value, void* vo_opaque = nullptr) {
         MDK_CALL(p, setAspectRatio, value, vo_opaque);
