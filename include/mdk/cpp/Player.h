@@ -81,7 +81,8 @@ public:
   Gapless play the next media after current media playback end
   \param flags seek flags if startPosition > 0, accurate or fast
   setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) first to disable next media.
- */
+  Usually call `currentMediaChanged()` first and `setNextMedia()` is called in the callback, then call `setMedia()`
+*/
     void setNextMedia(const char* url, int64_t startPosition = 0, SeekFlag flags = SeekFlag::FromStart) {
         MDK_CALL(p, setNextMedia, url, startPosition, MDKSeekFlag(flags));
     }
@@ -327,11 +328,14 @@ public:
     void setVideoSurfaceSize(int width, int height, void* vo_opaque = nullptr) {
         MDK_CALL(p, setVideoSurfaceSize, width, height, vo_opaque);
     }
-
+/*!
+  \brief setVideoViewport
+  The rectangular viewport where the scene will be drawn relative to surface viewport.
+  x, y, w, h are normalized to [0, 1]
+*/
     void setVideoViewport(float x, float y, float w, float h, void* vo_opaque = nullptr) {
         MDK_CALL(p, setVideoViewport, x, y, w, h, vo_opaque);
     }
-
 /*!
   \brief setAspectRatio
   Video display aspect ratio.
@@ -344,13 +348,34 @@ public:
     void setAspectRatio(float value, void* vo_opaque = nullptr) {
         MDK_CALL(p, setAspectRatio, value, vo_opaque);
     }
-
+/*!
+  \brief rotate
+  rotate around video frame center
+  \param degree: 0, 90, 180, 270, counterclockwise
+ */
     void rotate(int degree, void* vo_opaque = nullptr) {
         MDK_CALL(p, rotate, degree, vo_opaque);
     }
-
+/*!
+  \brief scale
+  scale frame size. x, y can be < 0, means scale and flip.
+*/
     void scale(float x, float y, void* vo_opaque = nullptr) {
         MDK_CALL(p, scale, x, y, vo_opaque);
+    }
+
+    enum MapDirection {
+        FrameToViewport, // left-hand
+        ViewportToFrame, // left-hand
+    };
+/*!
+  \brief mapPoint
+  map a point from one coordinates to another. a frame must be rendered. coordinates is normalized to [0, 1].
+  \param x points to x coordinate of viewport or currently rendered video frame
+  \param z not used
+*/
+    void mapPoint(MapDirection dir, float* x, float* y, float* z = nullptr, void* vo_opaque = nullptr) {
+        MDK_CALL(p, mapPoint, MDK_MapDirection(dir), x, y, z, vo_opaque);
     }
 
 /*
@@ -375,7 +400,7 @@ public:
   \brief renderApi()
   get render api. For offscreen rendering, may only api type be valid in setRenderAPI(), and other members are filled internally, and used by user after renderVideo()
  */
-    RenderAPI* renderAPI(void* vo_opaque = nullptr) {
+    RenderAPI* renderAPI(void* vo_opaque = nullptr) const {
         return reinterpret_cast<RenderAPI*>(MDK_CALL(p, renderAPI, vo_opaque));
     }
 
@@ -424,7 +449,10 @@ public:
  */
     template<class Frame>
     Player& onFrame(std::function<int(Frame&, int/*track*/)> cb);
-
+/*!
+  \brief position
+  Current playback time in milliseconds. Relative to media's first timestamp, which usually is 0.
+ */
     int64_t position() const {
         return MDK_CALL(p, position);
     }
@@ -456,7 +484,7 @@ public:
     }
 /*!
  * \brief buffered
- * get buffered data duration and size
+ * get buffered undecoded data duration and size
  * \return buffered data(packets) duration
  */
     int64_t buffered(int64_t* bytes = nullptr) const {
@@ -512,6 +540,7 @@ public:
 
 /*!
   \brief onEvent
+  Add/Remove a [MediaEvent](https://github.com/wang-bin/mdk-sdk/wiki/Types#class-mediaevent) listener, or remove listeners.
   callback return: true if event is processed and should stop dispatching.
  */
     Player& onEvent(std::function<bool(const MediaEvent&)> cb, CallbackToken* token = nullptr) {
@@ -557,14 +586,6 @@ public:
         MDK_CALL(p, record, url, format);
     }
 
-/*!
-  \brief setLoop
-  DEPRECATED! use setLoop+setRange instead
- */
-    void setLoop(int count, int64_t a, int64_t b = INT64_MAX) {
-        setLoop(count);
-        setRange(a, b);
-    }
 /*!
   \brief setLoop
   Set A-B loop repeat count.

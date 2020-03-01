@@ -106,6 +106,11 @@ typedef struct mdkSnapshotRequest {
     bool subtitle; // not supported yet
 } mdkSnapshotRequest;
 
+enum MDK_MapDirection {
+    MDK_MapDirection_FrameToViewport, // left-hand
+    MDK_MapDirection_ViewportToFrame, // left-hand
+};
+
 typedef struct mdkSnapshotCallback {
 /* \brief cb
    snapshot callback.
@@ -393,7 +398,14 @@ typedef struct mdkPlayerAPI {
  */
     mdkRenderAPI* (*renderAPI)(mdkPlayer*, void* vo_opaque);
 
-    void* reserved[11];
+/*!
+  \brief mapPoint
+  map a point from one coordinates to another. a frame must be rendered. coordinates is normalized to [0, 1].
+  \param x points to x coordinate of viewport or currently rendered video frame
+  \param z not used
+*/
+    void (*mapPoint)(mdkPlayer*, MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque);
+    void* reserved[10];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();

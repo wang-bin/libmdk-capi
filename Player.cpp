@@ -419,6 +419,11 @@ void MDK_Player_setRange(mdkPlayer* p, int64_t a, int64_t b)
     p->setRange(a, b);
 }
 
+void MDK_Player_mapPoint(mdkPlayer* p, MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque)
+{
+    p->mapPoint(Player::MapDirection(dir), x, y, z, vo_opaque);
+}
+
 mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -478,6 +483,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setRenderAPI);
     SET_API(renderAPI);
     SET_API(onVideo);
+    SET_API(mapPoint);
 #undef SET_API
     return p;
 }
