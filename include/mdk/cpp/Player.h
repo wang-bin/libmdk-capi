@@ -636,6 +636,22 @@ public:
     void setRange(int64_t a, int64_t b = INT64_MAX) {
         MDK_CALL(p, setRange, a, b);
     }
+
+/*!
+  \brief onSync
+  cb: called when about to render a frame. return expected current playback position(seconds). sync callback clock should handle pause, resume, seek and seek finish events
+ */
+    Player& onSync(std::function<double()> cb) {
+        sync_cb_ = cb;
+        mdkSyncCallback callback;
+        callback.cb = [](void* opaque){
+            auto f = (std::function<double()>*)opaque;
+            return (*f)();
+        };
+        callback.opaque = sync_cb_ ? (void*)&sync_cb_ : nullptr;
+        MDK_CALL(p, onSync, callback);
+        return *this;
+    }
 private:
     mdkPlayerAPI* p = nullptr;
     std::function<void()> current_cb_ = nullptr;
@@ -648,6 +664,7 @@ private:
     std::function<void(bool)> switch_cb_ = nullptr;
     SnapshotCallback snapshot_cb_ = nullptr;
     std::function<int(VideoFrame&, int/*track*/)> video_cb_ = nullptr;
+    std::function<double()> sync_cb_ = nullptr;
     std::map<CallbackToken, std::function<bool(const MediaEvent&)>> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
     std::map<CallbackToken, std::function<void(int)>> loop_cb_; // rb tree, elements never destroyed

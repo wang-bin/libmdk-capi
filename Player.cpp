@@ -424,6 +424,13 @@ void MDK_Player_mapPoint(mdkPlayer* p, MDK_MapDirection dir, float* x, float* y,
     p->mapPoint(Player::MapDirection(dir), x, y, z, vo_opaque);
 }
 
+void MDK_Player_onSync(mdkPlayer* p, mdkSyncCallback cb)
+{
+    p->onSync([cb]{
+        return cb.cb(cb.opaque);
+    });
+}
+
 mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -484,6 +491,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(renderAPI);
     SET_API(onVideo);
     SET_API(mapPoint);
+    SET_API(onSync);
 #undef SET_API
     return p;
 }

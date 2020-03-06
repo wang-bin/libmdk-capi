@@ -125,6 +125,11 @@ typedef struct mdkSnapshotCallback {
     void* opaque;
 } mdkSnapshotCallback;
 
+typedef struct mdkSyncCallback {
+    double (*cb)(void* opaque);
+    void* opaque;
+} mdkSyncCallback;
+
 
 typedef struct mdkPlayerAPI {
     mdkPlayer* object;
@@ -405,7 +410,9 @@ typedef struct mdkPlayerAPI {
   \param z not used
 */
     void (*mapPoint)(mdkPlayer*, MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque);
-    void* reserved[10];
+    void (*onSync)(mdkPlayer*, mdkSyncCallback cb);
+
+    void* reserved[9];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
