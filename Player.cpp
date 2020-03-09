@@ -424,11 +424,11 @@ void MDK_Player_mapPoint(mdkPlayer* p, MDK_MapDirection dir, float* x, float* y,
     p->mapPoint(Player::MapDirection(dir), x, y, z, vo_opaque);
 }
 
-void MDK_Player_onSync(mdkPlayer* p, mdkSyncCallback cb)
+void MDK_Player_onSync(mdkPlayer* p, mdkSyncCallback cb, int minInterval)
 {
     p->onSync([cb]{
         return cb.cb(cb.opaque);
-    });
+    }, minInterval);
 }
 
 mdkPlayerAPI* mdkPlayerAPI_new()

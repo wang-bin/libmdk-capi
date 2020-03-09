@@ -410,7 +410,7 @@ typedef struct mdkPlayerAPI {
   \param z not used
 */
     void (*mapPoint)(mdkPlayer*, MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque);
-    void (*onSync)(mdkPlayer*, mdkSyncCallback cb);
+    void (*onSync)(mdkPlayer*, mdkSyncCallback cb, int minInterval);
 
     void* reserved[9];
 } mdkPlayerAPI;

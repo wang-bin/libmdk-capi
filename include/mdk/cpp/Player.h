@@ -641,7 +641,7 @@ public:
   \brief onSync
   cb: called when about to render a frame. return expected current playback position(seconds). sync callback clock should handle pause, resume, seek and seek finish events
  */
-    Player& onSync(std::function<double()> cb) {
+    Player& onSync(std::function<double()> cb, int minInterval) {
         sync_cb_ = cb;
         mdkSyncCallback callback;
         callback.cb = [](void* opaque){
@@ -649,7 +649,7 @@ public:
             return (*f)();
         };
         callback.opaque = sync_cb_ ? (void*)&sync_cb_ : nullptr;
-        MDK_CALL(p, onSync, callback);
+        MDK_CALL(p, onSync, callback, minInterval);
         return *this;
     }
 private:
