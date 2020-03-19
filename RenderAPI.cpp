@@ -23,6 +23,10 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
     case MDK_RenderAPI_D3D11: {
         auto c = static_cast<mdkD3D11RenderAPI*>(data);
         auto api = make_unique<D3D11RenderAPI>(c->context, c->rtv);
+        api->debug = c->debug;
+        api->buffers = c->buffers;
+        api->adapter = c->buffers;
+        api->feature_level = c->buffers;
         return api;
     }
 #endif // defined(D3D11_SDK_VERSION)

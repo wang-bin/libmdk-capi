@@ -37,6 +37,14 @@ struct D3D11RenderAPI : RenderAPI {
     ID3D11DeviceContext* context = nullptr;
     ID3D11RenderTargetView* rtv = nullptr;
     void* reserved[2];
+
+/*
+  options. as input, they are desired values. as output, they are result values(if context is not provided by user)
+*/
+    bool debug = false;
+    int buffers = 2; /* UWP must >= 2. */
+    int adapter = 0; /* adapter index */
+    float feature_level = 0; /* 0 is the highest */
 };
 #endif
 
