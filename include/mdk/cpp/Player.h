@@ -113,7 +113,7 @@ public:
         MDK_CALL(p, setAudioDecoders, s.data());
     }
 
-// see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#setdecodernamesconst-stdvectorstdstring-names
+// see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setvideodecodersconst-stdvectorstdstring-names
     void setVideoDecoders(const std::vector<std::string>& names) {
         std::vector<const char*> s(names.size() + 1, nullptr);
         for (size_t i = 0; i < names.size(); ++i)
@@ -641,7 +641,7 @@ public:
   \brief onSync
   cb: called when about to render a frame. return expected current playback position(seconds). sync callback clock should handle pause, resume, seek and seek finish events
  */
-    Player& onSync(std::function<double()> cb, int minInterval) {
+    Player& onSync(std::function<double()> cb, int minInterval = 10) {
         sync_cb_ = cb;
         mdkSyncCallback callback;
         callback.cb = [](void* opaque){
