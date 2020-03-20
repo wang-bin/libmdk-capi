@@ -25,7 +25,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         auto api = make_unique<D3D11RenderAPI>(c->context, c->rtv);
         api->debug = c->debug;
         api->buffers = c->buffers;
-        api->adapter = c->buffers;
+        api->adapter = c->adapter;
         api->feature_level = c->buffers;
         return api;
     }

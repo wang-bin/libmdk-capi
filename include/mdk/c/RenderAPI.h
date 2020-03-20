@@ -33,9 +33,9 @@ struct mdkD3D11RenderAPI {
 /*
   options. as input, they are desired values. as output, they are result values(if context is not provided by user)
 */
-    bool debug = false;
-    int buffers = 2; /* UWP must >= 2. */
-    int adapter = 0; /* adapter index */
-    float feature_level = 0; /* 0 is the highest */
+    bool debug;
+    int buffers; /* UWP must >= 2. */
+    int adapter; /* adapter index */
+    float feature_level; /* 0 is the highest */
 };
 #endif
