@@ -16,6 +16,23 @@ enum MDK_RenderAPI {
  */
 typedef struct mdkRenderAPI mdkRenderAPI;
 
+struct mdkGLRenderAPI {
+    MDK_RenderAPI type;
+    void* (*getProcAddress)(const char* name, void* userData); /* NOT IMPLENETED */
+    void* (*getCurrentNativeContext)(void* userData); /* NOT IMPLENETED */
+    void* userData; /* NOT IMPLENETED */
+    void* nativeContext; /* NOT IMPLENETED. prefer this over getProcAddress if not null */
+
+/* context creation options. */
+    bool debug; /* default false. NOT IMPLENETED */
+    int8_t egl; /* default -1. -1: auto. 0: no, 1: yes */
+/* if any one of opengl and opengles is 0, then another is treated as 1 */
+    int8_t opengl; /* default -1. -1: auto. 0: no, 1: yes */
+    int8_t opengles; /* default -1. -1: auto. 0: no, 1: yes */
+    uint8_t profile; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
+    float version; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
+};
+
 /*!
   NOTE: include d3d11.h first to use D3D11RenderAPI
  */

@@ -22,6 +22,33 @@ protected:
     Type type_ = Type::Invalid;
 };
 
+
+struct GLRenderAPI final: RenderAPI {
+    GLRenderAPI() {
+        type_ = RenderAPI::OpenGL;
+    }
+
+    void* (*getProcAddress)(const char* name, void* userData); /* NOT IMPLENETED */
+    void* (*getCurrentNativeContext)(void* userData); /* NOT IMPLENETED */
+    void* userData; /* NOT IMPLENETED */
+    void* nativeContext; /* NOT IMPLENETED. prefer this over getProcAddress if not null */
+
+/* context creation options. */
+    enum class Profile : uint8_t {
+        No,
+        Core,
+        Compatibility,
+    };
+
+    bool debug = false; /* default false. NOT IMPLENETED */
+    int8_t egl = -1; /* default -1. -1: auto. 0: no, 1: try */
+/* if any one of opengl and opengles is 0, then another is treated as 1 */
+    int8_t opengl = -1; /* default -1. -1: auto. 0: no, 1: try */
+    int8_t opengles = -1; /* default -1. -1: auto. 0: no, 1: try */
+    Profile profile = Profile::Core; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
+    float version = 0; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
+};
+
 /*!
   NOTE: include d3d11.h first to use D3D11RenderAPI
  */
