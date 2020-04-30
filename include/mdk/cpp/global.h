@@ -25,6 +25,7 @@
 #define MDK_CALL(p, FN, ...) (assert(p->FN && "NOT IMPLEMENTED"), p->FN(p->object, ##__VA_ARGS__))
 
 MDK_NS_BEGIN
+constexpr double TimestampEOS = DBL_MAX;
 constexpr double TimeScaleForInt = 1000.0; // ms
 constexpr float IgnoreAspectRatio = 0; // stretch, ROI etc.
 // aspect ratio > 0: keep the given aspect ratio and scale as large as possible inside target rectangle
