@@ -147,6 +147,7 @@ MDK_API void MDK_setLogHandler(mdkLogHandler);
 */
 MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
 MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
+MDK_API void MDK_setGlobalOptionPtr(const char* key, void* value);
 /*
   events:
   {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd

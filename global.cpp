@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/global.h"
 #include "mdk/global.h"
@@ -20,7 +20,7 @@ MDK_LogLevel MDK_logLevel() {
 void MDK_setLogHandler(mdkLogHandler h) {
     if (!h.opaque) {
        setLogHandler(nullptr);
-       return; 
+       return;
     }
     setLogHandler([h](LogLevel value, const char* msg){
         h.cb(MDK_LogLevel(value), msg, h.opaque);
@@ -37,4 +37,8 @@ void MDK_setGlobalOptionInt32(const char* key, int value)
     SetGlobalOption(key, value);
 }
 
+void MDK_setGlobalOptionPtr(const char* key, void* value)
+{
+    SetGlobalOption(key, value);
+}
 } // extern "C"

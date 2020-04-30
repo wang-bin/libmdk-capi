@@ -186,6 +186,11 @@ static inline void SetGlobalOption(const char* key, int value)
     MDK_setGlobalOptionInt32(key, value);
 }
 
+static inline void SetGlobalOption(const char* key, void* value)
+{
+    MDK_setGlobalOptionPtr(key, value);
+}
+
 /*
   events:
   {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd
