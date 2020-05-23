@@ -30,6 +30,17 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->version = c->version;
         return api;
     }
+    case MDK_RenderAPI_Metal: {
+        auto c = static_cast<mdkMetalRenderAPI*>(data);
+        auto api = make_unique<MetalRenderAPI>();
+        api->device = c->device;
+        api->cmdQueue = c->cmdQueue;
+        api->texture = c->texture;
+        api->opaque = c->opaque;
+        api->currentRenderTarget = c->currentRenderTarget;
+        api->device_index = c->device_index;
+        return api;
+    }
 #if defined(D3D11_SDK_VERSION)
     case MDK_RenderAPI_D3D11: {
         auto c = static_cast<mdkD3D11RenderAPI*>(data);

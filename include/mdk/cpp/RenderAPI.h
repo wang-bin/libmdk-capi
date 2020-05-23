@@ -14,6 +14,7 @@ struct RenderAPI {
     enum Type {
         Invalid,
         OpenGL = 1,
+        Metal = 3,
         D3D11 = 4,
     };
 
@@ -27,13 +28,16 @@ struct GLRenderAPI final: RenderAPI {
     GLRenderAPI() {
         type_ = RenderAPI::OpenGL;
     }
-
+/*** Render Context Resources. Foreign context (provided by user) only ***/
     void* (*getProcAddress)(const char* name, void* userData); /* NOT IMPLENETED */
     void* (*getCurrentNativeContext)(void* userData); /* NOT IMPLENETED */
     void* userData; /* NOT IMPLENETED */
     void* nativeContext; /* NOT IMPLENETED. prefer this over getProcAddress if not null */
 
-/* context creation options. */
+/***
+  Render Context Creation Options.
+  as input, they are desired values to create an internal context(ignored if context is provided by user). as output, they are result values(if context is not provided by user)
+***/
     enum class Profile : uint8_t {
         No,
         Core,
@@ -49,6 +53,29 @@ struct GLRenderAPI final: RenderAPI {
     float version = 0; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
 };
 
+struct MetalRenderAPI final: RenderAPI {
+    MetalRenderAPI() {
+        type_ = RenderAPI::Metal;
+    }
+/*** Render Context Resources. Foreign context (provided by user) only ***/
+// id<?> => void*: to be compatible with c++
+    void* device = nullptr; // MUST set if metal is provided by user
+    void* cmdQueue = nullptr; // optional. if not null, device can be null. currentQueue callback to share the same command buffer?
+/* one of texture and currentRenderTarget MUST be set if metal is provided by user */
+    void* texture = nullptr; // optional. id<MTLTexture>. if not null, device can be null. usually for offscreen rendering. render target for MTLRenderPassDescriptor if encoder is not provided by user. set once for offscreen rendering
+    void* opaque = nullptr; // optional. callback opaque
+    void* (*currentRenderTarget)(void* opaque) = nullptr; // optional. usually for on screen rendering. return id<MTLTexture>.
+    // no encoder because we need own render pass
+    void* reserved[2];
+
+/***
+  Render Context Creation Options.
+  as input, they are desired values to create an internal context(ignored if context is provided by user). as output, they are result values(if context is not provided by user)
+***/
+    // device options: macOS only
+    int device_index = -1; // -1 will use system default device. callback with index+name?
+};
+
 /*!
   NOTE: include d3d11.h first to use D3D11RenderAPI
  */
@@ -57,6 +84,7 @@ struct D3D11RenderAPI : RenderAPI {
     D3D11RenderAPI(ID3D11DeviceContext* c = nullptr, ID3D11RenderTargetView* r = nullptr) : context(c), rtv(r) {
         type_ = RenderAPI::D3D11;
     }
+/*** Render Context Resources. Foreign context (provided by user) only ***/
 /*
   context and rtv can be set by user if user can provide. then rendering becomes foreign context mode.
   \sa Player.setRenderAPI()
@@ -65,9 +93,10 @@ struct D3D11RenderAPI : RenderAPI {
     ID3D11RenderTargetView* rtv = nullptr;
     void* reserved[2];
 
-/*
-  options. as input, they are desired values. as output, they are result values(if context is not provided by user)
-*/
+/***
+  Render Context Creation Options.
+  as input, they are desired values to create an internal context(ignored if context is provided by user). as output, they are result values(if context is not provided by user)
+***/
     bool debug = false;
     int buffers = 2; /* UWP must >= 2. */
     int adapter = 0; /* adapter index */
