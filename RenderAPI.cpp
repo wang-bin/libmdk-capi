@@ -20,7 +20,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         auto api = make_unique<GLRenderAPI>();
         api->getProcAddress = c->getProcAddress;
         api->getCurrentNativeContext = c->getCurrentNativeContext;
-        api->userData = c->userData;
+        api->opaque = c->opaque;
         api->nativeContext = c->nativeContext;
         api->debug = c->debug;
         api->egl = c->egl;

@@ -29,9 +29,9 @@ struct GLRenderAPI final: RenderAPI {
         type_ = RenderAPI::OpenGL;
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
-    void* (*getProcAddress)(const char* name, void* userData); /* NOT IMPLENETED */
-    void* (*getCurrentNativeContext)(void* userData); /* NOT IMPLENETED */
-    void* userData; /* NOT IMPLENETED */
+    void* (*getProcAddress)(const char* name, void* opaque); /* NOT IMPLENETED */
+    void* (*getCurrentNativeContext)(void* opaque); /* NOT IMPLENETED */
+    void* opaque; /* NOT IMPLENETED */
     void* nativeContext; /* NOT IMPLENETED. prefer this over getProcAddress if not null */
 
 /***
@@ -51,6 +51,7 @@ struct GLRenderAPI final: RenderAPI {
     int8_t opengles = -1; /* default -1. -1: auto. 0: no, 1: try */
     Profile profile = Profile::Core; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
     float version = 0; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
+    int8_t reserved[32];
 };
 
 struct MetalRenderAPI final: RenderAPI {
