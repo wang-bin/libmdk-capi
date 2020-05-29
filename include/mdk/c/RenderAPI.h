@@ -69,10 +69,12 @@ struct mdkD3D11RenderAPI {
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 /*
   context and rtv can be set by user if user can provide. then rendering becomes foreign context mode.
+  if rtv is not null, no need to set context
   \sa Player.setRenderAPI()
  */
     ID3D11DeviceContext* context;
-    ID3D11RenderTargetView* rtv;
+    // rtv or texture. usually user can provide a texture from gui easly, no d3d code to create a view
+    ID3D11DeviceChild* rtv; // optional. the render target(view). ID3D11RenderTargetView or ID3D11Texture2D. can be null if context is not null. if not null, no need to set context
     void* reserved[2];
 
 /***

@@ -82,16 +82,18 @@ struct MetalRenderAPI final: RenderAPI {
  */
 #if defined(D3D11_SDK_VERSION)
 struct D3D11RenderAPI : RenderAPI {
-    D3D11RenderAPI(ID3D11DeviceContext* c = nullptr, ID3D11RenderTargetView* r = nullptr) : context(c), rtv(r) {
+    D3D11RenderAPI(ID3D11DeviceContext* c = nullptr, ID3D11DeviceChild* r = nullptr) : context(c), rtv(r) {
         type_ = RenderAPI::D3D11;
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 /*
   context and rtv can be set by user if user can provide. then rendering becomes foreign context mode.
+  if rtv is not null, no need to set context
   \sa Player.setRenderAPI()
  */
     ID3D11DeviceContext* context = nullptr;
-    ID3D11RenderTargetView* rtv = nullptr;
+    // rtv or texture. usually user can provide a texture from gui easly, no d3d code to create a view
+    ID3D11DeviceChild* rtv = nullptr; // optional. the render target(view). ID3D11RenderTargetView or ID3D11Texture2D. can be null if context is not null. if not null, no need to set context
     void* reserved[2];
 
 /***
