@@ -20,10 +20,11 @@ typedef struct mdkRenderAPI mdkRenderAPI;
 struct mdkGLRenderAPI {
     MDK_RenderAPI type;
 /*** Render Context Resources. Foreign context (provided by user) only ***/
+    int fbo; // if >=0, will draw in given fbo. no need to bind in user code
+    int unused;
     void* (*getProcAddress)(const char* name, void* opaque); /* NOT IMPLENETED */
     void* (*getCurrentNativeContext)(void* opaque); /* NOT IMPLENETED */
     void* opaque; /* NOT IMPLENETED */
-    void* nativeContext; /* NOT IMPLENETED. prefer this over getProcAddress if not null */
 
 /***
   Render Context Creation Options.

@@ -29,10 +29,11 @@ struct GLRenderAPI final: RenderAPI {
         type_ = RenderAPI::OpenGL;
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
+    int fbo = -1; // if >=0, will draw in given fbo. no need to bind in user code
+    int unused;
     void* (*getProcAddress)(const char* name, void* opaque); /* NOT IMPLENETED */
     void* (*getCurrentNativeContext)(void* opaque); /* NOT IMPLENETED */
     void* opaque; /* NOT IMPLENETED */
-    void* nativeContext; /* NOT IMPLENETED. prefer this over getProcAddress if not null */
 
 /***
   Render Context Creation Options.
