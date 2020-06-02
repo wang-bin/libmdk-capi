@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
  * Free for GPL softwares or non-commercial use.
@@ -115,13 +115,11 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         info->metadata[entry.key] = entry.value;
     for (int i = 0; i < cinfo->nb_chapters; ++i) {
         auto cci = &cinfo->chapters[i];
-        std::string title;
-        if (cci->title)
-            title = cci->title;
         ChapterInfo ci;
         ci.start_time = cci->start_time;
         ci.end_time = cci->end_time;
-        ci.title = cci->title;
+        if (cci->title)
+            ci.title = cci->title;
         info->chapters.emplace_back(std::move(ci));
     }
     for (int i = 0; i < cinfo->nb_audio; ++i) {
