@@ -122,7 +122,8 @@ enum class SeekFlag {
     FromStart   = 1<<1, /// relative to media start position
     FromNow     = 1<<2, /// relative to current position, the seek position can be negative
     /// combine the above values with one of the following
-    KeyFrame    = 1<<8, // fast key-frame seek, forward if Backward is not set. If not set, it's accurate seek but slow, implies backward seek internally
+/* KeyFrame forward seek may fail(permission denied) near the end of media if there's no key frame after seek target position*/
+    KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. It's accurate seek without this flag. Accurate seek is slow and implies backward seek internally.*/
     Fast        = KeyFrame,
 
     Default     = KeyFrame|FromStart
