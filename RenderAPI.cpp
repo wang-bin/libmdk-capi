@@ -48,7 +48,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->debug = c->debug;
         api->buffers = c->buffers;
         api->adapter = c->adapter;
-        api->feature_level = c->buffers;
+        api->feature_level = c->feature_level;
         return api;
     }
 #endif // defined(D3D11_SDK_VERSION)
