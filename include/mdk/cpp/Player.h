@@ -269,6 +269,7 @@ public:
    \param opaque user data
    \returns a file path to save as a file(jpeg is recommended, other formats depends on ffmpeg runtime). or empty to do nothing.
    Returned string will be freed internally(assume allocated by malloc family apis).
+   FIXME: malloc in user code and free in mdk may crash if mixed debug and release(vcrt)
    Callback is called in a dedicated thread, so time-consuming operations(encode, file io etc.) are allowed in the callback.
  */
     using SnapshotCallback = std::function<std::string(SnapshotRequest*, double frameTime)>;
@@ -286,10 +287,7 @@ public:
             auto file = (*f)((SnapshotRequest*)req, frameTime);
             if (file.empty())
                 return (char*)nullptr;
-            auto filec = (char*)malloc(file.size() + 1);
-            memcpy(filec, file.data(), file.size());
-            filec[file.size()] = 0;
-            return filec;
+            return MDK_strdup(file.data());
         };
         callback.opaque = snapshot_cb_ ? (void*)&snapshot_cb_ : nullptr;
         return MDK_CALL(p, snapshot, (mdkSnapshotRequest*)request, callback, vo_opaque);

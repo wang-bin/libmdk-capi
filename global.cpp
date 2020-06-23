@@ -3,6 +3,8 @@
  */
 #include "mdk/c/global.h"
 #include "mdk/global.h"
+#include <string.h>
+
 using namespace MDK_NS;
 extern "C" {
 void* MDK_javaVM(void* vm) {
@@ -40,5 +42,14 @@ void MDK_setGlobalOptionInt32(const char* key, int value)
 void MDK_setGlobalOptionPtr(const char* key, void* value)
 {
     SetGlobalOption(key, value);
+}
+
+char* MDK_strdup(const char* strSource)
+{
+#if defined(_MSC_VER)
+    return _strdup(strSource);
+#else
+    return strdup(strSource);
+#endif
 }
 } // extern "C"

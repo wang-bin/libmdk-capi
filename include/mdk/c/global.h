@@ -186,6 +186,13 @@ typedef struct mdkStringMapEntry {
     void* priv; /* input/output: set by api */
 } mdkStringMapEntry;
 
+/*
+  \brief MDK_strdup
+  Always use this if a duplicated string is needed. DO NOT call strdup() directly because may fail to free() it in mdk, for example
+  if user code is built against msvc debug crt but mdk uses release crt, then free() in mdk will crash
+ */
+MDK_API char* MDK_strdup(const char* strSource);
+
 #ifdef __cplusplus
 }
 #endif
