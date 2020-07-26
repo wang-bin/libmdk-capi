@@ -419,6 +419,11 @@ public:
         return MDK_CALL(p, setBackgroundColor, r, g, b, a, vo_opaque);
     }
 
+    Player& set(VideoEffect effect, const float& values, void* vo_opaque = nullptr) {
+        MDK_CALL(p, setVideoEffect, MDK_VideoEffect(effect), &values, vo_opaque);
+        return *this;
+    }
+
 /*!
   \brief setRenderCallback
   set a callback which is invoked when the vo coresponding to vo_opaque needs to update/draw content, e.g. when a new frame is received in the renderer.

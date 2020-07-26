@@ -212,4 +212,16 @@ public:
         } decoder;
     };
 };
+
+/*!
+  \brief VideoEffect
+  per video renderer effect. set via Player.set(VideoEffect effect, const float&);
+ */
+enum class VideoEffect {
+    Brightness,   /* [-1.0f, 1.0f], default 0 */
+    Contrast,     /* [-1.0f, 1.0f], default 0 */
+    Hue,          /* [-1.0f, 1.0f], default 0 */
+    Saturation,   /* [-1.0f, 1.0f], default 0 */
+};
+
 MDK_NS_END

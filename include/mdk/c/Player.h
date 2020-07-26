@@ -412,7 +412,8 @@ typedef struct mdkPlayerAPI {
     void (*mapPoint)(mdkPlayer*, MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque);
     void (*onSync)(mdkPlayer*, mdkSyncCallback cb, int minInterval);
 
-    void* reserved[9];
+    void (*setVideoEffect)(mdkPlayer*, MDK_VideoEffect effect, const float* values, void* vo_opaque);
+    void* reserved[8];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();

@@ -431,6 +431,11 @@ void MDK_Player_onSync(mdkPlayer* p, mdkSyncCallback cb, int minInterval)
     }, minInterval);
 }
 
+void MDK_Player_setVideoEffect(mdkPlayer* p, MDK_VideoEffect effect, const float* values, void* vo_opaque)
+{
+    p->set(VideoEffect(effect), *values, vo_opaque);
+}
+
 mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -492,6 +497,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(onVideo);
     SET_API(mapPoint);
     SET_API(onSync);
+    SET_API(setVideoEffect);
 #undef SET_API
     return p;
 }

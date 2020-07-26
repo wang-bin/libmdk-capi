@@ -114,6 +114,17 @@ typedef enum MDKSeekFlag {
 } MDK_SeekFlag;
 
 /*!
+  \brief VideoEffect
+  per video renderer effect. set via Player.setVideoEffect(MDK_VideoEffect effect, const float*);
+ */
+enum class MDK_VideoEffect {
+    MDK_VideoEffect_Brightness,   /* [-1.0f, 1.0f], default 0 */
+    MDK_VideoEffect_Contrast,     /* [-1.0f, 1.0f], default 0 */
+    MDK_VideoEffect_Hue,          /* [-1.0f, 1.0f], default 0 */
+    MDK_VideoEffect_Saturation,   /* [-1.0f, 1.0f], default 0 */
+};
+
+/*!
   \brief javaVM
   Set/Get current java vm
   \param vm null to get current vm
