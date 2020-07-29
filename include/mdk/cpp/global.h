@@ -130,6 +130,9 @@ enum class SeekFlag {
 };
 template<> struct is_flag<SeekFlag> : std::true_type {};
 
+static inline int version() {
+    return MDK_version();
+}
 /*!
   \brief javaVM
   Set/Get current java vm

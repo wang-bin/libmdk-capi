@@ -124,6 +124,7 @@ enum class MDK_VideoEffect {
     MDK_VideoEffect_Saturation,   /* [-1.0f, 1.0f], default 0 */
 };
 
+MDK_API int MDK_version();
 /*!
   \brief javaVM
   Set/Get current java vm

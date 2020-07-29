@@ -7,6 +7,12 @@
 
 using namespace MDK_NS;
 extern "C" {
+
+int MDK_version()
+{
+    return version();
+}
+
 void* MDK_javaVM(void* vm) {
     return javaVM(vm);
 }
