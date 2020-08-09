@@ -390,6 +390,13 @@ public:
   If setRenderAPI() is not called by user, a default one (usually GLRenderAPI) is used, thus renderAPI() always not null.
   setRenderAPI() is not thread safe, so usually called before rendering starts, or native surface is set.
 */
+
+/*!
+  \brief setRenderAPI
+  set render api for a vo, useful for non-opengl(no way to get current context)
+  \param api
+  To release gfx resources, set null api in rendering thread/context(required by vulkan)
+ */
     Player& setRenderAPI(RenderAPI* api, void* vo_opaque = nullptr) {
         MDK_CALL(p, setRenderAPI, reinterpret_cast<mdkRenderAPI*>(api), vo_opaque);
         return *this;

@@ -396,6 +396,13 @@ typedef struct mdkPlayerAPI {
   If setRenderAPI() is not called by user, a default one (usually GLRenderAPI) is used, thus renderAPI() always not null.
   setRenderAPI() is not thread safe, so usually called before rendering starts, or native surface is set.
 */
+
+/*!
+  \brief setRenderAPI
+  set render api for a vo, useful for non-opengl(no way to get current context)
+  \param api
+  To release gfx resources, set null api in rendering thread/context(required by vulkan)
+ */
     void (*setRenderAPI)(mdkPlayer*, mdkRenderAPI* api, void* vo_opaque);
 /*!
   \brief renderApi()
