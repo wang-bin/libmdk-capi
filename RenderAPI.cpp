@@ -5,6 +5,9 @@
 #if defined(_WIN32)
 # include <d3d11.h>
 #endif
+#if __has_include(<vulkan/vulkan_core.h>)
+# include <vulkan/vulkan_core.h>
+#endif
 #include "mdk/RenderAPI.h"
 #include "mdk/c/RenderAPI.h"
 #include <memory>
@@ -52,8 +55,35 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         return api;
     }
 #endif // defined(D3D11_SDK_VERSION)
-#if (__APPLE__+0)
-
+#if (VK_VERSION_1_0+0)
+    case MDK_RenderAPI_Vulkan: {
+        auto c = static_cast<mdkVulkanRenderAPI*>(data);
+        auto api = make_unique<VulkanRenderAPI>();
+        api->instance = c->instance;
+        api->phy_device = c->phy_device;
+        api->device = c->device;
+        api->graphics_queue = c->graphics_queue;
+        api->rtv = c->rtv;
+        api->render_pass = c->render_pass;
+        api->opaque = c->opaque;
+        api->renderTargetSize = c->renderTargetSize;
+        api->beginFrame = c->beginFrame;
+        api->currentCommandBuffer = c->currentCommandBuffer;
+        api->endFrame = c->endFrame;
+        api->graphics_family = c->graphics_family;
+        api->compute_family = c->compute_family;
+        api->transfer_family = c->transfer_family;
+        api->present_family = c->present_family;
+        api->debug = c->debug;
+        api->buffers = c->buffers;
+        api->device_index = c->device_index;
+        api->max_version = c->max_version;
+        api->gfx_queue_index = c->gfx_queue_index;
+        api->transfer_queue_index = c->transfer_queue_index;
+        api->compute_queue_index = c->compute_queue_index;
+        api->depth = c->depth;
+        return api;
+    }
 #endif
     default:
         break;

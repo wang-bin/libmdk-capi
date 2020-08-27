@@ -6,4 +6,9 @@ set(SRC_C
   RenderAPI.cpp
   VideoFrame.cpp
 )
+if(EXISTS ${Vulkan_INCLUDE_DIR}) # FindVulkan will cache Vulkan_INCLUDE_DIR even if library is not found
+  set_property(SOURCE RenderAPI.cpp
+    APPEND PROPERTY INCLUDE_DIRECTORIES "${Vulkan_INCLUDE_DIR}") # or COMPILE_OPTIONS "-I..."
+endif()
+
 add_library(${MODULE} OBJECT ${SRC_C})
