@@ -66,7 +66,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->rtv = c->rtv;
         api->render_pass = c->render_pass;
         api->opaque = c->opaque;
-        api->renderTargetSize = c->renderTargetSize;
+        api->renderTargetInfo = c->renderTargetInfo;
         api->beginFrame = c->beginFrame;
         api->currentCommandBuffer = c->currentCommandBuffer;
         api->endFrame = c->endFrame;

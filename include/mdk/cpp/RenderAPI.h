@@ -126,19 +126,20 @@ struct VulkanRenderAPI final : RenderAPI {
   Used by offscreen rendering.
  */
     VkImageView *rtv = nullptr; // TODO: VkImage?
-    VkRenderPass render_pass = VK_NULL_HANDLE; // optional. Usually not for offscreen rendering
+    VkRenderPass render_pass = VK_NULL_HANDLE; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     void* opaque = nullptr;
 /*!
-  \brief renderTargetSize
+  \brief renderTargetInfo
   Get render target image size
-  \return image count, e.g. swapchain image count.
+  \param format image format. MUST be set if framebuffer from beginFrame() is null but image view is not
+  \return (render target)image count, e.g. swapchain image count.
  */
-    int (*renderTargetSize)(void* opaque, int* w, int* h); // return count
+    int (*renderTargetInfo)(void* opaque, int* w, int* h, VkFormat* format); // return count
 /*!
   \brief beginFrame
   Optional. Can be null(or not) for offscreen rendering.
   MUST be paired with endFrame()
-  \param fb can be null, then will create internally. if not null, should be used with render_pass
+  \param fb can be null, then will create internally. if not null, MUST set render_pass
   \param imgSem from present queue. can be null if fulfill any of
   1. present queue == gfx queue
   2. getCommandBuffer() is provided and submit in user code
