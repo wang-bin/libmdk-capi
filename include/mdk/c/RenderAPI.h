@@ -101,16 +101,16 @@ struct mdkVulkanRenderAPI {
     VkDevice device/* = VK_NULL_HANDLE*/; // Optional to create internal context as shared device. Required for foreign context.
     VkQueue graphics_queue/*/* = VK_NULL_HANDLE*/; // OPTIONAL. If null, will use gfx_queue_index. NOT required if vk is create internally
 /*!
-  \brief rtv
+  \brief rt
   Used by offscreen rendering.
  */
-    VkImage *rt/* = nullptr*/;
+    VkImage rt = VK_NULL_HANDLE; // VkImage? so can use qrhitexture.nativeTexture().object
     VkRenderPass render_pass = VK_NULL_HANDLE; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     void* opaque = nullptr;
 /*!
   \brief renderTargetInfo
   Get render target image size
-  \param format image format. MUST be set if framebuffer from beginFrame() is null but image view is not
+  \param format image format. MUST be set if framebuffer from beginFrame() is null
   \param finalLayout image final layout. No transition if undefined. Transition can also be in endFrame() callback if needed, then finalLayout here can be undefined.
   NOTE: assume transition is in the same graphics queue family.
   \return (render target)image count, e.g. swapchain image count.
@@ -118,14 +118,14 @@ struct mdkVulkanRenderAPI {
     int (*renderTargetInfo)(void* opaque, int* w, int* h, VkFormat* format, VkImageLayout* finalLayout); // return count
 /*!
   \brief beginFrame
-  Optional. Can be null(or not) for offscreen rendering.
+  Optional. Can be null(or not) for offscreen rendering if rt is not null.
   MUST be paired with endFrame()
   \param fb can be null, then will create internally. if not null, MUST set render_pass
   \param imgSem from present queue. can be null if fulfill any of
+  // TODO: VkImage?
   1. present queue == gfx queue
   2. getCommandBuffer() is provided and submit in user code
   \return image index.
-  TODO: param format to create renderpass
 */
     int (*beginFrame)(void* opaque, VkImageView* view/* = nullptr*/, VkFramebuffer* fb/*= nullptr*/, VkSemaphore* imgSem/* = nullptr*/)/* = nullptr*/;
     // int getNextImageView(); // not fbo, fbo is bound to render pass(can be dummy tmp). image view can also be used by compute pipeline. return index
