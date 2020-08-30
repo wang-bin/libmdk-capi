@@ -125,16 +125,18 @@ struct VulkanRenderAPI final : RenderAPI {
   \brief rtv
   Used by offscreen rendering.
  */
-    VkImageView *rtv = nullptr; // TODO: VkImage?
+    VkImage *rt = nullptr;
     VkRenderPass render_pass = VK_NULL_HANDLE; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     void* opaque = nullptr;
 /*!
   \brief renderTargetInfo
   Get render target image size
   \param format image format. MUST be set if framebuffer from beginFrame() is null but image view is not
+  \param finalLayout image final layout. No transition if undefined. Transition can also be in endFrame() callback if needed, then finalLayout here can be undefined.
+  NOTE: assume transition is in the same graphics queue family.
   \return (render target)image count, e.g. swapchain image count.
  */
-    int (*renderTargetInfo)(void* opaque, int* w, int* h, VkFormat* format); // return count
+    int (*renderTargetInfo)(void* opaque, int* w, int* h, VkFormat* format, VkImageLayout* finalLayout); // return count
 /*!
   \brief beginFrame
   Optional. Can be null(or not) for offscreen rendering.

@@ -63,7 +63,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->phy_device = c->phy_device;
         api->device = c->device;
         api->graphics_queue = c->graphics_queue;
-        api->rtv = c->rtv;
+        api->rt = c->rt;
         api->render_pass = c->render_pass;
         api->opaque = c->opaque;
         api->renderTargetInfo = c->renderTargetInfo;
