@@ -250,8 +250,9 @@ public:
 
 // vo_opaque: a ptr to identify the renderer. can be null, then it is the default vo/renderer.
     struct SnapshotRequest {
-/* data: rgba data. Created internally or provided by user.
+/* data: rgba or bgra data. Created internally or provided by user.
    If data is provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot callback is finished.
+  TODO: format rgba(gl, metal, d3d) or bgra(vulkan)
  */
         uint8_t* data = nullptr;
         // result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
