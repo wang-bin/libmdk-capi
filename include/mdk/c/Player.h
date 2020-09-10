@@ -93,7 +93,6 @@ typedef struct mdkLoopCallback {
 typedef struct mdkSnapshotRequest {
 /* data: rgba or bgra data. Created internally or provided by user.
    If data is provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot callback is finished.
-  TODO: format rgba(gl, metal, d3d) or bgra(vulkan)
  */
     uint8_t* data;
 /*
@@ -138,7 +137,11 @@ typedef struct mdkPlayerAPI {
     void (*setMute)(mdkPlayer*, bool value);
     void (*setVolume)(mdkPlayer*, float value);
 
-/* MUST call setActiveTracks() after setMedia(), otherwise the 1st track in the media is used*/
+/*!
+  \brief setMedia
+  Set a new media url. Current playback is not affected.
+  // MUST call setActiveTracks() after setMedia(), otherwise the 1st track in the media is used
+ */
     void (*setMedia)(mdkPlayer*, const char* url);
 /* Set individual source for type, e.g. audio track file. If url is not empty, an individual pipeline will be used for 'type' tracks.
   If url is empty, use 'type' tracks in MediaType::Video url.
@@ -153,10 +156,15 @@ typedef struct mdkPlayerAPI {
   Gapless play the next media after current media playback end
   \param flags seek flags if startPosition > 0, accurate or fast
   setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) first to disable next media.
+  Usually you can call `currentMediaChanged()` to set a callback which invokes `setNextMedia()`, then call `setMedia()`.
  */
     void (*setNextMedia)(mdkPlayer*, const char* url, int64_t startPosition, MDKSeekFlag flags);
 
-/* call before setMedia() */
+/*!
+  \brief currentMediaChanged
+  Set a callback which is invoked when current media is stopped and a new media is about to play, or when setMedia() is called.
+  Call before setMedia() to take effect.
+ */
     void (*currentMediaChanged)(mdkPlayer*, mdkCurrentMediaChangedCallback cb);
 /* backends can be: AudioQueue(Apple only), OpenSL(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
   ends with NULL
@@ -180,7 +188,7 @@ typedef struct mdkPlayerAPI {
 
 /*!
   \brief setState
-  request a new state.
+  Request a new state. It's async and may take effect later.
   setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) before stop to disable next media.
   setState(State::Stopped) will release all resouces and clear video renderer viewport. While a normal playback end will keep renderer resources
   and the last video frame. Manually call setState(State::Stopped) to clear them.

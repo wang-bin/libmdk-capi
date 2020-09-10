@@ -58,7 +58,11 @@ public:
         MDK_CALL(p, setVolume, value);
     }
 
-    // MUST call setActiveTracks() after setMedia(), otherwise the 1st track in the media is used
+/*!
+  \brief setMedia
+  Set a new media url. Current playback is not affected.
+  // MUST call setActiveTracks() after setMedia(), otherwise the 1st track in the media is used
+ */
     void setMedia(const char* url) {
         MDK_CALL(p, setMedia, url);
     }
@@ -81,12 +85,16 @@ public:
   Gapless play the next media after current media playback end
   \param flags seek flags if startPosition > 0, accurate or fast
   setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) first to disable next media.
-  Usually call `currentMediaChanged()` first and `setNextMedia()` is called in the callback, then call `setMedia()`
+  Usually you can call `currentMediaChanged()` to set a callback which invokes `setNextMedia()`, then call `setMedia()`.
 */
     void setNextMedia(const char* url, int64_t startPosition = 0, SeekFlag flags = SeekFlag::FromStart) {
         MDK_CALL(p, setNextMedia, url, startPosition, MDKSeekFlag(flags));
     }
-
+/*!
+  \brief currentMediaChanged
+  Set a callback which is invoked when current media is stopped and a new media is about to play, or when setMedia() is called.
+  Call before setMedia() to take effect.
+ */
     void currentMediaChanged(std::function<void()> cb) { // call before setMedia()
         current_cb_ = cb;
         mdkCurrentMediaChangedCallback callback;
@@ -167,7 +175,7 @@ public:
 
 /*!
   \brief setState
-  request a new state.
+  Request a new state. It's async and may take effect later.
   setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) before stop to disable next media.
   setState(State::Stopped) will release all resouces and clear video renderer viewport. While a normal playback end will keep renderer resources
   and the last video frame. Manually call setState(State::Stopped) to clear them.
@@ -252,7 +260,6 @@ public:
     struct SnapshotRequest {
 /* data: rgba or bgra data. Created internally or provided by user.
    If data is provided by user, stride,  height and width MUST be also set, and data MUST be valid until snapshot callback is finished.
-  TODO: format rgba(gl, metal, d3d) or bgra(vulkan)
  */
         uint8_t* data = nullptr;
         // result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
