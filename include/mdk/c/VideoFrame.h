@@ -41,33 +41,33 @@ enum MDK_PixelFormat {
 };
 
 typedef struct mdkVideoFrameAPI {
-    mdkVideoFrame* object;
+    struct mdkVideoFrame* object;
 
-    int (*planeCount)(mdkVideoFrame*);
-    int (*width)(mdkVideoFrame*, int plane /*=-1*/);
-    int (*height)(mdkVideoFrame*, int plane /*=-1*/);
-    MDK_PixelFormat (*format)(mdkVideoFrame*);
-    bool (*addBuffer)(mdkVideoFrame*, const uint8_t* data, int stride, void* buf, void (*bufDeleter)(void** pBuf), int plane);
-    void (*setBuffers)(mdkVideoFrame*, uint8_t const** const data, int* strides/*in/out = nullptr*/);
-    const uint8_t* (*bufferData)(mdkVideoFrame*, int plane);
-    int (*bytesPerLine)(mdkVideoFrame*, int plane);
-    void (*setTimestamp)(mdkVideoFrame*, double t);
-    double (*timestamp)(mdkVideoFrame*);
+    int (*planeCount)(struct mdkVideoFrame*);
+    int (*width)(struct mdkVideoFrame*, int plane /*=-1*/);
+    int (*height)(struct mdkVideoFrame*, int plane /*=-1*/);
+    enum MDK_PixelFormat (*format)(struct mdkVideoFrame*);
+    bool (*addBuffer)(struct mdkVideoFrame*, const uint8_t* data, int stride, void* buf, void (*bufDeleter)(void** pBuf), int plane);
+    void (*setBuffers)(struct mdkVideoFrame*, uint8_t const** const data, int* strides/*in/out = nullptr*/);
+    const uint8_t* (*bufferData)(struct mdkVideoFrame*, int plane);
+    int (*bytesPerLine)(struct mdkVideoFrame*, int plane);
+    void (*setTimestamp)(struct mdkVideoFrame*, double t);
+    double (*timestamp)(struct mdkVideoFrame*);
 
-    mdkVideoFrameAPI* (*to)(mdkVideoFrame*, MDK_PixelFormat format, int width/*= -1*/, int height/*= -1*/);
+    struct mdkVideoFrameAPI* (*to)(struct mdkVideoFrame*, enum MDK_PixelFormat format, int width/*= -1*/, int height/*= -1*/);
 
 /* The followings are not implemented */
-    mdkVideoFrameAPI* (*toHost)(mdkVideoFrame*);
-    mdkVideoFrameAPI* (*fromGL)();
-    mdkVideoFrameAPI* (*fromMetal)();
-    mdkVideoFrameAPI* (*fromD3D11)();
-    mdkVideoFrameAPI* (*fromVk)();
+    struct mdkVideoFrameAPI* (*toHost)(struct mdkVideoFrame*);
+    struct mdkVideoFrameAPI* (*fromGL)();
+    struct mdkVideoFrameAPI* (*fromMetal)();
+    struct mdkVideoFrameAPI* (*fromD3D11)();
+    struct mdkVideoFrameAPI* (*fromVk)();
     void* reserved[16];
 } mdkVideoFrameAPI;
 
 
-MDK_API mdkVideoFrameAPI* mdkVideoFrameAPI_new(int width/*=0*/, int height/*=0*/, MDK_PixelFormat format/*=Unknown*/);
-MDK_API void mdkVideoFrameAPI_delete(mdkVideoFrameAPI**);
+MDK_API mdkVideoFrameAPI* mdkVideoFrameAPI_new(int width/*=0*/, int height/*=0*/, enum MDK_PixelFormat format/*=Unknown*/);
+MDK_API void mdkVideoFrameAPI_delete(struct mdkVideoFrameAPI**);
 
 #ifdef __cplusplus
 }

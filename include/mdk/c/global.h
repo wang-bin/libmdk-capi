@@ -8,7 +8,10 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
+#if !defined(__CLANG_INTTYPES_H) /* include non-modular headers inside framework module error for swift*/
 #include <inttypes.h>
+#endif
+#include <stdint.h>
 #include <limits.h>
 
 #define MDK_VERSION_INT(major, minor, patch) \
@@ -117,7 +120,7 @@ typedef enum MDKSeekFlag {
   \brief VideoEffect
   per video renderer effect. set via Player.setVideoEffect(MDK_VideoEffect effect, const float*);
  */
-enum class MDK_VideoEffect {
+enum MDK_VideoEffect {
     MDK_VideoEffect_Brightness,   /* [-1.0f, 1.0f], default 0 */
     MDK_VideoEffect_Contrast,     /* [-1.0f, 1.0f], default 0 */
     MDK_VideoEffect_Hue,          /* [-1.0f, 1.0f], default 0 */

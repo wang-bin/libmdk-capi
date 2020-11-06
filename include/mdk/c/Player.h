@@ -49,7 +49,7 @@ typedef struct mdkRenderCallback {
 } mdkRenderCallback;
 
 typedef struct mdkVideoCallback {
-    int (*cb)(mdkVideoFrameAPI** pFrame/*in/out*/, int track, void* opaque);
+    int (*cb)(struct mdkVideoFrameAPI** pFrame/*in/out*/, int track, void* opaque);
     void* opaque;
 } mdkVideoCallback;
 
@@ -132,25 +132,25 @@ typedef struct mdkSyncCallback {
 
 
 typedef struct mdkPlayerAPI {
-    mdkPlayer* object;
+    struct mdkPlayer* object;
 
-    void (*setMute)(mdkPlayer*, bool value);
-    void (*setVolume)(mdkPlayer*, float value);
+    void (*setMute)(struct mdkPlayer*, bool value);
+    void (*setVolume)(struct mdkPlayer*, float value);
 
 /*!
   \brief setMedia
   Set a new media url. Current playback is not affected.
   // MUST call setActiveTracks() after setMedia(), otherwise the 1st track in the media is used
  */
-    void (*setMedia)(mdkPlayer*, const char* url);
+    void (*setMedia)(struct mdkPlayer*, const char* url);
 /* Set individual source for type, e.g. audio track file. If url is not empty, an individual pipeline will be used for 'type' tracks.
   If url is empty, use 'type' tracks in MediaType::Video url.
   TODO: default type is Unknown
 */
-    void (*setMediaForType)(mdkPlayer*, const char* url, MDK_MediaType type);
-    const char* (*url)(mdkPlayer*);
+    void (*setMediaForType)(struct mdkPlayer*, const char* url, MDK_MediaType type);
+    const char* (*url)(struct mdkPlayer*);
 
-    void (*setPreloadImmediately)(mdkPlayer*, bool value);
+    void (*setPreloadImmediately)(struct mdkPlayer*, bool value);
 /*!
   \brief setNextMedia
   Gapless play the next media after current media playback end
@@ -158,22 +158,22 @@ typedef struct mdkPlayerAPI {
   setState(State::Stopped) only stops current media. Call setNextMedia(nullptr, -1) first to disable next media.
   Usually you can call `currentMediaChanged()` to set a callback which invokes `setNextMedia()`, then call `setMedia()`.
  */
-    void (*setNextMedia)(mdkPlayer*, const char* url, int64_t startPosition, MDKSeekFlag flags);
+    void (*setNextMedia)(struct mdkPlayer*, const char* url, int64_t startPosition, enum MDKSeekFlag flags);
 
 /*!
   \brief currentMediaChanged
   Set a callback which is invoked when current media is stopped and a new media is about to play, or when setMedia() is called.
   Call before setMedia() to take effect.
  */
-    void (*currentMediaChanged)(mdkPlayer*, mdkCurrentMediaChangedCallback cb);
+    void (*currentMediaChanged)(struct mdkPlayer*, mdkCurrentMediaChangedCallback cb);
 /* backends can be: AudioQueue(Apple only), OpenSL(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
   ends with NULL
 */
-    void (*setAudioBackends)(mdkPlayer*, const char** names);
-    void (*setAudioDecoders)(mdkPlayer*, const char** names);
-    void (*setVideoDecoders)(mdkPlayer*, const char** names);
+    void (*setAudioBackends)(struct mdkPlayer*, const char** names);
+    void (*setAudioDecoders)(struct mdkPlayer*, const char** names);
+    void (*setVideoDecoders)(struct mdkPlayer*, const char** names);
 
-    void (*setTimeout)(mdkPlayer*, int64_t value, mdkTimeoutCallback cb);
+    void (*setTimeout)(struct mdkPlayer*, int64_t value, mdkTimeoutCallback cb);
 /*!
   \brief prepare
   Preload a media and then becomes State::Paused. \sa PrepareCallback
@@ -183,8 +183,8 @@ typedef struct mdkPlayerAPI {
   For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
  */
-    void (*prepare)(mdkPlayer*, int64_t startPosition, mdkPrepareCallback cb, MDKSeekFlag flags);
-    const mdkMediaInfo* (*mediaInfo)(mdkPlayer*); /* NOT IMPLEMENTED*/
+    void (*prepare)(struct mdkPlayer*, int64_t startPosition, mdkPrepareCallback cb, enum MDKSeekFlag flags);
+    const struct mdkMediaInfo* (*mediaInfo)(struct mdkPlayer*); /* NOT IMPLEMENTED*/
 
 /*!
   \brief setState
@@ -197,19 +197,19 @@ typedef struct mdkPlayerAPI {
   so the final state is State::Stopped. Current solution is waitFor(State::Stopped) before setState(State::Playing).
   Usually no waitFor(State::Playing) because we want async load
 */
-    void (*setState)(mdkPlayer*, MDK_State value);
-    MDK_State (*state)(mdkPlayer*);
-    void (*onStateChanged)(mdkPlayer*, mdkStateChangedCallback);
-    bool (*waitFor)(mdkPlayer*, MDK_State value, long timeout);
+    void (*setState)(struct mdkPlayer*, MDK_State value);
+    MDK_State (*state)(struct mdkPlayer*);
+    void (*onStateChanged)(struct mdkPlayer*, mdkStateChangedCallback);
+    bool (*waitFor)(struct mdkPlayer*, MDK_State value, long timeout);
 
-    MDK_MediaStatus (*mediaStatus)(mdkPlayer*);
+    MDK_MediaStatus (*mediaStatus)(struct mdkPlayer*);
 /*!
   \brief onMediaStatusChanged
   Add a callback to be invoked when MediaStatus is changed
   \param cb null to clear callbacks
   TODO: callback token
  */
-    void (*onMediaStatusChanged)(mdkPlayer*, mdkMediaStatusChangedCallback);
+    void (*onMediaStatusChanged)(struct mdkPlayer*, mdkMediaStatusChangedCallback);
 
 /*!
  * \brief updateNativeSurface
@@ -217,11 +217,11 @@ typedef struct mdkPlayerAPI {
  * native surface MUST be not null before destroying player
  type: ignored if win ptr does not change (request to resize)
  */
-    void (*updateNativeSurface)(mdkPlayer*, void* surface, int width, int height, MDK_SurfaceType type);
+    void (*updateNativeSurface)(struct mdkPlayer*, void* surface, int width, int height, enum MDK_SurfaceType type);
 
-    void (*createSurface)(mdkPlayer*, void* nativeHandle, MDK_SurfaceType type);
-    void (*resizeSurface)(mdkPlayer*, int w, int h);
-    void (*showSurface)(mdkPlayer*);
+    void (*createSurface)(struct mdkPlayer*, void* nativeHandle, enum MDK_SurfaceType type);
+    void (*resizeSurface)(struct mdkPlayer*, int w, int h);
+    void (*showSurface)(struct mdkPlayer*);
 
 /*
   vo_opaque: a ptr to identify the renderer. can be null, then it is the default vo/renderer.
@@ -238,8 +238,8 @@ typedef struct mdkPlayerAPI {
   Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.
   If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed. But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
  */
-    void (*setVideoSurfaceSize)(mdkPlayer*, int width, int height, void* vo_opaque);
-    void (*setVideoViewport)(mdkPlayer*, float x, float y, float w, float h, void* vo_opaque);
+    void (*setVideoSurfaceSize)(struct mdkPlayer*, int width, int height, void* vo_opaque);
+    void (*setVideoViewport)(struct mdkPlayer*, float x, float y, float w, float h, void* vo_opaque);
 /*!
   \brief setAspectRatio
   Video display aspect ratio.
@@ -249,21 +249,21 @@ typedef struct mdkPlayerAPI {
   other value > 0: keep given aspect ratio and scale as large as possible inside renderer viewport
   other value < 0: keep given aspect ratio and scale as small as possible inside renderer viewport
  */
-    void (*setAspectRatio)(mdkPlayer*, float value, void* vo_opaque);
-    void (*rotate)(mdkPlayer*, int degree, void* vo_opaque);
-    void (*scale)(mdkPlayer*, float x, float y, void* vo_opaque);
+    void (*setAspectRatio)(struct mdkPlayer*, float value, void* vo_opaque);
+    void (*rotate)(struct mdkPlayer*, int degree, void* vo_opaque);
+    void (*scale)(struct mdkPlayer*, float x, float y, void* vo_opaque);
 /*!
    \brief renderVideo
   Render the next or current(redraw) frame. Foreign render context only (i.e. not created by createSurface()/updateNativeSurface()).
   OpenGL: Can be called in multiple foreign contexts for the same vo_opaque.
    \return timestamp of rendered frame, or < 0 if no frame is rendered
  */
-    double (*renderVideo)(mdkPlayer*, void* vo_opaque);
+    double (*renderVideo)(struct mdkPlayer*, void* vo_opaque);
 /*!
   \brief setBackgroundColor
   r, g, b, a range is [0, 1]. default is 0. if out of range or a == 0, background color will not be filled
  */
-    void (*setBackgroundColor)(mdkPlayer*, float r, float g, float b, float a, void* vo_opaque);
+    void (*setBackgroundColor)(struct mdkPlayer*, float r, float g, float b, float a, void* vo_opaque);
 
 /*!
   \brief setRenderCallback
@@ -272,41 +272,41 @@ typedef struct mdkPlayerAPI {
   with vo_opaque, user can know which vo/renderer is rendering, useful for multiple renderers
   There may be no frames or playback not even started, but renderer update is required internally
 */
-    void (*setRenderCallback)(mdkPlayer*, mdkRenderCallback);
+    void (*setRenderCallback)(struct mdkPlayer*, mdkRenderCallback);
 
 /*
   \brief onVideo
   Called before delivering frame to renderers. Can be used to apply filters.
  */
-    void (*onVideo)(mdkPlayer*, mdkVideoCallback);
-    void (*onAudio)(mdkPlayer*); // NOT IMPLEMENTED
+    void (*onVideo)(struct mdkPlayer*, mdkVideoCallback);
+    void (*onAudio)(struct mdkPlayer*); // NOT IMPLEMENTED
 /*
   \brief beforeVideoRender
   NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to apply GPU filters.
  */
-    void (*beforeVideoRender)(mdkPlayer*, void (*)(mdkVideoFrameAPI*, void* vo_opaque));
+    void (*beforeVideoRender)(struct mdkPlayer*, void (*)(struct mdkVideoFrameAPI*, void* vo_opaque));
 /*
   \brief beforeVideoRender
   NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to draw a watermark.
  */
-    void (*afterVideoRender)(mdkPlayer*, void (*)(mdkVideoFrameAPI*, void* vo_opaque));
+    void (*afterVideoRender)(struct mdkPlayer*, void (*)(struct mdkVideoFrameAPI*, void* vo_opaque));
 
-    int64_t (*position)(mdkPlayer*);
+    int64_t (*position)(struct mdkPlayer*);
 /*!
   \brief seekWithFlags
   \param cb callback to be invoked when seek finished(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
  */
-    bool (*seekWithFlags)(mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
-    bool (*seek)(mdkPlayer*, int64_t pos, mdkSeekCallback);
+    bool (*seekWithFlags)(struct mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
+    bool (*seek)(struct mdkPlayer*, int64_t pos, mdkSeekCallback);
 
-    void (*setPlaybackRate)(mdkPlayer*, float value);
-    float (*playbackRate)(mdkPlayer*);
+    void (*setPlaybackRate)(struct mdkPlayer*, float value);
+    float (*playbackRate)(struct mdkPlayer*);
 /*!
  * \brief buffered
  * get buffered data(packets) duration and size
  * \return buffered data duration
  */
-    int64_t (*buffered)(mdkPlayer*, int64_t* bytes);
+    int64_t (*buffered)(struct mdkPlayer*, int64_t* bytes);
 /*!
   \brief switchBitrate
   A new media will be played later
@@ -314,7 +314,7 @@ typedef struct mdkPlayerAPI {
   \param cb (true/false) called when finished/failed
   \param flags seek flags for the next url, accurate or fast
  */
-    void (*switchBitrate)(mdkPlayer*, const char* url, int64_t delay, SwitchBitrateCallback cb);
+    void (*switchBitrate)(struct mdkPlayer*, const char* url, int64_t delay, SwitchBitrateCallback cb);
 /*!
  * \brief switchBitrateSingalConnection
  * Only 1 media is loaded. The previous media is unloaded and the playback continues. When new media is preloaded, stop the previous media at some point
@@ -322,9 +322,9 @@ typedef struct mdkPlayerAPI {
  * \return false if preload immediately
  * This will not affect next media set by user
  */
-    bool (*switchBitrateSingleConnection)(mdkPlayer*, const char *url, SwitchBitrateCallback cb);
+    bool (*switchBitrateSingleConnection)(struct mdkPlayer*, const char *url, SwitchBitrateCallback cb);
 
-    void (*onEvent)(mdkPlayer*, mdkMediaEventCallback cb, MDK_CallbackToken* token);
+    void (*onEvent)(struct mdkPlayer*, mdkMediaEventCallback cb, MDK_CallbackToken* token);
 /*
   \brief bufferRange
   set duration range of buffered data.
@@ -335,14 +335,14 @@ typedef struct mdkPlayerAPI {
 
   Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, 1000, true) will decode as soon as possible when media data received, also it ensures the max delay of rendered video is 1s, and no accumulated delay.
  */
-    void (*setBufferRange)(mdkPlayer*, int64_t minMs, int64_t maxMs, bool drop);
+    void (*setBufferRange)(struct mdkPlayer*, int64_t minMs, int64_t maxMs, bool drop);
 /*!
   \brief snapshot
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
   When `snapshot()` is called, redraw is scheduled for `vo_opaque`'s renderer, then renderer will take a snapshot in rendering thread.
   So for a foreign context, if renderer's surface/window/widget is invisible or minimized, snapshot may do nothing because of system or gui toolkit painting optimization.
 */
-    void (*snapshot)(mdkPlayer*, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque);
+    void (*snapshot)(struct mdkPlayer*, mdkSnapshotRequest* request, mdkSnapshotCallback cb, void* vo_opaque);
 
 /*
   \brief setProperty
@@ -352,44 +352,44 @@ typedef struct mdkPlayerAPI {
   - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
   - "continue_at_end": do not stop playback when decode and render to end of stream. only setState(State::Stopped) can stop playback
  */
-    void (*setProperty)(mdkPlayer*, const char* key, const char* value);
+    void (*setProperty)(struct mdkPlayer*, const char* key, const char* value);
 /*!
   \brief setProperty
   \return value for key, or null if no such key
  */
-    const char* (*getProperty)(mdkPlayer*, const char* key);
+    const char* (*getProperty)(struct mdkPlayer*, const char* key);
 /*
   \brief record
   Start to record or stop recording current media by remuxing packets read. If media is not loaded, recorder will start when playback starts
   \param url destination. null or the same value as recording one to stop recording
   \param format forced format if unable to guess from url suffix
  */
-    void (*record)(mdkPlayer*, const char* url, const char* format);
+    void (*record)(struct mdkPlayer*, const char* url, const char* format);
 
 /*!
   \brief setLoopRange
   DEPRECATED! use setLoop+setRange instead
  */
-    void (*setLoopRange)(mdkPlayer*, int count, int64_t a, int64_t b);
+    void (*setLoopRange)(struct mdkPlayer*, int count, int64_t a, int64_t b);
 /*!
   \brief setLoop
   Set A-B loop repeat count.
   \param count repeat count. 0 to disable looping and stop when out of range(B)
  */
-    void (*setLoop)(mdkPlayer*, int count);
+    void (*setLoop)(struct mdkPlayer*, int count);
 /*
   \brief onLoop
   add/remove a callback which will be invoked right before a new A-B loop
   \param cb callback with current loop count elapsed
  */
-    void (*onLoop)(mdkPlayer*, mdkLoopCallback cb, MDK_CallbackToken* token);
+    void (*onLoop)(struct mdkPlayer*, mdkLoopCallback cb, MDK_CallbackToken* token);
 /*!
   \brief setRange
   Set A-B loop range, or playback range
   \param a loop position begin, in ms.
   \param b loop position end, in ms. -1, INT64_MAX or numeric_limit<int64_t>::max() indicates b is the end of media
  */
-    void (*setRange)(mdkPlayer*, int64_t a, int64_t b);
+    void (*setRange)(struct mdkPlayer*, int64_t a, int64_t b);
 
 /*
   RenderAPI
@@ -412,12 +412,12 @@ typedef struct mdkPlayerAPI {
   \param api
   To release gfx resources, set null api in rendering thread/context(required by vulkan)
  */
-    void (*setRenderAPI)(mdkPlayer*, mdkRenderAPI* api, void* vo_opaque);
+    void (*setRenderAPI)(struct mdkPlayer*, mdkRenderAPI* api, void* vo_opaque);
 /*!
   \brief renderApi()
   get render api. For offscreen rendering, may only api type be valid in setRenderAPI(), and other members are filled internally, and used by user after renderVideo()
  */
-    mdkRenderAPI* (*renderAPI)(mdkPlayer*, void* vo_opaque);
+    mdkRenderAPI* (*renderAPI)(struct mdkPlayer*, void* vo_opaque);
 
 /*!
   \brief mapPoint
@@ -425,15 +425,15 @@ typedef struct mdkPlayerAPI {
   \param x points to x coordinate of viewport or currently rendered video frame
   \param z not used
 */
-    void (*mapPoint)(mdkPlayer*, MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque);
-    void (*onSync)(mdkPlayer*, mdkSyncCallback cb, int minInterval);
+    void (*mapPoint)(struct mdkPlayer*, enum MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque);
+    void (*onSync)(struct mdkPlayer*, mdkSyncCallback cb, int minInterval);
 
-    void (*setVideoEffect)(mdkPlayer*, MDK_VideoEffect effect, const float* values, void* vo_opaque);
+    void (*setVideoEffect)(struct mdkPlayer*, enum MDK_VideoEffect effect, const float* values, void* vo_opaque);
     void* reserved[8];
 } mdkPlayerAPI;
 
 MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
-MDK_API void mdkPlayerAPI_delete(mdkPlayerAPI**);
+MDK_API void mdkPlayerAPI_delete(struct mdkPlayerAPI**);
 /* MUST be called when a foreign OpenGL context previously used is being destroyed to release context resources. The context MUST be current.*/
 MDK_API void MDK_foreignGLContextDestroyed();
 

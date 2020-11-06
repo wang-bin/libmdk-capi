@@ -19,7 +19,7 @@ enum MDK_RenderAPI {
 typedef struct mdkRenderAPI mdkRenderAPI;
 
 struct mdkGLRenderAPI {
-    MDK_RenderAPI type;
+    enum MDK_RenderAPI type;
 /*** Render Context Resources. Foreign context (provided by user) only ***/
     int fbo; // if >=0, will draw in given fbo. no need to bind in user code
     int unused;
@@ -42,15 +42,15 @@ struct mdkGLRenderAPI {
 };
 
 struct mdkMetalRenderAPI {
-    MDK_RenderAPI type;
+    enum MDK_RenderAPI type;
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 // id<?> => void*: to be compatible with c++
-    void* device = nullptr; // MUST set if metal is provided by user
-    void* cmdQueue = nullptr; // optional. if not null, device can be null. currentQueue callback to share the same command buffer?
+    void* device; // MUST set if metal is provided by user
+    void* cmdQueue; // optional. if not null, device can be null. currentQueue callback to share the same command buffer?
 /* one of texture and currentRenderTarget MUST be set if metal is provided by user */
-    void* texture = nullptr; // optional. id<MTLTexture>. if not null, device can be null. usually for offscreen rendering. render target for MTLRenderPassDescriptor if encoder is not provided by user. set once for offscreen rendering
-    void* opaque = nullptr; // optional. callback opaque
-    void* (*currentRenderTarget)(void* opaque) = nullptr; // optional. usually for on screen rendering. return id<MTLTexture>.
+    void* texture; // optional. id<MTLTexture>. if not null, device can be null. usually for offscreen rendering. render target for MTLRenderPassDescriptor if encoder is not provided by user. set once for offscreen rendering
+    void* opaque; // optional. callback opaque
+    void* (*currentRenderTarget)(void* opaque); // optional. usually for on screen rendering. return id<MTLTexture>.
     // no encoder because we need own render pass
     void* reserved[2];
 
@@ -67,7 +67,7 @@ struct mdkMetalRenderAPI {
  */
 #if defined(D3D11_SDK_VERSION)
 struct mdkD3D11RenderAPI {
-    MDK_RenderAPI type;
+    enum MDK_RenderAPI type;
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 /*
   context and rtv can be set by user if user can provide. then rendering becomes foreign context mode.
@@ -93,7 +93,7 @@ struct mdkD3D11RenderAPI {
 
 // always declare
 struct mdkVulkanRenderAPI {
-    MDK_RenderAPI type;
+    enum MDK_RenderAPI type;
 
 #if (VK_VERSION_1_0+0)
     VkInstance instance/* = VK_NULL_HANDLE*/; // OPTIONAL. shared instance. for internal created context but not foreign context, to load instance extensions
@@ -106,7 +106,7 @@ struct mdkVulkanRenderAPI {
  */
     VkImage rt = VK_NULL_HANDLE; // VkImage? so can use qrhitexture.nativeTexture().object
     VkRenderPass render_pass = VK_NULL_HANDLE; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-    void* opaque = nullptr;
+    void* opaque/* = nullptr*/;
 /*!
   \brief renderTargetInfo
   Get render target image size
