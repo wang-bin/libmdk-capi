@@ -436,7 +436,7 @@ void MDK_Player_setVideoEffect(mdkPlayer* p, MDK_VideoEffect effect, const float
     p->set(VideoEffect(effect), *values, vo_opaque);
 }
 
-mdkPlayerAPI* mdkPlayerAPI_new()
+const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
     p->object = new mdkPlayer();
@@ -502,7 +502,7 @@ mdkPlayerAPI* mdkPlayerAPI_new()
     return p;
 }
 
-void mdkPlayerAPI_delete(mdkPlayerAPI** pp)
+void mdkPlayerAPI_delete(const mdkPlayerAPI** pp)
 {
     if (!pp || !*pp)
         return;

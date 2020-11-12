@@ -432,8 +432,8 @@ typedef struct mdkPlayerAPI {
     void* reserved[8];
 } mdkPlayerAPI;
 
-MDK_API mdkPlayerAPI* mdkPlayerAPI_new();
-MDK_API void mdkPlayerAPI_delete(struct mdkPlayerAPI**);
+MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();
+MDK_API void mdkPlayerAPI_delete(const struct mdkPlayerAPI**);
 /* MUST be called when a foreign OpenGL context previously used is being destroyed to release context resources. The context MUST be current.*/
 MDK_API void MDK_foreignGLContextDestroyed();
 

@@ -62,14 +62,14 @@ struct MetalRenderAPI final: RenderAPI {
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 // id<?> => void*: to be compatible with c++
-    void* device = nullptr; // MUST set if metal is provided by user
-    void* cmdQueue = nullptr; // optional. if not null, device can be null. currentQueue callback to share the same command buffer?
+    const void* device = nullptr; // MUST set if metal is provided by user
+    const void* cmdQueue = nullptr; // optional. if not null, device can be null. currentQueue callback to share the same command buffer?
 /* one of texture and currentRenderTarget MUST be set if metal is provided by user */
-    void* texture = nullptr; // optional. id<MTLTexture>. if not null, device can be null. usually for offscreen rendering. render target for MTLRenderPassDescriptor if encoder is not provided by user. set once for offscreen rendering
-    void* opaque = nullptr; // optional. callback opaque
-    void* (*currentRenderTarget)(void* opaque) = nullptr; // optional. usually for on screen rendering. return id<MTLTexture>.
+    const void* texture = nullptr; // optional. id<MTLTexture>. if not null, device can be null. usually for offscreen rendering. render target for MTLRenderPassDescriptor if encoder is not provided by user. set once for offscreen rendering
+    const void* opaque = nullptr; // optional. callback opaque
+    const void* (*currentRenderTarget)(const void* opaque) = nullptr; // optional. usually for on screen rendering. return id<MTLTexture>.
     // no encoder because we need own render pass
-    void* reserved[2];
+    const void* reserved[2];
 
 /***
   Render Context Creation Options.
