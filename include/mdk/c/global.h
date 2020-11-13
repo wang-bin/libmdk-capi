@@ -8,9 +8,7 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
-#if !defined(__CLANG_INTTYPES_H) /* include non-modular headers inside framework module error for swift*/
-#include <inttypes.h>
-#endif
+#include <stdbool.h>
 #include <stdint.h>
 #include <limits.h>
 
