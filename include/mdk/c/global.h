@@ -8,9 +8,6 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
-#ifndef bool
-#include <stdbool.h> // for swift bool type. but -fcxx-module error
-#endif
 #include <stdint.h>
 
 #define MDK_VERSION_INT(major, minor, patch) \
