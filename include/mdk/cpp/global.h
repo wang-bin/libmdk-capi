@@ -174,12 +174,6 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
     };
     h.opaque = scb ? (void*)&scb : nullptr;
     MDK_setLogHandler(h);
-    static struct LogReset {
-        ~LogReset() {
-            mdkLogHandler stdh{};
-            MDK_setLogHandler(stdh); // reset log handler(to stderr) to fix crash if log after scb destroyed, e.g. log in other global/static var dtor
-        }
-    } reset;
 }
 
 /*
