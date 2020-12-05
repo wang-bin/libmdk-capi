@@ -214,7 +214,7 @@ public:
 /*!
   \brief onMediaStatusChanged
   Add a callback to be invoked when MediaStatus is changed
-  \param cb null to clear callbacks
+  \param cb null to clear callbacks. return true
  */
     Player& onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
         status_cb_ = cb;
@@ -329,7 +329,10 @@ public:
 /*
   \brief setVideoSurfaceSize
   Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.
-  If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed. But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
+NOTE:
+  If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed and gfx resources will be released(need the context to be current for GL).
+  But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
+  OpenGL: resources will never be released if setVideoSurfaceSize(-1, -1) is not called or not called in correct context.
  */
     void setVideoSurfaceSize(int width, int height, void* vo_opaque = nullptr) {
         MDK_CALL(p, setVideoSurfaceSize, width, height, vo_opaque);

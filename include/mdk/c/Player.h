@@ -171,7 +171,7 @@ typedef struct mdkPlayerAPI {
 */
     void (*setAudioBackends)(struct mdkPlayer*, const char** names);
     void (*setAudioDecoders)(struct mdkPlayer*, const char** names);
-    void (*setVideoDecoders)(struct mdkPlayer*, const char** names);
+    void (*setVideoDecoders)(struct mdkPlayer*, const char* names[]);
 
     void (*setTimeout)(struct mdkPlayer*, int64_t value, mdkTimeoutCallback cb);
 /*!
@@ -236,7 +236,10 @@ typedef struct mdkPlayerAPI {
 /*
   \brief setVideoSurfaceSize
   Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.
-  If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed. But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
+NOTE:
+  If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed and gfx resources will be released(need the context to be current for GL).
+  But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
+  OpenGL: resources will never be released if setVideoSurfaceSize(-1, -1) is not called or not called in correct context.
  */
     void (*setVideoSurfaceSize)(struct mdkPlayer*, int width, int height, void* vo_opaque);
     void (*setVideoViewport)(struct mdkPlayer*, float x, float y, float w, float h, void* vo_opaque);
