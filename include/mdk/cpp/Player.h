@@ -514,14 +514,14 @@ NOTE:
 /*
   \brief bufferRange
   set duration range of buffered data.
-  minMs: default 4000. wait for buffered duration >= minMs when before popping a packet from to decode
-  maxMs: default 16000. max buffered duration.
+  minMs: default 1000. wait for buffered duration >= minMs when before popping a packet from to decode
+  maxMs: default 2000. max buffered duration.
   drop = true: drop old non-key frame packets to reduce buffered duration until < maxMs.
   drop = false: wait for buffered duration < maxMs before pushing packets
 
   Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, 1000, true) will decode as soon as possible when media data received, also it ensures the max delay of rendered video is 1s, and no accumulated delay.
  */
-    void setBufferRange(int64_t minMs = 4000, int64_t maxMs = 16000, bool drop = false) {
+    void setBufferRange(int64_t minMs = 1000, int64_t maxMs = 2000, bool drop = false) {
         MDK_CALL(p, setBufferRange, minMs, maxMs, drop);
     }
 /*!
