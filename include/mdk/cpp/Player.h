@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2020 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
- * MDK SDK: https://sourceforge.net/projects/mdk-sdk/files
+ * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for GPL softwares or non-commercial use.
  *
  * The above copyright notice and this permission notice shall be included
@@ -38,7 +38,7 @@ class VideoFrame;
 class Player
 {
 public:
-    // MUST be called when a foreign OpenGL context previously used is being destroyed to release context resources. The context MUST be current.
+    // deprecated! MUST be called when a foreign OpenGL context previously used is being destroyed to release context resources. The context MUST be current.
     static void foreignGLContextDestroyed() {
         MDK_foreignGLContextDestroyed();
     }

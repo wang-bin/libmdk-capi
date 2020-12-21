@@ -11,6 +11,7 @@
 #include "MediaInfoInternal.h"
 #include <cassert>
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 using namespace MDK_NS;
@@ -93,7 +94,7 @@ void MDK_Player_setAudioDecoders(mdkPlayer* p, const char** names)
     p->setAudioDecoders(s);
 }
 
-void MDK_Player_setVideoDecoders(mdkPlayer* p, const char** names)
+void MDK_Player_setVideoDecoders(mdkPlayer* p, const char* names[])
 {
     if (!names) // TODO: default
         return;
@@ -513,7 +514,7 @@ void mdkPlayerAPI_delete(const mdkPlayerAPI** pp)
 
 void MDK_foreignGLContextDestroyed()
 {
-    Player::foreignGLContextDestroyed();
+    clog << "WARNING: foreignGLContextDestroyed is deprecated. use Player.setVideoSurfaceSize(-1, -1, ...) instead" << endl;
 }
 
 } // extern "C"
