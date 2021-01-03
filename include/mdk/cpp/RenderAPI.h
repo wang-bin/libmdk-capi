@@ -1,5 +1,11 @@
 /*
- * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * This file is part of MDK
+ * MDK SDK: https://github.com/wang-bin/mdk-sdk
+ * Free for opensource softwares or non-commercial use.
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
  */
 #pragma once
 #include "global.h"
