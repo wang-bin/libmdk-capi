@@ -10,6 +10,7 @@
 #pragma once
 #include "global.h"
 #include "RenderAPI.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -429,10 +430,22 @@ NOTE:
   \param z not used
 */
     void (*mapPoint)(struct mdkPlayer*, enum MDK_MapDirection dir, float* x, float* y, float* z, void* vo_opaque);
+/*!
+  \brief onSync
+  \param cb a callback invoked when about to render a frame. return expected current playback position(seconds), e.g. DBL_MAX(TimestampEOS) indicates render video frame ASAP.
+  sync callback clock should handle pause, resume, seek and seek finish events
+ */
     void (*onSync)(struct mdkPlayer*, mdkSyncCallback cb, int minInterval);
 
     void (*setVideoEffect)(struct mdkPlayer*, enum MDK_VideoEffect effect, const float* values, void* vo_opaque);
-    void* reserved[8];
+/*!
+  \brief setActiveTracks
+  \param type
+  \param tracks set of active track number, from 0~N. Invalid track numbers will be ignored
+ */
+    void (*setActiveTracks)(struct mdkPlayer*, enum MDK_MediaType type, const int* tracks, size_t count);
+
+    void* reserved[7];
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

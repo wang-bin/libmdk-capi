@@ -16,6 +16,7 @@
 #include <cinttypes>
 #include <cstdlib>
 #include <map>
+#include <set>
 #include <vector>
 
 MDK_NS_BEGIN
@@ -105,7 +106,15 @@ public:
         callback.opaque = current_cb_ ? (void*)&current_cb_ : nullptr;
         MDK_CALL(p, currentMediaChanged, callback);
     }
-
+/*!
+  \brief setActiveTracks
+  \param type
+  \param tracks set of active track number, from 0~N. Invalid track numbers will be ignored
+ */
+    void setActiveTracks(MediaType type, const std::set<int>& tracks) {
+        std::vector<int> ts(tracks.cbegin(), tracks.cend());
+        MDK_CALL(p, setActiveTracks, MDK_MediaType(type), ts.data(), ts.size());
+    }
     // backends can be: AudioQueue(Apple only), OpenSL(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
     void setAudioBackends(const std::vector<std::string>& names) {
         std::vector<const char*> s(names.size() + 1, nullptr);
@@ -660,7 +669,8 @@ NOTE:
 
 /*!
   \brief onSync
-  cb: called when about to render a frame. return expected current playback position(seconds). sync callback clock should handle pause, resume, seek and seek finish events
+  \param cb a callback invoked when about to render a frame. return expected current playback position(seconds), e.g. DBL_MAX(TimestampEOS) indicates render video frame ASAP.
+  sync callback clock should handle pause, resume, seek and seek finish events
  */
     Player& onSync(std::function<double()> cb, int minInterval = 10) {
         sync_cb_ = cb;

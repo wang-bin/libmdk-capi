@@ -437,6 +437,14 @@ void MDK_Player_setVideoEffect(mdkPlayer* p, MDK_VideoEffect effect, const float
     p->set(VideoEffect(effect), *values, vo_opaque);
 }
 
+void MDK_Player_setActiveTracks(mdkPlayer* p, MDK_MediaType type, const int* tracks, size_t count)
+{
+    set<int> t;
+    for (int i = 0; i < count; ++i)
+        t.insert(tracks[i]);
+    p->setActiveTracks(MediaType(type), set<int>(tracks, tracks + count));
+}
+
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -499,6 +507,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(mapPoint);
     SET_API(onSync);
     SET_API(setVideoEffect);
+    SET_API(setActiveTracks);
 #undef SET_API
     return p;
 }
