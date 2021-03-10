@@ -237,6 +237,7 @@ typedef struct mdkPlayerAPI {
 /*
   \brief setVideoSurfaceSize
   Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.
+  Usually for foreign contexts, i.e. not use updateNativeSurface().
 NOTE:
   If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed and gfx resources will be released(need the context to be current for GL).
   But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
@@ -298,6 +299,9 @@ NOTE:
     int64_t (*position)(struct mdkPlayer*);
 /*!
   \brief seekWithFlags
+  \param pos seek target. if flags has SeekFlag::Frame, pos is frame count, otherwise it's milliseconds.
+  If SeekFlag::Frame, only pos > 0 with SeekFlag::FromNow is supported, i.e. step forward.
+  FIXME: a/v sync broken if SeekFlag::Frame.
   \param cb callback to be invoked when seek finished(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
  */
     bool (*seekWithFlags)(struct mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
