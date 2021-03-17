@@ -127,6 +127,7 @@ enum MDK_VideoEffect {
 MDK_API int MDK_version();
 /*!
   \brief javaVM
+  deprecated. use MDK_setGlobalOptionPtr("jvm",..) or MDK_setGlobalOptionPtr("JavaVM",..) instead
   Set/Get current java vm
   \param vm null to get current vm
   \return vm before set
@@ -156,10 +157,21 @@ MDK_API void MDK_setLogHandler(mdkLogHandler);
 
 /*
  keys:
- - path to ffmpeg runtime libraries: avutil_lib, avcodec_lib, avformat_lib, swresample_lib, avfilter_lib
+ - "avutil_lib", "avcodec_lib", "avformat_lib", "swresample_lib", "avfilter_lib": path to ffmpeg runtime libraries
+ - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
+ - "MDK_KEY": license key for your product
+ - "ffmpeg.loglevel": ffmpeg log leve names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
 */
 MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
+/*
+  keys:
+  - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
+ */
 MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
+/*
+  keys:
+  - "jvm", "JavaVM": JavaVM*. android only
+ */
 MDK_API void MDK_setGlobalOptionPtr(const char* key, void* value);
 /*
   events:

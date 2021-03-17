@@ -134,15 +134,6 @@ template<> struct is_flag<SeekFlag> : std::true_type {};
 static inline int version() {
     return MDK_version();
 }
-/*!
-  \brief javaVM
-  Set/Get current java vm
-  \param vm null to get current vm
-  \return vm before set
- */
-static inline void* javaVM(void* vm = nullptr) {
-    return MDK_javaVM(vm);
-}
 
 enum LogLevel {
     Off,
@@ -179,21 +170,42 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
 
 /*
  keys:
- - path to ffmpeg runtime libraries: avutil_lib, avcodec_lib, avformat_lib, swresample_lib, avfilter_lib
+ - "avutil_lib", "avcodec_lib", "avformat_lib", "swresample_lib", "avfilter_lib": path to ffmpeg runtime libraries
+ - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
+ - "MDK_KEY": license key for your product
+ - "ffmpeg.loglevel": ffmpeg log leve names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
 */
 static inline void SetGlobalOption(const char* key, const char* value)
 {
     MDK_setGlobalOptionString(key, value);
 }
-
+/*
+  keys:
+  - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
+ */
 static inline void SetGlobalOption(const char* key, int value)
 {
     MDK_setGlobalOptionInt32(key, value);
 }
-
+/*
+  keys:
+  - "jvm", "JavaVM": JavaVM*. android only
+ */
 static inline void SetGlobalOption(const char* key, void* value)
 {
     MDK_setGlobalOptionPtr(key, value);
+}
+/*!
+  \brief javaVM
+  Set/Get current java vm
+  \param vm null to get current vm
+  \return vm before set
+ */
+#if (__cpp_attributes+0)
+[[deprecated("use SetGlobalOption(\"jvm\", ptr) instead")]]
+#endif
+static inline void javaVM(void* vm) {
+    return SetGlobalOption("jvm", vm);
 }
 
 /*

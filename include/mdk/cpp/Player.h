@@ -316,7 +316,7 @@ public:
   Predefined properties are:
   - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
   - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
-  - "continue_at_end": do not stop playback when decode and render to end of stream. only setState(State::Stopped) can stop playback
+  - "continue_at_end": "0" or "1". do not stop playback when decode and render to end of stream. only setState(State::Stopped) can stop playback
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
