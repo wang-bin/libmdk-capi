@@ -75,6 +75,9 @@ public:
             mdkVideoFrameAPI_delete(&p);
     }
 
+    bool isValid() const { return !!p; }
+    explicit operator bool() const { return isValid();}
+
     void attach(mdkVideoFrameAPI* api) {
         if (owner_)
             mdkVideoFrameAPI_delete(&p);
