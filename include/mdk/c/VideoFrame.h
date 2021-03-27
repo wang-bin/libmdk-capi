@@ -19,7 +19,7 @@ extern "C" {
 struct mdkVideoFrame;
 
 enum MDK_PixelFormat {
-    MDK_PixelFormat_Unknown = -1,
+    MDK_PixelFormat_Unknown = -1, // TODO: 0 in next major version
     MDK_PixelFormat_YUV420P,
     MDK_PixelFormat_NV12,
     MDK_PixelFormat_YUV422P,

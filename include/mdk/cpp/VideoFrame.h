@@ -16,7 +16,7 @@ MDK_NS_BEGIN
 
 enum class PixelFormat
 {
-    Unknown = -1,
+    Unknown = 0,
     YUV420P,
     NV12,
     YUV422P,
@@ -36,6 +36,8 @@ enum class PixelFormat
     GBRP10LE,
     XYZ12LE,
 };
+
+static inline bool operator!(PixelFormat f) { return f == PixelFormat::Unknown; }
 
 class VideoFrame
 {
@@ -63,7 +65,7 @@ public:
    NOTE: Unkine setBuffers(), no memory is allocated for null strides.
  */
     VideoFrame(int width, int height, PixelFormat format, int* strides/*in/out*/ = nullptr, uint8_t const** const data/*in/out*/ = nullptr) {
-        p = mdkVideoFrameAPI_new(width, height, MDK_PixelFormat(format));
+        p = mdkVideoFrameAPI_new(width, height, MDK_PixelFormat(int(format) - 1));
         if (data)
             MDK_CALL(p, setBuffers, data, strides);
     }
@@ -102,7 +104,7 @@ public:
     }
 
     PixelFormat format() const {
-        return (PixelFormat)MDK_CALL(p, format);
+        return (PixelFormat)(int(MDK_CALL(p, format)) + 1);
     }
 /*!
   \brief addBuffer
@@ -154,7 +156,7 @@ public:
   \return Invalid frame if failed
  */
     VideoFrame to(PixelFormat format, int width = -1, int height = -1) {
-        return VideoFrame(MDK_CALL(p, to, MDK_PixelFormat(format), width, height));
+        return VideoFrame(MDK_CALL(p, to, MDK_PixelFormat(int(format)-1), width, height));
     }
 private:
     mdkVideoFrameAPI* p = nullptr;
