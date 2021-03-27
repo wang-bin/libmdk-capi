@@ -451,7 +451,8 @@ NOTE:
  */
     void (*setActiveTracks)(struct mdkPlayer*, enum MDK_MediaType type, const int* tracks, size_t count);
 
-    void* reserved[7];
+    void (*setDecoders)(struct mdkPlayer*, enum MDK_MediaType type, const char* names[]);
+    void* reserved[6];
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

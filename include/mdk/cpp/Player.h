@@ -123,19 +123,12 @@ public:
         MDK_CALL(p, setAudioBackends, s.data());
     }
 
-    void setAudioDecoders(const std::vector<std::string>& names) {
-        std::vector<const char*> s(names.size() + 1, nullptr);
-        for (size_t i = 0; i < names.size(); ++i)
-            s[i] = names[i].data();
-        MDK_CALL(p, setAudioDecoders, s.data());
-    }
-
 // see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setvideodecodersconst-stdvectorstdstring-names
-    void setVideoDecoders(const std::vector<std::string>& names) {
+    void setDecoders(MediaType type, const std::vector<std::string>& names) {
         std::vector<const char*> s(names.size() + 1, nullptr);
         for (size_t i = 0; i < names.size(); ++i)
             s[i] = names[i].data();
-        MDK_CALL(p, setVideoDecoders, s.data());
+        MDK_CALL(p, setDecoders, MDK_MediaType(type), s.data());
     }
 
 /*!
@@ -689,6 +682,22 @@ NOTE:
         MDK_CALL(p, onSync, callback, minInterval);
         return *this;
     }
+
+
+#if !MDK_VERSION_CHECK(1, 0, 0)
+#if (__cpp_attributes+0)
+[[deprecated("use setDecoders(MediaType::Audio, names) instead")]]
+#endif
+    void setAudioDecoders(const std::vector<std::string>& names) {
+        setDecoders(MediaType::Audio, names);
+    }
+#if (__cpp_attributes+0)
+[[deprecated("use setDecoders(MediaType::Video, names) instead")]]
+#endif
+    void setVideoDecoders(const std::vector<std::string>& names) {
+        setDecoders(MediaType::Video, names);
+    }
+#endif
 private:
     const mdkPlayerAPI* p = nullptr;
     std::function<void()> current_cb_ = nullptr;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -83,7 +83,7 @@ void MDK_Player_setAudioBackends(mdkPlayer* p, const char** names)
     p->setAudioBackends(s);
 }
 
-void MDK_Player_setAudioDecoders(mdkPlayer* p, const char** names)
+void MDK_Player_setDecoders(mdkPlayer* p, MDK_MediaType type, const char* names[])
 {
     if (!names) // TODO: default
         return;
@@ -91,18 +91,17 @@ void MDK_Player_setAudioDecoders(mdkPlayer* p, const char** names)
     while (*names) {
         s.emplace_back(*names++);
     }
-    p->setAudioDecoders(s);
+    p->setDecoders(MediaType(type), s);
+}
+
+void MDK_Player_setAudioDecoders(mdkPlayer* p, const char** names)
+{
+    MDK_Player_setDecoders(p, MDK_MediaType_Audio, names);
 }
 
 void MDK_Player_setVideoDecoders(mdkPlayer* p, const char* names[])
 {
-    if (!names) // TODO: default
-        return;
-    vector<string> s;
-    while (*names) {
-        s.emplace_back(*names++);
-    }
-    p->setVideoDecoders(s);
+    MDK_Player_setDecoders(p, MDK_MediaType_Video, names);
 }
 
 void MDK_Player_setTimeout(mdkPlayer* p, int64_t value, mdkTimeoutCallback cb)
@@ -508,6 +507,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(onSync);
     SET_API(setVideoEffect);
     SET_API(setActiveTracks);
+    SET_API(setDecoders);
 #undef SET_API
     return p;
 }
