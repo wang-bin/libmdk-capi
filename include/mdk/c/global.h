@@ -145,9 +145,10 @@ typedef enum MDK_LogLevel {
 MDK_API void MDK_setLogLevel(MDK_LogLevel value);
 MDK_API MDK_LogLevel MDK_logLevel();
 /* \brief setLogHandler
-  if log handler is not set, i.e. setLogHandler() was not called, log is disabled.
-  if set to non-null handler, log will be passed to the handler.
-  if previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
+  If log handler is not set, i.e. setLogHandler() was not called, log is disabled.
+  If set to non-null handler, logs that >= logLevel() will be passed to the handler.
+  If previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
+  To disable log, setLogHandler(nullptr) twice is better than simply setLogLevel(LogLevel::Off)
 */
 typedef struct mdkLogHandler {
     void (*cb)(MDK_LogLevel, const char*, void* opaque);
@@ -161,11 +162,13 @@ MDK_API void MDK_setLogHandler(mdkLogHandler);
  - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
  - "MDK_KEY": license key for your product
  - "ffmpeg.loglevel": ffmpeg log leve names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
+ - "logLevel": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
 */
 MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
 /*
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
+  - "logLevel": raw value of LogLevel
  */
 MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
 /*

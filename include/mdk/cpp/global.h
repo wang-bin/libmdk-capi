@@ -143,18 +143,20 @@ enum LogLevel {
     Debug,
     All
 };
+#if !MDK_VERSION_CHECK(1, 0, 0)
+#if (__cpp_attributes+0)
+[[deprecated("use SetGlobalOption(\"logLevel\", LogLevel/*or name*/) instead")]]
+#endif
 static inline void setLogLevel(LogLevel value) {
     MDK_setLogLevel(MDK_LogLevel(value));
 }
-
-static inline LogLevel logLevel() {
-    return (LogLevel)MDK_logLevel();
-}
+#endif
 
 /* \brief setLogHandler
-  if log handler is not set, i.e. setLogHandler() was not called, log is disabled.
-  if set to non-null handler, log will be passed to the handler.
-  if previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
+  If log handler is not set, i.e. setLogHandler() was not called, log is disabled.
+  If set to non-null handler, logs that >= logLevel() will be passed to the handler.
+  If previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
+  To disable log, setLogHandler(nullptr) twice is better than simply setLogLevel(LogLevel::Off)
 */
 static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) {
     static std::function<void(LogLevel, const char*)> scb;
@@ -174,6 +176,7 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
  - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
  - "MDK_KEY": license key for your product
  - "ffmpeg.loglevel": ffmpeg log leve names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
+ - "logLevel": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
 */
 static inline void SetGlobalOption(const char* key, const char* value)
 {
@@ -182,10 +185,16 @@ static inline void SetGlobalOption(const char* key, const char* value)
 /*
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
+  - "logLevel": raw value of LogLevel
  */
 static inline void SetGlobalOption(const char* key, int value)
 {
     MDK_setGlobalOptionInt32(key, value);
+}
+// key: "logLevel"
+static inline void SetGlobalOption(const char* key, LogLevel value)
+{
+    MDK_setGlobalOptionInt32(key, std::underlying_type<LogLevel>::type(value));
 }
 /*
   keys:
@@ -201,13 +210,14 @@ static inline void SetGlobalOption(const char* key, void* value)
   \param vm null to get current vm
   \return vm before set
  */
+#if !MDK_VERSION_CHECK(1, 0, 0)
 #if (__cpp_attributes+0)
 [[deprecated("use SetGlobalOption(\"jvm\", ptr) instead")]]
 #endif
 static inline void javaVM(void* vm) {
     return SetGlobalOption("jvm", vm);
 }
-
+#endif
 /*
   events:
   {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd
