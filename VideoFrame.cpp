@@ -127,6 +127,11 @@ mdkVideoFrameAPI* MDK_VideoFrame_to(mdkVideoFrame* p, MDK_PixelFormat format, in
     return MDK_VideoFrame_toC(p->frame.to(fromC(format), width, height));
 }
 
+bool MDK_VideoFrame_save(mdkVideoFrame* p, const char* fileName, const char* format, int quality)
+{
+    return p->frame.save(fileName, format, quality);
+}
+
 void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
 {
 #define SET_API(FN) p->FN = MDK_VideoFrame_##FN
@@ -140,6 +145,7 @@ void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
     SET_API(setTimestamp);
     SET_API(timestamp);
     SET_API(to);
+    SET_API(save);
 #undef SET_API
 }
 
