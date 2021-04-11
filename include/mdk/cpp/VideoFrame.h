@@ -162,10 +162,10 @@ public:
   \brief save
   Saves the frame to the file with the given fileName, using the given image file format and quality factor.
   \param format if null, guess the format by fileName's suffix
-  \param quality must be in the range 0 to 100 or -1. Specify 0 to obtain small compressed files, 100 for large uncompressed files, and -1 (the default) to use the default settings.
+  \param quality must be in the range 0.0 to 1.0 or -1. Specify 0 to obtain small compressed files, 100 for large uncompressed files, and -1 (the default) to use the default settings.
   \returns true if the frame was successfully saved; otherwise returns false.
  */
-    bool save(const char* fileName, const char* format = nullptr, int quality = -1) const {
+    bool save(const char* fileName, const char* format = nullptr, float quality = -1) const {
         return MDK_CALL(p, save, fileName, format, quality);
     }
 private:

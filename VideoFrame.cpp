@@ -127,7 +127,7 @@ mdkVideoFrameAPI* MDK_VideoFrame_to(mdkVideoFrame* p, MDK_PixelFormat format, in
     return MDK_VideoFrame_toC(p->frame.to(fromC(format), width, height));
 }
 
-bool MDK_VideoFrame_save(mdkVideoFrame* p, const char* fileName, const char* format, int quality)
+bool MDK_VideoFrame_save(mdkVideoFrame* p, const char* fileName, const char* format, float quality)
 {
     return p->frame.save(fileName, format, quality);
 }
