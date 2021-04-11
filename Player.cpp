@@ -134,7 +134,7 @@ const mdkMediaInfo* MDK_Player_mediaInfo(mdkPlayer* p)
 
 void MDK_Player_setState(mdkPlayer* p, MDK_State value)
 {
-    p->setState(State(value));
+    p->set(State(value));
 }
 
 MDK_State MDK_Player_state(mdkPlayer* p)

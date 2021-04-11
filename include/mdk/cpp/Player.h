@@ -186,8 +186,13 @@ public:
   so the final state is State::Stopped. Current solution is waitFor(State::Stopped) before setState(State::Playing).
   Usually no waitFor(State::Playing) because we want async load
 */
+// deprecated. use set(State)
     void setState(PlaybackState value) {
+        set(value);
+    }
+    Player& set(State value) {
         MDK_CALL(p, setState, MDK_State(value));
+        return *this;
     }
 
     PlaybackState state() const {
