@@ -359,6 +359,8 @@ void MDK_Player_snapshot(mdkPlayer* p, mdkSnapshotRequest* request, mdkSnapshotC
     if (request->data)
         r.buf = make_shared<Buffer2DView>(request->stride, request->height, request->data);
     p->snapshot(&r, [cb](Player::SnapshotRequest* req, double frameTime){
+        if (!req)
+            return string();
         mdkSnapshotRequest q;
         q.data = (uint8_t*)req->buf->constData();
         q.width = req->width;
