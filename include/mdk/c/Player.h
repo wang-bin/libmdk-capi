@@ -340,7 +340,9 @@ NOTE:
   set duration range of buffered data.
   \param minMs default 1000. wait for buffered duration >= minMs when before popping a packet from to decode
     If minMs < 0, then minMs, maxMs and drop will be reset to the default value
-  \param maxMs default 4000. max buffered duration. -1: same as INT64_MAX
+  \param maxMs default 4000. max buffered duration.
+    If maxMs < 0, then maxMs and drop will be reset to the default value
+    If maxMs == 0, same as INT64_MAX
   drop = true: drop old non-key frame packets to reduce buffered duration until < maxMs.
   drop = false: wait for buffered duration < maxMs before pushing packets
 
