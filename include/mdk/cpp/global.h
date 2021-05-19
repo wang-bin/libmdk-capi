@@ -188,6 +188,16 @@ static inline void SetGlobalOption(const char* key, const char* value)
 {
     MDK_setGlobalOptionString(key, value);
 }
+
+/*
+  keys:
+  - "ffmpeg.configuration": ffmpeg major version. return false if no ffmpeg api was invoked internally.
+ */
+static inline bool GetGlobalOption(const char* key, const char** value)
+{
+    return MDK_getGlobalOptionString(key, value);
+}
+
 /*
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
@@ -197,6 +207,16 @@ static inline void SetGlobalOption(const char* key, int value)
 {
     MDK_setGlobalOptionInt32(key, value);
 }
+
+/*
+  keys:
+  - "ffmpeg.version": ffmpeg major version. return false if no ffmpeg api was invoked internally.
+ */
+static inline bool GetGlobalOption(const char* key, int* value)
+{
+    return MDK_getGlobalOptionInt32(key, value);
+}
+
 // key: "logLevel"
 static inline void SetGlobalOption(const char* key, LogLevel value)
 {
@@ -210,6 +230,12 @@ static inline void SetGlobalOption(const char* key, void* value)
 {
     MDK_setGlobalOptionPtr(key, value);
 }
+
+static inline bool GetGlobalOption(const char* key, void** value)
+{
+    return MDK_getGlobalOptionPtr(key, value);
+}
+
 /*!
   \brief javaVM
   Set/Get current java vm

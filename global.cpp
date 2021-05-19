@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/global.h"
 #include "mdk/global.h"
@@ -48,6 +48,44 @@ void MDK_setGlobalOptionInt32(const char* key, int value)
 void MDK_setGlobalOptionPtr(const char* key, void* value)
 {
     SetGlobalOption(key, value);
+}
+
+bool MDK_getGlobalOptionString(const char* key, const char** value)
+{
+    const auto& v = GetGlobalOption(key);
+    if (auto pv = std::get_if<const char*>(&v)) {
+        if (value)
+            *value = *pv;
+        return true;
+    }
+    if (auto pv = std::get_if<std::string>(&v)) {
+        if (value)
+            *value = pv->data();
+        return true;
+    }
+    return false;
+}
+
+bool MDK_getGlobalOptionInt32(const char* key, int* value)
+{
+    const auto& v = GetGlobalOption(key);
+    if (auto pv = std::get_if<int>(&v)) {
+        if (value)
+            *value = *pv;
+        return true;
+    }
+    return false;
+}
+
+bool MDK_getGlobalOptionPtr(const char* key, void** value)
+{
+    const auto& v = GetGlobalOption(key);
+    if (auto pv = std::get_if<void*>(&v)) {
+        if (value)
+            *value = *pv;
+        return true;
+    }
+    return false;
 }
 
 char* MDK_strdup(const char* strSource)

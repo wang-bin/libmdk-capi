@@ -176,6 +176,10 @@ MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
   - "jvm", "JavaVM": JavaVM*. android only
  */
 MDK_API void MDK_setGlobalOptionPtr(const char* key, void* value);
+
+MDK_API bool MDK_getGlobalOptionString(const char* key, const char** value);
+MDK_API bool MDK_getGlobalOptionInt32(const char* key, int* value);
+MDK_API bool MDK_getGlobalOptionPtr(const char* key, void** value);
 /*
   events:
   {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd
