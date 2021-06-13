@@ -36,6 +36,11 @@ void MDK_Player_setVolume(mdkPlayer* p, float value)
     p->setVolume(value);
 }
 
+void MDK_Player_setChannelVolume(mdkPlayer* p, float value, int channel)
+{
+    p->setVolume(value, channel);
+}
+
 void MDK_Player_setMedia(mdkPlayer* p, const char* url)
 {
     p->setMedia(url);
@@ -453,6 +458,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
 #define SET_API(FN) p->FN = MDK_Player_##FN
     SET_API(setMute);
     SET_API(setVolume);
+    SET_API(setChannelVolume);
     SET_API(setMedia);
     SET_API(setMediaForType);
     SET_API(url);

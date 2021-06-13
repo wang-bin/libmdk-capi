@@ -57,10 +57,20 @@ public:
     }
 
     bool isMute() const { return mute_; }
-
+/*!
+  \brief setChannelVolume
+  Set audio volume level
+  \param value linear volume level, range is >=0. 1.0 is source volume
+  \param channel channel number, int value of AudioFormat::Channel, -1 for all channels.
+  The same as ms log2(SpeakerPosition), see https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/ksmedia/ns-ksmedia-ksaudio_channel_config#remarks
+  setVolume(value, -1) equals to setVolume(value)
+ */
     void setVolume(float value) {
         MDK_CALL(p, setVolume, value);
         volume_ = value;
+    }
+    void setVolume(float value, int channel) {
+        MDK_CALL(p, setChannelVolume, value, channel);
     }
 
     float volume() const { return volume_; }
