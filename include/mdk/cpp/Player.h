@@ -174,6 +174,7 @@ public:
   \param flags seek flag if startPosition != 0.
   For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
+  NOTE: the result position in PrepareCallback is usually <= requested startPosition, while timestamp of the first frame decoded after seek is the nearest position to requested startPosition
  */
     void prepare(int64_t startPosition = 0, PrepareCallback cb = nullptr, SeekFlag flags = SeekFlag::FromStart) {
         prepare_cb_ = cb;
@@ -506,7 +507,8 @@ NOTE:
   If pos > media time range with SeekFlag::AnyFrame, playback will stop unless setProperty("continue_at_end", "1") was called
   If SeekFlag::Frame, only pos > 0 with SeekFlag::FromNow is supported, i.e. step forward.
   FIXME: a/v sync broken if SeekFlag::Frame.
-  \param cb callback to be invoked when seek finished(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
+  \param cb callback to be invoked when stream seek finished and before any frame decoded(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
+  NOTE: the result position in seek callback is usually <= requested pos, while timestamp of the first frame decoded after seek is the nearest position to requested pos
  */
     bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t)> cb = nullptr) {
         seek_cb_ = cb;
