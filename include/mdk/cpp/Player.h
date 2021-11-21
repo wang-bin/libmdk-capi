@@ -74,7 +74,17 @@ public:
     }
 
     float volume() const { return volume_; }
-
+/*!
+  \brief setFrameRate
+  Set frame rate, frames per seconds
+  \param value frame rate
+  - 0 (default): use frame timestamp, or default frame rate 25.0fps if stream has no timestamp
+  - <0: render ASAP.
+  - >0: target frame rate
+ */
+    void setFrameRate(float value) {
+        MDK_CALL(p, setFrameRate, value);
+    }
 /*!
   \brief setMedia
   Set a new media url. Current playback is not affected.

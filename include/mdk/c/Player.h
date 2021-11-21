@@ -465,7 +465,16 @@ NOTE:
   setChannelVolume(value, -1) equals to setVolume(value)
  */
     void (*setChannelVolume)(struct mdkPlayer*, float value, int channel);
-    void* reserved[5];
+/*!
+  \brief setFrameRate
+  Set frame rate, frames per seconds
+  \param value frame rate
+  - 0 (default): use frame timestamp, or default frame rate 25.0fps if stream has no timestamp
+  - <0: render ASAP.
+  - >0: target frame rate
+ */
+    void (*setFrameRate)(struct mdkPlayer*, float value);
+    void* reserved[4];
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

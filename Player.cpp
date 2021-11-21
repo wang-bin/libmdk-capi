@@ -451,6 +451,11 @@ void MDK_Player_setActiveTracks(mdkPlayer* p, MDK_MediaType type, const int* tra
     p->setActiveTracks(MediaType(type), set<int>(tracks, tracks + count));
 }
 
+void MDK_Player_setFrameRate(mdkPlayer* p, float value)
+{
+    p->setFrameRate(value);
+}
+
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -516,6 +521,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setVideoEffect);
     SET_API(setActiveTracks);
     SET_API(setDecoders);
+    SET_API(setFrameRate);
 #undef SET_API
     return p;
 }
