@@ -22,7 +22,7 @@
 # define MDK_NS_END }
 # define MDK_NS_PREPEND(X) ::MDK_NS::X
 
-#define MDK_CALL(p, FN, ...) (assert(p->FN && "NOT IMPLEMENTED"), p->FN(p->object, ##__VA_ARGS__))
+#define MDK_CALL(p, FN, ...) (assert(p->FN && "NOT IMPLEMENTED! Runtime version < build version?"), p->FN(p->object, ##__VA_ARGS__))
 
 MDK_NS_BEGIN
 constexpr double TimestampEOS = DBL_MAX;
@@ -184,6 +184,7 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
  - "MDK_KEY_CODE_PAGE": license key code page used internally(windows only)
  - "ffmpeg.loglevel": ffmpeg log leve names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
  - "logLevel": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
+ - "profiler.gpu": "0", "1"
 */
 static inline void SetGlobalOption(const char* key, const char* value)
 {
@@ -204,6 +205,7 @@ static inline bool GetGlobalOption(const char* key, const char** value)
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
   - "logLevel": raw value of LogLevel
+  - "profiler.gpu": 0, 1
  */
 static inline void SetGlobalOption(const char* key, int value)
 {
