@@ -154,6 +154,7 @@ static inline void setLogLevel(LogLevel value) {
 
 /* \brief setLogHandler
   If log handler is not set, i.e. setLogHandler() was not called, log is disabled.
+  Set environment var `MDK_LOG=1` to enable log to stderr.
   If set to non-null handler, logs that >= logLevel() will be passed to the handler.
   If previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
   To disable log, setLogHandler(nullptr) twice is better than simply setLogLevel(LogLevel::Off)

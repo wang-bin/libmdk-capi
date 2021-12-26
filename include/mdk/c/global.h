@@ -13,7 +13,7 @@
 #define MDK_VERSION_INT(major, minor, patch) \
     (((major&0xff)<<16) | ((minor&0xff)<<8) | (patch&0xff))
 #define MDK_MAJOR 0
-#define MDK_MINOR 12
+#define MDK_MINOR 13
 #define MDK_MICRO 0
 #define MDK_VERSION MDK_VERSION_INT(MDK_MAJOR, MDK_MINOR, MDK_MICRO)
 #define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c))
@@ -146,6 +146,7 @@ MDK_API void MDK_setLogLevel(MDK_LogLevel value);
 MDK_API MDK_LogLevel MDK_logLevel();
 /* \brief setLogHandler
   If log handler is not set, i.e. setLogHandler() was not called, log is disabled.
+  Set environment var `MDK_LOG=1` to enable log to stderr.
   If set to non-null handler, logs that >= logLevel() will be passed to the handler.
   If previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
   To disable log, setLogHandler(nullptr) twice is better than simply setLogLevel(LogLevel::Off)
