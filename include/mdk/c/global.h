@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -169,7 +169,9 @@ MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
 /*
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
+  - "videoout.buffer_frames": N. max buffered frames to in the renderer
   - "logLevel": raw value of LogLevel
+  - "profiler.gpu": 0, 1
  */
 MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
 /*
