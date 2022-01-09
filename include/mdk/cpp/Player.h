@@ -370,7 +370,7 @@ public:
 NOTE:
   If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed and gfx resources will be released(need the context to be current for GL).
   But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
-  OpenGL: resources must be released by setVideoSurfaceSize(-1, -1, ...) in a correct context. If player is destroyed before context, MUST call Player::foreignGLContextDestroyed() when destroyin the context.
+  OpenGL: resources must be released by setVideoSurfaceSize(-1, -1, ...) in a correct context. If player is destroyed before context, MUST call Player::foreignGLContextDestroyed() when destroying the context.
  */
     void setVideoSurfaceSize(int width, int height, void* vo_opaque = nullptr) {
         MDK_CALL(p, setVideoSurfaceSize, width, height, vo_opaque);

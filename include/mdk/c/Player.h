@@ -241,7 +241,7 @@ typedef struct mdkPlayerAPI {
 NOTE:
   If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed and gfx resources will be released(need the context to be current for GL).
   But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
-  OpenGL: resources must be released by setVideoSurfaceSize(-1, -1, ...) in a correct context. If player is destroyed before context, MUST call Player::foreignGLContextDestroyed() when destroyin the context.
+  OpenGL: resources must be released by setVideoSurfaceSize(-1, -1, ...) in a correct context. If player is destroyed before context, MUST call Player::foreignGLContextDestroyed() when destroying the context.
  */
     void (*setVideoSurfaceSize)(struct mdkPlayer*, int width, int height, void* vo_opaque);
     void (*setVideoViewport)(struct mdkPlayer*, float x, float y, float w, float h, void* vo_opaque);
