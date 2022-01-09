@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -241,7 +241,7 @@ typedef struct mdkPlayerAPI {
 NOTE:
   If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed and gfx resources will be released(need the context to be current for GL).
   But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
-  OpenGL: resources will never be released if setVideoSurfaceSize(-1, -1) is not called or not called in correct context.
+  OpenGL: resources must be released by setVideoSurfaceSize(-1, -1, ...) in a correct context. If player is destroyed before context, MUST call Player::foreignGLContextDestroyed() when destroyin the context.
  */
     void (*setVideoSurfaceSize)(struct mdkPlayer*, int width, int height, void* vo_opaque);
     void (*setVideoViewport)(struct mdkPlayer*, float x, float y, float w, float h, void* vo_opaque);
@@ -479,7 +479,6 @@ NOTE:
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();
 MDK_API void mdkPlayerAPI_delete(const struct mdkPlayerAPI**);
-/* deprecated! MUST be called when a foreign OpenGL context previously used is being destroyed to release context resources. The context MUST be current.*/
 MDK_API void MDK_foreignGLContextDestroyed();
 
 #ifdef __cplusplus

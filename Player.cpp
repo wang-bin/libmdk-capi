@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -537,7 +537,7 @@ void mdkPlayerAPI_delete(const mdkPlayerAPI** pp)
 
 void MDK_foreignGLContextDestroyed()
 {
-    clog << "WARNING: foreignGLContextDestroyed is deprecated. use Player.setVideoSurfaceSize(-1, -1, ...) instead" << endl;
+    Player::foreignGLContextDestroyed();
 }
 
 } // extern "C"

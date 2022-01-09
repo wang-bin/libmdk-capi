@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -39,7 +39,14 @@ class VideoFrame;
 class Player
 {
 public:
-    // deprecated! MUST be called when a foreign OpenGL context previously used is being destroyed to release context resources. The context MUST be current.
+/*!
+  \brief foreignGLContextDestroyed()
+  Release GL resources bound to the context.
+  - MUST be called when a foreign OpenGL context previously used is being destroyed and player object is already destroyed. The context MUST be current.
+  - If player object is still alive, setVideoSurfaceSize(-1, -1, ...) is preferred.
+  - If forget to call both foreignGLContextDestroyed() and setVideoSurfaceSize(-1, -1, ...) in the context, resources will be released in the next draw in the same context.
+     But the context may be destroyed later, then resource will never be released
+*/
     static void foreignGLContextDestroyed() {
         MDK_foreignGLContextDestroyed();
     }
@@ -363,7 +370,7 @@ public:
 NOTE:
   If width or heigh < 0, corresponding video renderer (for vo_opaque) will be removed and gfx resources will be released(need the context to be current for GL).
   But subsequence call with this vo_opaque will create renderer again. So it can be used before destroying the renderer.
-  OpenGL: resources will never be released if setVideoSurfaceSize(-1, -1) is not called or not called in correct context.
+  OpenGL: resources must be released by setVideoSurfaceSize(-1, -1, ...) in a correct context. If player is destroyed before context, MUST call Player::foreignGLContextDestroyed() when destroyin the context.
  */
     void setVideoSurfaceSize(int width, int height, void* vo_opaque = nullptr) {
         MDK_CALL(p, setVideoSurfaceSize, width, height, vo_opaque);
