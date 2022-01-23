@@ -1,9 +1,12 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/global.h"
 #include "mdk/global.h"
 #include <string.h>
+#if (_WIN32 + 0)
+#include <intrin.h>
+#endif
 
 using namespace MDK_NS;
 extern "C" {
@@ -37,6 +40,9 @@ void MDK_setLogHandler(mdkLogHandler h) {
 
 void MDK_setGlobalOptionString(const char* key, const char* value)
 {
+#if (_WIN32 + 0)
+    SetGlobalOption("UserAddress", _ReturnAddress());
+#endif
     SetGlobalOption(key, value);
 }
 
