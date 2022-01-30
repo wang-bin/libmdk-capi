@@ -302,6 +302,7 @@ public:
         // result width of snapshot image set by user, or the same as current frame width if 0. no renderer transform.
         // if both requested width and height are < 0, then result image is scaled image of current frame with ratio=width/height. no renderer transform.
         // if only one of width and height < 0, then the result size is video renderer viewport size, and all transforms will be applied.
+        // if both width and height == 0, then result size is region of interest size of video frame set by setPointMap(), or video frame size
         int width = 0;
         int height = 0;
         int stride = 0;
