@@ -425,6 +425,16 @@ NOTE:
         MDK_CALL(p, mapPoint, MDK_MapDirection(dir), x, y, z, vo_opaque);
     }
 
+/*!
+  \brief setPointMap
+  Can be called on any thread
+  \param videoRoi: array of 2d point (x, y) in video frame. coordinate: top-left = (0, 0), bottom-right=(1, 1). set null to disable mapping
+  \param viewRoi: array of 2d point (x, y) in video renderer. coordinate: top-left = (0, 0), bottom-right=(1, 1)
+  \param count: point count. only support 2. set 0 to disable mapping
+ */
+    void setPointMap(const float* videoRoi, const float* viewRoi = nullptr, int count = 2, void* vo_opaque = nullptr) {
+        MDK_CALL(p, setPointMap, videoRoi, viewRoi, count, vo_opaque);
+    }
 /*
   RenderAPI
   RenderAPI provides platform/api dependent resources for video renderer and rendering context corresponding to vo_opaque. It's used by

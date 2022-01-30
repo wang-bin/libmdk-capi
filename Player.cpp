@@ -431,6 +431,11 @@ void MDK_Player_mapPoint(mdkPlayer* p, MDK_MapDirection dir, float* x, float* y,
     p->mapPoint(Player::MapDirection(dir), x, y, z, vo_opaque);
 }
 
+void MDK_Player_setPointMap(mdkPlayer* p, const float* videoRoi, const float* viewRoi, int count, void* vo_opaque)
+{
+    p->setPointMap(videoRoi, viewRoi, count, vo_opaque);
+}
+
 void MDK_Player_onSync(mdkPlayer* p, mdkSyncCallback cb, int minInterval)
 {
     p->onSync([cb]{

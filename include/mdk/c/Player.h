@@ -474,7 +474,8 @@ NOTE:
   - >0: target frame rate
  */
     void (*setFrameRate)(struct mdkPlayer*, float value);
-    void* reserved[4];
+    void (*setPointMap)(struct mdkPlayer*, const float* videoRoi, const float* viewRoi, int count, void* vo_opaque);
+    void* reserved[3];
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();
