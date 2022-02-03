@@ -527,6 +527,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setActiveTracks);
     SET_API(setDecoders);
     SET_API(setFrameRate);
+    SET_API(setPointMap);
 #undef SET_API
     return p;
 }
