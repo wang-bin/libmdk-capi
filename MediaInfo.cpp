@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/MediaInfo.h"
 #include "mdk/MediaInfo.h"
@@ -82,7 +82,7 @@ void from_abi(const MediaInfo& in, mdkMediaInfo& out)
     out.duration = in.duration;
     out.bit_rate = in.bit_rate;
     out.format = in.format.data();
-    out.streams = in.streams;
+    out.streams = (int)in.streams;
     out.nb_chapters = (int)in.chapters.size();
     out.nb_audio = (int)in.audio.size();
     out.nb_video = (int)in.video.size();
@@ -94,8 +94,8 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
 {
     if (!out)
         return;
+    *out = MediaInfoInternal{};
     out->abi = abi;
-    out->c.clear();
     for (const auto& i : out->abi.chapters) {
         mdkChapterInfo ci;
         from_abi(i, ci);
@@ -104,13 +104,11 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
     out->info.chapters = nullptr;
     if (!out->c.empty())
         out->info.chapters = &out->c[0];
-    out->a.clear();
     for (const auto& i : out->abi.audio) {
         mdkAudioStreamInfo si;
         from_abi(i, si);
         out->a.push_back(std::move(si));
     }
-    out->info.audio = nullptr;
     if (!out->a.empty())
         out->info.audio = &out->a[0];
     for (const auto& i : out->abi.video) {
@@ -118,7 +116,6 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
         from_abi(i, si);
         out->v.push_back(std::move(si));
     }
-    out->info.video = nullptr;
     if (!out->v.empty())
         out->info.video = &out->v[0];
     from_abi(out->abi, out->info);
