@@ -40,8 +40,10 @@ void MDK_setLogHandler(mdkLogHandler h) {
 
 void MDK_setGlobalOptionString(const char* key, const char* value)
 {
-#if (_WIN32 + 0)
+#if (_MSC_VER + 0)
     SetGlobalOption("UserAddress", _ReturnAddress());
+#else
+    SetGlobalOption("UserAddress", __builtin_return_address(0));
 #endif
     SetGlobalOption(key, value);
 }
