@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020-2022 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/VideoFrame.h"
 #include "mdk/VideoFrame.h"
@@ -182,6 +182,6 @@ mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame)
 VideoFrame MDK_VideoFrame_fromC(mdkVideoFrameAPI* p)
 {
     if (!p)
-        return VideoFrame();
+        return {};
     return p->object->frame;
 }
