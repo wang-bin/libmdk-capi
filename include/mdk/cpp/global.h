@@ -208,6 +208,7 @@ static inline bool GetGlobalOption(const char* key, const char** value)
   - "videoout.buffer_frames": N. max buffered frames to in the renderer
   - "logLevel": raw value of LogLevel
   - "profiler.gpu": 0, 1
+  - "demuxer.io": 0, 1(default), 2
  */
 static inline void SetGlobalOption(const char* key, int value)
 {
@@ -231,7 +232,7 @@ static inline void SetGlobalOption(const char* key, LogLevel value)
 }
 /*
   keys:
-  - "jvm", "JavaVM": JavaVM*. android only
+  - "jvm", "JavaVM": JavaVM*. android only. Required if not loaded by System.loadLibrary()
  */
 static inline void SetGlobalOption(const char* key, void* value)
 {
