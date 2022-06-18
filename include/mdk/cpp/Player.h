@@ -430,7 +430,7 @@ NOTE:
   \brief setPointMap
   Can be called on any thread
   \param videoRoi: array of 2d point (x, y) in video frame. coordinate: top-left = (0, 0), bottom-right=(1, 1). set null to disable mapping
-  \param viewRoi: array of 2d point (x, y) in video renderer. coordinate: top-left = (0, 0), bottom-right=(1, 1)
+  \param viewRoi: array of 2d point (x, y) in video renderer. coordinate: top-left = (0, 0), bottom-right=(1, 1). null is the whole renderer.
   \param count: point count. only support 2. set 0 to disable mapping
  */
     void setPointMap(const float* videoRoi, const float* viewRoi = nullptr, int count = 2, void* vo_opaque = nullptr) {
@@ -524,6 +524,7 @@ NOTE:
 /*!
   \brief position
   Current playback time in milliseconds. Relative to media's first timestamp, which usually is 0.
+  If has active video tracks, it's currently presented video frame time. otherwise, it's audio time.
  */
     int64_t position() const {
         return MDK_CALL(p, position);
