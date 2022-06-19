@@ -104,7 +104,7 @@ typedef enum MDKSeekFlag {
     MDK_SeekFlag_From0       = 1,    /* relative to time 0*/
     MDK_SeekFlag_FromStart   = 1<<1, /* relative to media start position*/
     MDK_SeekFlag_FromNow     = 1<<2, /* relative to current position, the seek position can be negative*/
-    MDK_SeekFlag_Frame       = 1<<6, /* Seek by frame. Seek target is frame count instead of milliseconds. Currently only FromNow|Frame and positive target is supported, .i.e step forward. BUG: avsync */
+    MDK_SeekFlag_Frame       = 1<<6, /* Seek by frame. Seek target is frame count instead of milliseconds. Currently only FromNow|Frame is supported. BUG: avsync */
     /* combine the above values with one of the following*/
 /* KeyFrame forward seek may fail(permission denied) near the end of media if there's no key frame after seek target position*/
     MDK_SeekFlag_KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. It's accurate seek without this flag. Accurate seek is slow and implies backward seek internally.*/

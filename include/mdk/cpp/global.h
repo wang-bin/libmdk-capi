@@ -121,7 +121,7 @@ enum class SeekFlag {
     From0       = 1,    /// relative to time 0. TODO: remove from api
     FromStart   = 1<<1, /// relative to media start position
     FromNow     = 1<<2, /// relative to current position, the seek position can be negative
-    Frame       = 1<<6, /* Seek by frame. Seek target is frame count instead of milliseconds. Currently only FromNow|Frame and positive target is supported, .i.e step forward. BUG: avsync */
+    Frame       = 1<<6, /* Seek by frame. Seek target is frame count instead of milliseconds. Currently only FromNow|Frame is supported. BUG: avsync */
     /// combine the above values with one of the following
 /* KeyFrame forward seek may fail(permission denied) near the end of media if there's no key frame after seek target position*/
     KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. It's accurate seek without this flag. Accurate seek is slow and implies backward seek internally.*/
