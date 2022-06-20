@@ -126,6 +126,7 @@ enum class SeekFlag {
 /* KeyFrame forward seek may fail(permission denied) near the end of media if there's no key frame after seek target position*/
     KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. It's accurate seek without this flag. Accurate seek is slow and implies backward seek internally.*/
     Fast        = KeyFrame,
+    InCache     = 1 << 10, // try to seek in cache first
 
     Default     = KeyFrame|FromStart
 };
