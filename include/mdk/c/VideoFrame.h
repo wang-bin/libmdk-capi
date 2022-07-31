@@ -35,9 +35,18 @@ enum MDK_PixelFormat {
     MDK_PixelFormat_BGRX,
     MDK_PixelFormat_RGB565LE,
     MDK_PixelFormat_RGB48LE,
+    MDK_PixelFormat_RGB48 = MDK_PixelFormat_RGB48LE,  // name: "rgb48le"
     MDK_PixelFormat_GBRP,
     MDK_PixelFormat_GBRP10LE,
     MDK_PixelFormat_XYZ12LE,
+    MDK_PixelFormat_YUVA420P,
+    MDK_PixelFormat_BC1,
+    MDK_PixelFormat_BC3,
+    MDK_PixelFormat_RGBA64, // name: "rgba64le"
+    MDK_PixelFormat_BGRA64, // name: "bgra64le"
+    MDK_PixelFormat_RGBP16, // name: "rgbp16le"
+    MDK_PixelFormat_RGBPF32, // name: "rgbpf32le"
+    MDK_PixelFormat_BGRAF32, // name: "bgraf32le"
 };
 
 typedef struct mdkVideoFrameAPI {

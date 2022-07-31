@@ -32,9 +32,18 @@ enum class PixelFormat
     BGRX,
     RGB565LE,
     RGB48LE,
+    RGB48 = RGB48LE,
     GBRP,
     GBRP10LE,
     XYZ12LE,
+    YUVA420P,
+    BC1,
+    BC3,
+    RGBA64,         // name: "rgba64le"
+    BGRA64,         // name: "bgra64le"
+    RGBP16,         // name: "rgbp16le"
+    RGBPF32,        // name: "rgbpf32le"
+    BGRAF32,        // name: "bgraf32le"
 };
 
 static inline bool operator!(PixelFormat f) { return f == PixelFormat::Unknown; }
