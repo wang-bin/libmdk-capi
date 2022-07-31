@@ -23,7 +23,7 @@ MDK_NS_BEGIN
 
 /*!
   \brief PrepareCallback
-  \param position in callback is the actual position, or <0 (TODO: error code as position) if prepare() failed.
+  \param position in callback is the timestamp of the 1st frame(video if exists) after seek, or <0 (TODO: error code as position) if prepare() failed.
   \param boost in callback can be set by user(*boost = true/false) to boost the first frame rendering. default is true.
   \return false to unload media immediately when media is loaded and MediaInfo is ready, true to continue.
     example: always return false can be used as media information reader
@@ -188,10 +188,10 @@ public:
   Preload a media and then becomes State::Paused. \sa PrepareCallback
   To play a media from a given position, call prepare(ms) then set(State::Playing)
   \param startPosition start from position, relative to media start position(i.e. MediaInfo.start_time)
+  \param cb same as callback of seek()
   \param flags seek flag if startPosition != 0.
   For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
-  NOTE: the result position in PrepareCallback is usually <= requested startPosition, while timestamp of the first frame decoded after seek is the nearest position to requested startPosition
  */
     void prepare(int64_t startPosition = 0, PrepareCallback cb = nullptr, SeekFlag flags = SeekFlag::FromStart) {
         prepare_cb_ = cb;
@@ -535,10 +535,10 @@ NOTE:
   If pos > media time range, e.g. INT64_MAX, will seek to the last frame of media for SeekFlag::AnyFrame, and the last key frame of media for SeekFlag::Fast.
   If pos > media time range with SeekFlag::AnyFrame, playback will stop unless setProperty("continue_at_end", "1") was called
   FIXME: a/v sync broken if SeekFlag::Frame|SeekFlag::FromNow.
-  \param cb callback to be invoked when stream seek finished and before any frame decoded(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
-  NOTE: the result position in seek callback is usually <= requested pos, while timestamp of the first frame decoded after seek is the nearest position to requested pos
+  \param cb if succeeded, callback is called when stream seek finished and after the 1st frame decoded, ret(>=0) is the timestamp of the 1st frame(video if exists) after seek.
+  if error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2), out of range(-4) or media unloaded(-3).
  */
-    bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t)> cb = nullptr) {
+    bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t ret)> cb = nullptr) {
         seek_cb_ = cb;
         mdkSeekCallback callback;
         callback.cb = [](int64_t ms, void* opaque){
