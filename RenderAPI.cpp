@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  */
 // include gl, d3d, vk headers to enable RenderAPI structures
 #if defined(_WIN32)
@@ -17,6 +17,8 @@ using namespace MDK_NS;
 
 unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
 {
+    const int version = type >> 16;
+    type = MDK_RenderAPI(type & 0xffff);
     switch (type) {
     case MDK_RenderAPI_OpenGL: {
         auto c = static_cast<mdkGLRenderAPI*>(data);
@@ -52,6 +54,9 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->buffers = c->buffers;
         api->adapter = c->adapter;
         api->feature_level = c->feature_level;
+        if (version >= (MDK_VERSION_INT(0, 17, 0) >> 8)) {
+            api->vendor = c->vendor;
+        }
         return api;
     }
 #endif // defined(D3D11_SDK_VERSION)

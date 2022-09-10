@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -23,17 +23,20 @@ struct RenderAPI {
         Vulkan = 2,
         Metal = 3,
         D3D11 = 4,
+
     };
 
-    Type type() const { return type_;}
+    //Type type() const { return Type(type_ & 0xffff);}
 protected:
-    Type type_ = Type::Invalid;
+    Type type_ = Type::Invalid; // high 16 bits: major + minor version, to unbreak abi for my flawed design
+
+    Type versioned(Type t) const { return Type(t | (MDK_VERSION >> 8 << 16));}
 };
 
 
 struct GLRenderAPI final: RenderAPI {
     GLRenderAPI() {
-        type_ = RenderAPI::OpenGL;
+        type_ = versioned(RenderAPI::OpenGL);
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
     int fbo = -1; // if >=0, will draw in given fbo. no need to bind in user code
@@ -64,7 +67,7 @@ struct GLRenderAPI final: RenderAPI {
 
 struct MetalRenderAPI final: RenderAPI {
     MetalRenderAPI() {
-        type_ = RenderAPI::Metal;
+        type_ = versioned(RenderAPI::Metal);
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 // id<?> => void*: to be compatible with c++
@@ -91,7 +94,7 @@ struct MetalRenderAPI final: RenderAPI {
 #if defined(D3D11_SDK_VERSION)
 struct D3D11RenderAPI : RenderAPI {
     D3D11RenderAPI(ID3D11DeviceContext* c = nullptr, ID3D11DeviceChild* r = nullptr) : context(c), rtv(r) {
-        type_ = RenderAPI::D3D11;
+        type_ = versioned(RenderAPI::D3D11);
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 /*
@@ -112,6 +115,7 @@ struct D3D11RenderAPI : RenderAPI {
     int buffers = 2; /* UWP must >= 2. */
     int adapter = 0; /* adapter index */
     float feature_level = 0; /* 0 is the highest */
+    const char* vendor = nullptr; /* gpu vendor name */
 };
 #endif
 
@@ -119,7 +123,7 @@ struct D3D11RenderAPI : RenderAPI {
 // always declare
 struct VulkanRenderAPI final : RenderAPI {
     VulkanRenderAPI() {
-        type_ = RenderAPI::Vulkan;
+        type_ = versioned(RenderAPI::Vulkan);
     }
 
 #if (VK_VERSION_1_0+0)

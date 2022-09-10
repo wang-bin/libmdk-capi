@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -93,6 +93,7 @@ struct mdkD3D11RenderAPI {
     int buffers; /* UWP must >= 2. */
     int adapter; /* adapter index */
     float feature_level; /* 0 is the highest */
+    const char* vendor; /* since v0.17.0 */
 };
 #endif
 
