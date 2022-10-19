@@ -43,6 +43,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->texture = c->texture;
         api->opaque = c->opaque;
         api->currentRenderTarget = c->currentRenderTarget;
+        api->layer = c->layer;
         api->device_index = c->device_index;
         return api;
     }

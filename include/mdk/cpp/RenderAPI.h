@@ -62,7 +62,7 @@ struct GLRenderAPI final: RenderAPI {
     int8_t opengles = -1; /* default -1. -1: auto. 0: no, 1: try */
     Profile profile = Profile::Core; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
     float version = 0; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
-    int8_t reserved[32];
+    int8_t reserved[32] = {};
 };
 
 struct MetalRenderAPI final: RenderAPI {
@@ -78,7 +78,8 @@ struct MetalRenderAPI final: RenderAPI {
     const void* opaque = nullptr; // optional. callback opaque
     const void* (*currentRenderTarget)(const void* opaque) = nullptr; // optional. usually for on screen rendering. return id<MTLTexture>.
     // no encoder because we need own render pass
-    const void* reserved[2];
+    const void* layer = nullptr; // optional. CAMetalLayer only used for appling colorspace parameters for hdr/sdr videos.
+    const void* reserved[1] = {};
 
 /***
   Render Context Creation Options.
@@ -105,7 +106,7 @@ struct D3D11RenderAPI : RenderAPI {
     ID3D11DeviceContext* context = nullptr;
     // rtv or texture. usually user can provide a texture from gui easly, no d3d code to create a view
     ID3D11DeviceChild* rtv = nullptr; // optional. the render target(view). ID3D11RenderTargetView or ID3D11Texture2D. can be null if context is not null. if not null, no need to set context
-    void* reserved[2];
+    void* reserved[2] = {};
 
 /***
   Render Context Creation Options.
@@ -177,7 +178,7 @@ struct VulkanRenderAPI final : RenderAPI {
  */
     void (*endFrame)(void* opaque, VkSemaphore* drawSem/* = nullptr*/) = nullptr; // can be null if offscreen. wait drawSem before present
 #endif // (VK_VERSION_1_0+0)
-    void* reserved[2];
+    void* reserved[2] = {};
 /*
   Set by user and used internally even if device is provided by user
  */

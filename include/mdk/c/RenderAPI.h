@@ -57,8 +57,9 @@ struct mdkMetalRenderAPI {
     const void* texture; // optional. id<MTLTexture>. if not null, device can be null. usually for offscreen rendering. render target for MTLRenderPassDescriptor if encoder is not provided by user. set once for offscreen rendering
     const void* opaque; // optional. callback opaque
     const void* (*currentRenderTarget)(const void* opaque); // optional. usually for on screen rendering. return id<MTLTexture>.
+    const void* layer; // optional. CAMetalLayer only used for appling colorspace parameters for hdr/sdr videos.
     // no encoder because we need own render pass
-    const void* reserved[2];
+    const void* reserved[1];
 
 /***
   Render Context Creation Options.
