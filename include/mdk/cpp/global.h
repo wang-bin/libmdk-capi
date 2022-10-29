@@ -184,8 +184,8 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
  - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
  - "MDK_KEY": license key for your product
  - "MDK_KEY_CODE_PAGE": license key code page used internally(windows only)
- - "ffmpeg.loglevel": ffmpeg log leve names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
- - "logLevel": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
+ - "ffmpeg.loglevel" or "ffmpeg.log": ffmpeg log level names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
+ - "logLevel" or "log": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
  - "profiler.gpu": "0", "1"
 */
 static inline void SetGlobalOption(const char* key, const char* value)
@@ -207,7 +207,7 @@ static inline bool GetGlobalOption(const char* key, const char** value)
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
   - "videoout.buffer_frames": N. max buffered frames to in the renderer
-  - "logLevel": raw value of LogLevel
+  - "logLevel" or "log": raw value of LogLevel
   - "profiler.gpu": 0, 1
   - "demuxer.io": 0, 1(default), 2
  */

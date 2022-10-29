@@ -158,19 +158,21 @@ typedef struct mdkLogHandler {
 MDK_API void MDK_setLogHandler(mdkLogHandler);
 
 /*
- keys:
+ keys for string/const char* value:
  - "avutil_lib", "avcodec_lib", "avformat_lib", "swresample_lib", "avfilter_lib": path to ffmpeg runtime libraries
  - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
  - "MDK_KEY": license key for your product
- - "ffmpeg.loglevel": ffmpeg log leve names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
- - "logLevel": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
+ - "MDK_KEY_CODE_PAGE": license key code page used internally(windows only)
+ - "ffmpeg.loglevel" or "ffmpeg.log": ffmpeg log level names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
+ - "logLevel" or "log": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
+ - "profiler.gpu": "0" or "1"
 */
 MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
 /*
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
   - "videoout.buffer_frames": N. max buffered frames to in the renderer
-  - "logLevel": raw value of LogLevel
+  - "logLevel" or "log": raw value of LogLevel
   - "profiler.gpu": 0, 1
  */
 MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
