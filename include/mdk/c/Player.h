@@ -346,7 +346,7 @@ NOTE:
   drop = true: drop old non-key frame packets to reduce buffered duration until < maxMs.
   drop = false: wait for buffered duration < maxMs before pushing packets
 
-  For realtime streams like(rtp, rtsp sdp etc.), the default range is [0, INT64_MAX, true].
+  For realtime streams like(rtp, rtsp, rtmp, sdp etc.), the default range is [0, INT64_MAX, true].
   Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, 1000, true) will decode as soon as possible when media data received, also it ensures the max delay of rendered video is 1s, and no accumulated delay.
  */
     void (*setBufferRange)(struct mdkPlayer*, int64_t minMs, int64_t maxMs, bool drop);
@@ -475,7 +475,8 @@ NOTE:
  */
     void (*setFrameRate)(struct mdkPlayer*, float value);
     void (*setPointMap)(struct mdkPlayer*, const float* videoRoi, const float* viewRoi, int count, void* vo_opaque);
-    void* reserved[3];
+    void (*setColorSpace)(struct mdkPlayer*, MDK_ColorSpace value, void* vo_opaque);
+    void* reserved[2];
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

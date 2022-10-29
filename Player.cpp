@@ -4,6 +4,7 @@
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
 #include "mdk/c/VideoFrame.h"
+#include "mdk/ColorSpace.h"
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
 #include "mdk/VideoFrame.h"
@@ -448,6 +449,14 @@ void MDK_Player_setVideoEffect(mdkPlayer* p, MDK_VideoEffect effect, const float
     p->set(VideoEffect(effect), *values, vo_opaque);
 }
 
+void MDK_Player_setColorSpace(mdkPlayer* p, MDK_ColorSpace value, void* vo_opaque)
+{
+    const ColorSpace cs[] = {
+        ColorSpaceUnknown, ColorSpaceBT709, ColorSpaceBT2100_PQ, ColorSpaceBT2100_HLG
+    };
+    p->set(cs[(int)value], vo_opaque);
+}
+
 void MDK_Player_setActiveTracks(mdkPlayer* p, MDK_MediaType type, const int* tracks, size_t count)
 {
     set<int> t;
@@ -528,6 +537,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setDecoders);
     SET_API(setFrameRate);
     SET_API(setPointMap);
+    SET_API(setColorSpace);
 #undef SET_API
     return p;
 }

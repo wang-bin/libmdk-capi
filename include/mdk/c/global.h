@@ -124,6 +124,12 @@ enum MDK_VideoEffect {
     MDK_VideoEffect_Saturation,   /* [-1.0f, 1.0f], default 0 */
 };
 
+enum MDK_ColorSpace {
+    MDK_ColorSpace_Unknown,
+    MDK_ColorSpace_BT709,
+    MDK_ColorSpace_BT2100_PQ,
+};
+
 MDK_API int MDK_version();
 /*!
   \brief javaVM

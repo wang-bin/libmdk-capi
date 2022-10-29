@@ -491,6 +491,11 @@ NOTE:
         return *this;
     }
 
+    Player& set(ColorSpace value, void* vo_opaque = nullptr) {
+        MDK_CALL(p, setColorSpace, MDK_ColorSpace(value), vo_opaque);
+        return *this;
+    }
+
 /*!
   \brief setRenderCallback
   set a callback which is invoked when the vo coresponding to vo_opaque needs to update/draw content, e.g. when a new frame is received in the renderer.
@@ -579,7 +584,7 @@ NOTE:
   drop = true: drop old non-key frame packets to reduce buffered duration until < maxMs.
   drop = false: wait for buffered duration < maxMs before pushing packets
 
-  For realtime streams like(rtp, rtsp sdp etc.), the default range is [0, INT64_MAX, true].
+  For realtime streams like(rtp, rtsp, rtmp sdp etc.), the default range is [0, INT64_MAX, true].
   Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, 1000, true) will decode as soon as possible when media data received, also it ensures the max delay of rendered video is 1s, and no accumulated delay.
  */
     void setBufferRange(int64_t minMs = -1, int64_t maxMs = -1, bool drop = false) {

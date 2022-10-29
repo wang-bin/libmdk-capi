@@ -291,4 +291,10 @@ enum class VideoEffect {
     Saturation,   /* [-1.0f, 1.0f], default 0 */
 };
 
+enum ColorSpace {
+    ColorSpaceUnknown,
+    ColorSpaceBT709,
+    ColorSpaceBT2100_PQ,
+};
+
 MDK_NS_END
