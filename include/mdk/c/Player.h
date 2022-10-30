@@ -475,7 +475,7 @@ NOTE:
  */
     void (*setFrameRate)(struct mdkPlayer*, float value);
     void (*setPointMap)(struct mdkPlayer*, const float* videoRoi, const float* viewRoi, int count, void* vo_opaque);
-    void (*setColorSpace)(struct mdkPlayer*, MDK_ColorSpace value, void* vo_opaque);
+    void (*setColorSpace)(struct mdkPlayer*, enum MDK_ColorSpace value, void* vo_opaque);
     void* reserved[2];
 } mdkPlayerAPI;
 
