@@ -146,7 +146,7 @@ enum LogLevel {
 };
 #if !MDK_VERSION_CHECK(1, 0, 0)
 #if (__cpp_attributes+0)
-[[deprecated("use SetGlobalOption(\"logLevel\", LogLevel/*or name*/) instead")]]
+[[deprecated("use SetGlobalOption(\"log\", LogLevel/*or name*/) instead")]]
 #endif
 static inline void setLogLevel(LogLevel value) {
     MDK_setLogLevel(MDK_LogLevel(value));

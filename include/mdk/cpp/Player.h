@@ -490,7 +490,14 @@ NOTE:
         MDK_CALL(p, setVideoEffect, MDK_VideoEffect(effect), &values, vo_opaque);
         return *this;
     }
-
+/*!
+  \brief set
+  Set output color space.
+  \param value
+    - invalid (ColorSpaceUnknown): renderer will try to use the value of decoded frame, and will send hdr10 metadata when possible. i.e. hdr videos will enable hdr display. Currently only supported by metal, and `MetalRenderAPI.layer` must be a `CAMetalLayer` ([example](https://github.com/wang-bin/mdkSwift/blob/master/Player.swift#L184))
+    - hdr colorspace (ColorSpaceBT2100_PQ): no hdr metadata will be sent to the display, sdr will map to hdr. Can be used by the gui toolkits which support hdr swapchain but no api to change swapchain colorspace and format on the fly, see [Qt example](https://github.com/wang-bin/mdk-examples/blob/master/Qt/qmlrhi/VideoTextureNodePub.cpp#L83)
+    - sdr color space (ColorSpaceBT709): the default. HDR videos will tone map to SDR.
+*/
     Player& set(ColorSpace value, void* vo_opaque = nullptr) {
         MDK_CALL(p, setColorSpace, MDK_ColorSpace(value), vo_opaque);
         return *this;
