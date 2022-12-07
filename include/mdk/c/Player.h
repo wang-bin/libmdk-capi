@@ -141,12 +141,13 @@ typedef struct mdkPlayerAPI {
 
 /*!
   \brief setMedia
-  Set a new media url. Current playback is not affected.
+  Set a new media url.  If url changed, will stop current playback, and reset active tracks, external tracks set by setMedia(url, type)
   // MUST call setActiveTracks() after setMedia(), otherwise the 1st track in the media is used
  */
     void (*setMedia)(struct mdkPlayer*, const char* url);
 /* Set individual source for type, e.g. audio track file. If url is not empty, an individual pipeline will be used for 'type' tracks.
   If url is empty, use 'type' tracks in MediaType::Video url.
+  MUST be after main media setMedia(url).
   TODO: default type is Unknown
 */
     void (*setMediaForType)(struct mdkPlayer*, const char* url, MDK_MediaType type);
