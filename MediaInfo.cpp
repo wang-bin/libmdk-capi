@@ -11,8 +11,10 @@ void from_abi(const AudioCodecParameters& in, mdkAudioCodecParameters& out)
 {
     out.codec = in.codec.data();
     out.codec_tag = in.codec_tag;
-    out.extra_data = in.extra->constData();
-    out.extra_data_size = (int)in.extra->size();
+    if (in.extra) {
+        out.extra_data = in.extra->constData();
+        out.extra_data_size = (int)in.extra->size();
+    }
     out.bit_rate = in.bit_rate;
     out.profile = in.profile;
     out.level = in.level;
@@ -41,8 +43,10 @@ void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& out)
 {
     out.codec = in.codec.data();
     out.codec_tag = in.codec_tag;
-    out.extra_data = in.extra->constData();
-    out.extra_data_size = (int)in.extra->size();
+    if (in.extra) {
+        out.extra_data = in.extra->constData();
+        out.extra_data_size = (int)in.extra->size();
+    }
     out.bit_rate = in.bit_rate;
     out.profile = in.profile;
     out.level = in.level;
