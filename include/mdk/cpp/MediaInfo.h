@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -75,6 +75,24 @@ struct VideoStreamInfo {
     VideoCodecParameters codec;
 };
 
+struct SubtitleCodecParameters {
+    const char* codec;
+    uint32_t codec_tag = 0;
+    const uint8_t* extra_data; /* without padding data */
+    int extra_data_size;
+
+    int width = 0;  /* display width. bitmap subtitles only */
+    int height = 0; /* display height. bitmap subtitles only */
+};
+
+struct SubtitleStreamInfo {
+    int index;
+    int64_t start_time;
+    int64_t duration;
+
+    SubtitleCodecParameters codec;
+};
+
 struct ChapterInfo {
     int64_t start_time = 0;
     int64_t end_time = 0;
@@ -94,6 +112,7 @@ struct MediaInfo
     std::unordered_map<std::string, std::string> metadata;
     std::vector<AudioStreamInfo> audio;
     std::vector<VideoStreamInfo> video;
+    std::vector<SubtitleStreamInfo> subtitle;
 };
 
 // the following functions MUST be built into user's code because user's c++ stl abi is unknown
@@ -148,6 +167,15 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         while (MDK_VideoStreamMetadata(&csi, &e))
             si.metadata[e.key] = e.value;
         info->video.push_back(std::move(si));
+    }
+    for (int i = 0; i < cinfo->nb_subtitle; ++i) {
+        SubtitleStreamInfo si{};
+        const auto& csi = cinfo->subtitle[i];
+        si.index = csi.index;
+        si.start_time = csi.start_time;
+        si.duration = csi.duration;
+        MDK_SubtitleStreamCodecParameters(&csi, (mdkSubtitleCodecParameters*)&si.codec);
+        info->subtitle.push_back(std::move(si));
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -83,6 +83,26 @@ MDK_API void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo*, mdkVideoC
 /* see document of mdkStringMapEntry */
 MDK_API bool MDK_VideoStreamMetadata(const mdkVideoStreamInfo*, mdkStringMapEntry* entry);
 
+struct mdkSubtitleCodecParameters {
+    const char* codec ;
+    uint32_t codec_tag;
+    const uint8_t* extra_data;
+    int extra_data_size;
+
+    int width = 0;  /* display width. bitmap subtitles only */
+    int height = 0; /* display height. bitmap subtitles only */
+};
+
+struct mdkSubtitleStreamInfo {
+    int index;
+    int64_t start_time;
+    int64_t duration;
+
+    const void* priv;
+};
+
+MDK_API void MDK_SubtitleStreamCodecParameters(const mdkSubtitleStreamInfo*, mdkSubtitleCodecParameters* p);
+
 typedef struct mdkChapterInfo {
     int64_t start_time;
     int64_t end_time;
@@ -104,6 +124,8 @@ typedef struct mdkMediaInfo
     int nb_audio;
     mdkVideoStreamInfo* video;
     int nb_video;
+    mdkSubtitleStreamInfo* subtitle;
+    int nb_subtitle;
 
     const void* priv;
 

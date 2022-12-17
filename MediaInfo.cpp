@@ -69,6 +69,26 @@ void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)
     out.priv = &in;
 }
 
+void from_abi(const SubtitleCodecParameters& in, mdkSubtitleCodecParameters& out)
+{
+    out.codec = in.codec.data();
+    out.codec_tag = in.codec_tag;
+    if (in.extra) {
+        out.extra_data = in.extra->constData();
+        out.extra_data_size = (int)in.extra->size();
+    }
+    out.width = in.width;
+    out.height = in.height;
+}
+
+void from_abi(const SubtitleStreamInfo& in, mdkSubtitleStreamInfo& out)
+{
+    out.index = in.index;
+    out.start_time = in.start_time;
+    out.duration = in.duration;
+    out.priv = &in;
+}
+
 void from_abi(const ChapterInfo& in, mdkChapterInfo& out)
 {
     out.start_time = in.start_time;
@@ -90,6 +110,7 @@ void from_abi(const MediaInfo& in, mdkMediaInfo& out)
     out.nb_chapters = (int)in.chapters.size();
     out.nb_audio = (int)in.audio.size();
     out.nb_video = (int)in.video.size();
+    out.nb_subtitle = (int)in.subtitle.size();
 
     out.priv = &in;
 }
@@ -100,6 +121,7 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
         return;
     *out = MediaInfoInternal{};
     out->abi = abi;
+
     for (const auto& i : out->abi.chapters) {
         mdkChapterInfo ci;
         from_abi(i, ci);
@@ -108,6 +130,7 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
     out->info.chapters = nullptr;
     if (!out->c.empty())
         out->info.chapters = &out->c[0];
+
     for (const auto& i : out->abi.audio) {
         mdkAudioStreamInfo si;
         from_abi(i, si);
@@ -115,6 +138,7 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
     }
     if (!out->a.empty())
         out->info.audio = &out->a[0];
+
     for (const auto& i : out->abi.video) {
         mdkVideoStreamInfo si;
         from_abi(i, si);
@@ -122,6 +146,15 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
     }
     if (!out->v.empty())
         out->info.video = &out->v[0];
+
+    for (const auto& i : out->abi.subtitle) {
+        mdkSubtitleStreamInfo si;
+        from_abi(i, si);
+        out->s.push_back(si);
+    }
+    if (!out->s.empty())
+        out->info.subtitle = &out->s[0];
+
     from_abi(out->abi, out->info);
 }
 
@@ -162,6 +195,12 @@ void MDK_AudioStreamCodecParameters(const mdkAudioStreamInfo* info, mdkAudioCode
 void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo* info, mdkVideoCodecParameters* p)
 {
     auto abi = reinterpret_cast<const VideoStreamInfo*>(info->priv);
+    from_abi(abi->codec, *p);
+}
+
+void MDK_SubtitleStreamCodecParameters(const mdkSubtitleStreamInfo* info, mdkSubtitleCodecParameters* p)
+{
+    auto abi = reinterpret_cast<const SubtitleStreamInfo*>(info->priv);
     from_abi(abi->codec, *p);
 }
 
