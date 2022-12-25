@@ -21,6 +21,16 @@ extern mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame);
 extern VideoFrame MDK_VideoFrame_fromC(mdkVideoFrameAPI* p);
 extern unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data);
 
+static inline MediaType fromC(MDK_MediaType t)
+{
+    switch (t) {
+    case MDK_MediaType_Video: return MediaType::Video;
+    case MDK_MediaType_Audio: return MediaType::Audio;
+    case MDK_MediaType_Subtitle: return MediaType::Subtitle;
+    default: return MediaType::Unknown;
+    }
+}
+
 struct mdkPlayer : Player{
     MediaInfoInternal media_info;
 };
@@ -49,7 +59,7 @@ void MDK_Player_setMedia(mdkPlayer* p, const char* url)
 
 void MDK_Player_setMediaForType(mdkPlayer* p, const char* url, MDK_MediaType type)
 {
-    p->setMedia(url, MediaType(type));
+    p->setMedia(url, fromC(type));
 }
 
 const char* MDK_Player_url(mdkPlayer* p)
@@ -97,7 +107,7 @@ void MDK_Player_setDecoders(mdkPlayer* p, MDK_MediaType type, const char* names[
     while (*names) {
         s.emplace_back(*names++);
     }
-    p->setDecoders(MediaType(type), s);
+    p->setDecoders(fromC(type), s);
 }
 
 void MDK_Player_setAudioDecoders(mdkPlayer* p, const char** names)
@@ -462,7 +472,7 @@ void MDK_Player_setActiveTracks(mdkPlayer* p, MDK_MediaType type, const int* tra
     set<int> t;
     for (int i = 0; i < count; ++i)
         t.insert(tracks[i]);
-    p->setActiveTracks(MediaType(type), set<int>(tracks, tracks + count));
+    p->setActiveTracks(fromC(type), set<int>(tracks, tracks + count));
 }
 
 void MDK_Player_setFrameRate(mdkPlayer* p, float value)
