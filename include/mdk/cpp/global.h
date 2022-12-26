@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <type_traits>
 
 #ifndef MDK_NS
 #define MDK_NS mdk
@@ -23,6 +24,7 @@
 # define MDK_NS_PREPEND(X) ::MDK_NS::X
 
 #define MDK_CALL(p, FN, ...) (assert(p->FN && "NOT IMPLEMENTED! Runtime version < build version?"), p->FN(p->object, ##__VA_ARGS__))
+#define MDK_CALL2(p, FN, ...) (assert(p->size > 0 && offsetof(std::remove_reference<decltype(*p)>::type, FN) < p->size && "NOT IMPLEMENTED! Upgrade your runtime library"), p->FN(p->object, ##__VA_ARGS__))
 
 MDK_NS_BEGIN
 constexpr double TimestampEOS = DBL_MAX;

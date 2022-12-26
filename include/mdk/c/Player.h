@@ -477,7 +477,18 @@ NOTE:
     void (*setFrameRate)(struct mdkPlayer*, float value);
     void (*setPointMap)(struct mdkPlayer*, const float* videoRoi, const float* viewRoi, int count, void* vo_opaque);
     void (*setColorSpace)(struct mdkPlayer*, enum MDK_ColorSpace value, void* vo_opaque);
-    void* reserved[2];
+    void* reserved[1];
+
+/*!
+  \brief size
+  Struct size returned from runtime. Build time struct size may be different with runtime one, user MUST check
+  1. size == 0: old runtime without extendable size support. members after size(and reserved) member are not available in runtime
+  2. size > 0: new runtime with extendable size support. Before using members after size(and reserved), if offsetof(ThisType, Member) < size, it's safe to use the member
+*/
+    union {
+        void* reserved2;
+        int size;
+    };
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

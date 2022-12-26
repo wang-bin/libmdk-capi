@@ -483,6 +483,7 @@ void MDK_Player_setFrameRate(mdkPlayer* p, float value)
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
+    p->size = sizeof(mdkPlayerAPI);
     p->object = new mdkPlayer();
 #define SET_API(FN) p->FN = MDK_Player_##FN
     SET_API(setMute);
