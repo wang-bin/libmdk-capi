@@ -489,6 +489,8 @@ NOTE:
         void* reserved2;
         int size;
     };
+
+    void (*enqueueVideo)(struct mdkPlayer*, struct mdkVideoFrameAPI* frame, void* vo_opaque);
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

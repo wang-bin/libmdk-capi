@@ -480,6 +480,11 @@ void MDK_Player_setFrameRate(mdkPlayer* p, float value)
     p->setFrameRate(value);
 }
 
+void MDK_Player_enqueueVideo(mdkPlayer* p, mdkVideoFrameAPI* frame, void* vo_opaque)
+{
+    p->enqueue(MDK_VideoFrame_fromC(frame), vo_opaque);
+}
+
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -549,6 +554,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setFrameRate);
     SET_API(setPointMap);
     SET_API(setColorSpace);
+    SET_API(enqueueVideo);
 #undef SET_API
     return p;
 }

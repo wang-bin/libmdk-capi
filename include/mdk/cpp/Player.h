@@ -480,6 +480,13 @@ NOTE:
         return MDK_CALL(p, renderVideo, vo_opaque);
     }
 /*!
+  \brief enqueue
+  Send the frame to video renderer. You must call renderVideo() later in render thread
+*/
+    void enqueue(const VideoFrame& frame, void* vo_opaque = nullptr) {
+        MDK_CALL2(p, enqueueVideo, frame.toC(), vo_opaque);
+    }
+/*!
   \brief setBackgroundColor
   r, g, b, a range is [0, 1]. default is 0. if out of range, background color will not be filled
  */

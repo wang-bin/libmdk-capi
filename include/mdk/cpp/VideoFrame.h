@@ -102,6 +102,10 @@ public:
         return ptr;
     }
 
+    mdkVideoFrameAPI* toC() const {
+        return p;
+    }
+
     int planeCount() const { return MDK_CALL(p, planeCount); }
 
     int width(int plane = -1) const {
@@ -136,7 +140,7 @@ public:
    \param strides array of plane strides, size MUST >= plane count of format if not null. Can be null and strides[i] can be <=0 indicating no padding bytes (for plane i).
    NOTE: strides[i] will be filled with allocated plane i stride if necessary(strides[i] <= 0)
  */
-    void setBuffers(mdkVideoFrame*, uint8_t const** const data, int* strides/*in/out*/ = nullptr) {
+    void setBuffers(uint8_t const** const data, int* strides/*in/out*/ = nullptr) {
         MDK_CALL(p, setBuffers, data, strides);
     }
 
