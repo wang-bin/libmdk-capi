@@ -83,23 +83,23 @@ MDK_API void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo*, mdkVideoC
 /* see document of mdkStringMapEntry */
 MDK_API bool MDK_VideoStreamMetadata(const mdkVideoStreamInfo*, mdkStringMapEntry* entry);
 
-struct mdkSubtitleCodecParameters {
+typedef struct mdkSubtitleCodecParameters {
     const char* codec ;
     uint32_t codec_tag;
     const uint8_t* extra_data;
     int extra_data_size;
 
-    int width = 0;  /* display width. bitmap subtitles only */
-    int height = 0; /* display height. bitmap subtitles only */
-};
+    int width;  /* display width. bitmap subtitles only */
+    int height; /* display height. bitmap subtitles only */
+} mdkSubtitleCodecParameters;
 
-struct mdkSubtitleStreamInfo {
+typedef struct mdkSubtitleStreamInfo {
     int index;
     int64_t start_time;
     int64_t duration;
 
     const void* priv;
-};
+} mdkSubtitleStreamInfo;
 
 MDK_API void MDK_SubtitleStreamCodecParameters(const mdkSubtitleStreamInfo*, mdkSubtitleCodecParameters* p);
 
