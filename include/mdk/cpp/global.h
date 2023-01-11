@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -24,7 +24,7 @@
 # define MDK_NS_PREPEND(X) ::MDK_NS::X
 
 #define MDK_CALL(p, FN, ...) (assert(p->FN && "NOT IMPLEMENTED! Runtime version < build version?"), p->FN(p->object, ##__VA_ARGS__))
-#define MDK_CALL2(p, FN, ...) (assert(p->size > 0 && offsetof(std::remove_reference<decltype(*p)>::type, FN) < p->size && "NOT IMPLEMENTED! Upgrade your runtime library"), p->FN(p->object, ##__VA_ARGS__))
+#define MDK_CALL2(p, FN, ...) (assert(p->size > 0 && offsetof(std::remove_reference<decltype(*p)>::type, FN) < (size_t)p->size && "NOT IMPLEMENTED! Upgrade your runtime library"), p->FN(p->object, ##__VA_ARGS__))
 
 MDK_NS_BEGIN
 constexpr double TimestampEOS = DBL_MAX;
