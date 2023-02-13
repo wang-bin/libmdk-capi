@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -198,6 +198,7 @@ MDK_API bool MDK_getGlobalOptionPtr(const char* key, void** value);
   {progress 0~100, "reader.buffering"}: error is buffering progress
   {0/1, "thread.audio/video/subtitle", stream}: decoder thread is started (error = 1) and about to exit(error = 0)
   {error, "snapshot", saved_file if no error and error string if error < 0}
+  {0, "cc"}: the 1st closed caption data is decoded. can be used in ui to show CC button.
 */
 typedef struct mdkMediaEvent {
     int64_t error; /* result <0: error code(fourcc?). >=0: special value depending on event*/
