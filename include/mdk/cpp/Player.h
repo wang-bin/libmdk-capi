@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -347,6 +347,8 @@ public:
   - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
   - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
   - "continue_at_end": "0" or "1". do not stop playback when decode and render to end of stream. only set(State::Stopped) can stop playback. Useful for timeline preview.
+  - "cc": "0" or "1"(default). enable closed caption decoding and rendering.
+  - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. setActiveTracks(MediaType::Subtitle, {...}) enables decoding only.
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
@@ -474,7 +476,7 @@ NOTE:
    \brief renderVideo
   Render the next or current(redraw) frame. Foreign render context only (i.e. not created by createSurface()/updateNativeSurface()).
   OpenGL: Can be called in multiple foreign contexts for the same vo_opaque.
-   \return timestamp of rendered frame, or < 0 if no frame is rendered
+   \return timestamp of rendered frame, or < 0 if no frame is rendered. precision is microsecond
  */
     double renderVideo(void* vo_opaque = nullptr) {
         return MDK_CALL(p, renderVideo, vo_opaque);
