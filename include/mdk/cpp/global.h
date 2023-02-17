@@ -236,6 +236,9 @@ static inline void SetGlobalOption(const char* key, LogLevel value)
 /*
   keys:
   - "jvm", "JavaVM": JavaVM*. android only. Required if not loaded by System.loadLibrary()
+  - "X11Display": Display*
+  - "DRMDevice": drm device path, for vaapi
+  - "DRMFd": drm fd, for vaapi
  */
 static inline void SetGlobalOption(const char* key, void* value)
 {
