@@ -112,6 +112,16 @@ typedef struct mdkChapterInfo {
     const void* priv;
 } mdkChapterInfo;
 
+typedef struct mdkProgramInfo {
+    int id;
+    const int* stream; // stream index
+    int nb_stream;
+
+    const void* priv;
+} mdkProgramInfo;
+
+MDK_API bool MDK_ProgramMetadata(const mdkProgramInfo*, mdkStringMapEntry* entry);
+
 typedef struct mdkMediaInfo
 {
     int64_t start_time; // ms
@@ -132,6 +142,9 @@ typedef struct mdkMediaInfo
 
     mdkChapterInfo* chapters;
     int nb_chapters;
+
+    mdkProgramInfo* programs;
+    int nb_programs;
 } mdkMediaInfo;
 
 /* see document of mdkStringMapEntry */

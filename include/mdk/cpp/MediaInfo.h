@@ -103,6 +103,12 @@ struct ChapterInfo {
     std::string title;
 };
 
+struct ProgramInfo {
+    int id;
+    std::vector<int> stream; // stream index
+    std::unordered_map<std::string, std::string> metadata; // "service_name", "service_provider" etc.
+};
+
 struct MediaInfo
 {
     int64_t start_time; // ms
@@ -117,6 +123,7 @@ struct MediaInfo
     std::vector<AudioStreamInfo> audio;
     std::vector<VideoStreamInfo> video;
     std::vector<SubtitleStreamInfo> subtitle;
+    std::vector<ProgramInfo> program;
 };
 
 // the following functions MUST be built into user's code because user's c++ stl abi is unknown
@@ -137,12 +144,12 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
     while (MDK_MediaMetadata(cinfo, &entry))
         info->metadata[entry.key] = entry.value;
     for (int i = 0; i < cinfo->nb_chapters; ++i) {
-        auto cci = &cinfo->chapters[i];
+        const auto& cci = cinfo->chapters[i];
         ChapterInfo ci;
-        ci.start_time = cci->start_time;
-        ci.end_time = cci->end_time;
-        if (cci->title)
-            ci.title = cci->title;
+        ci.start_time = cci.start_time;
+        ci.end_time = cci.end_time;
+        if (cci.title)
+            ci.title = cci.title;
         info->chapters.emplace_back(std::move(ci));
     }
     for (int i = 0; i < cinfo->nb_audio; ++i) {
@@ -183,6 +190,16 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         while (MDK_SubtitleStreamMetadata(&csi, &e))
             si.metadata[e.key] = e.value;
         info->subtitle.push_back(std::move(si));
+    }
+    for (int i = 0; i < cinfo->nb_programs; ++i) {
+        const auto& cpi = cinfo->programs[i];
+        ProgramInfo pi;
+        pi.id = cpi.id;
+        pi.stream.assign(cpi.stream, cpi.stream + cpi.nb_stream);
+        mdkStringMapEntry e{};
+        while (MDK_ProgramMetadata(&cpi, &e))
+            pi.metadata[e.key] = e.value;
+        info->program.push_back(std::move(pi));
     }
 }
 

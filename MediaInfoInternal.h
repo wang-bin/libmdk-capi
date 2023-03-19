@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  */
 #pragma once
 #include "mdk/c/MediaInfo.h"
@@ -15,6 +15,7 @@ struct MediaInfoInternal {
     vector<mdkAudioStreamInfo> a;
     vector<mdkVideoStreamInfo> v;
     vector<mdkSubtitleStreamInfo> s;
+    vector<mdkProgramInfo> p;
 };
 
 void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out);

@@ -7,7 +7,7 @@
 #include "MediaInfoInternal.h"
 #include <cassert>
 
-void from_abi(const AudioCodecParameters& in, mdkAudioCodecParameters& out)
+static void from_abi(const AudioCodecParameters& in, mdkAudioCodecParameters& out)
 {
     out.codec = in.codec.data();
     out.codec_tag = in.codec_tag;
@@ -30,7 +30,7 @@ void from_abi(const AudioCodecParameters& in, mdkAudioCodecParameters& out)
     out.frame_size = in.frame_size;
 }
 
-void from_abi(const AudioStreamInfo& in, mdkAudioStreamInfo& out)
+static void from_abi(const AudioStreamInfo& in, mdkAudioStreamInfo& out)
 {
     out.index = in.index;
     out.start_time = in.start_time;
@@ -39,7 +39,7 @@ void from_abi(const AudioStreamInfo& in, mdkAudioStreamInfo& out)
     out.priv = &in;
 }
 
-void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& out)
+static void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& out)
 {
     out.codec = in.codec.data();
     out.codec_tag = in.codec_tag;
@@ -59,7 +59,7 @@ void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& out)
     out.b_frames = in.b_frames;
 }
 
-void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)
+static void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)
 {
     out.index = in.index;
     out.start_time = in.start_time;
@@ -69,7 +69,7 @@ void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)
     out.priv = &in;
 }
 
-void from_abi(const SubtitleCodecParameters& in, mdkSubtitleCodecParameters& out)
+static void from_abi(const SubtitleCodecParameters& in, mdkSubtitleCodecParameters& out)
 {
     out.codec = in.codec.data();
     out.codec_tag = in.codec_tag;
@@ -81,7 +81,7 @@ void from_abi(const SubtitleCodecParameters& in, mdkSubtitleCodecParameters& out
     out.height = in.height;
 }
 
-void from_abi(const SubtitleStreamInfo& in, mdkSubtitleStreamInfo& out)
+static void from_abi(const SubtitleStreamInfo& in, mdkSubtitleStreamInfo& out)
 {
     out.index = in.index;
     out.start_time = in.start_time;
@@ -89,7 +89,7 @@ void from_abi(const SubtitleStreamInfo& in, mdkSubtitleStreamInfo& out)
     out.priv = &in;
 }
 
-void from_abi(const ChapterInfo& in, mdkChapterInfo& out)
+static void from_abi(const ChapterInfo& in, mdkChapterInfo& out)
 {
     out.start_time = in.start_time;
     out.end_time = in.end_time;
@@ -100,7 +100,15 @@ void from_abi(const ChapterInfo& in, mdkChapterInfo& out)
     out.priv = &in;
 }
 
-void from_abi(const MediaInfo& in, mdkMediaInfo& out)
+static void from_abi(const ProgramInfo& in, mdkProgramInfo& out)
+{
+    out.id = in.id;
+    out.stream = in.stream.data();
+    out.nb_stream = (int)in.stream.size();
+    out.priv = &in;
+}
+
+static void from_abi(const MediaInfo& in, mdkMediaInfo& out)
 {
     out.start_time = in.start_time;
     out.duration = in.duration;
@@ -111,6 +119,7 @@ void from_abi(const MediaInfo& in, mdkMediaInfo& out)
     out.nb_audio = (int)in.audio.size();
     out.nb_video = (int)in.video.size();
     out.nb_subtitle = (int)in.subtitle.size();
+    out.nb_programs = (int)in.program.size();
 
     out.priv = &in;
 }
@@ -130,6 +139,15 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
     out->info.chapters = nullptr;
     if (!out->c.empty())
         out->info.chapters = &out->c[0];
+
+    for (const auto& i : out->abi.program) {
+        mdkProgramInfo pi;
+        from_abi(i, pi);
+        out->p.push_back(pi);
+    }
+    out->info.programs = nullptr;
+    if (!out->p.empty())
+        out->info.programs = &out->p[0];
 
     for (const auto& i : out->abi.audio) {
         mdkAudioStreamInfo si;
@@ -223,4 +241,10 @@ bool MDK_SubtitleStreamMetadata(const mdkSubtitleStreamInfo* info, mdkStringMapE
 {
     return MDK_GetMetaData<SubtitleStreamInfo>(info, entry);
 }
+
+bool MDK_ProgramMetadata(const mdkProgramInfo* info, mdkStringMapEntry* entry)
+{
+    return MDK_GetMetaData<ProgramInfo>(info, entry);
+}
+
 } // extern "C"
