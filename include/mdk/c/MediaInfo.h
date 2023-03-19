@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -102,6 +102,7 @@ typedef struct mdkSubtitleStreamInfo {
 } mdkSubtitleStreamInfo;
 
 MDK_API void MDK_SubtitleStreamCodecParameters(const mdkSubtitleStreamInfo*, mdkSubtitleCodecParameters* p);
+MDK_API bool MDK_SubtitleStreamMetadata(const mdkSubtitleStreamInfo*, mdkStringMapEntry* entry);
 
 typedef struct mdkChapterInfo {
     int64_t start_time;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/MediaInfo.h"
 #include "mdk/MediaInfo.h"
@@ -219,4 +219,8 @@ bool MDK_MediaMetadata(const mdkMediaInfo* info, mdkStringMapEntry* entry)
     return MDK_GetMetaData<MediaInfo>(info, entry);
 }
 
+bool MDK_SubtitleStreamMetadata(const mdkSubtitleStreamInfo* info, mdkStringMapEntry* entry)
+{
+    return MDK_GetMetaData<SubtitleStreamInfo>(info, entry);
+}
 } // extern "C"

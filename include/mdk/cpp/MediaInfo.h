@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -43,6 +43,7 @@ struct AudioStreamInfo {
     int64_t duration; /* ms */
     int64_t frames;
 
+// stream language is metadata["language"]
     std::unordered_map<std::string, std::string> metadata;
     AudioCodecParameters codec;
 };
@@ -71,6 +72,7 @@ struct VideoStreamInfo {
     int64_t frames;
     int rotation;
 
+// stream language is metadata["language"]
     std::unordered_map<std::string, std::string> metadata;
     VideoCodecParameters codec;
 };
@@ -90,6 +92,8 @@ struct SubtitleStreamInfo {
     int64_t start_time;
     int64_t duration;
 
+// stream language is metadata["language"]
+    std::unordered_map<std::string, std::string> metadata;
     SubtitleCodecParameters codec;
 };
 
@@ -175,6 +179,9 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         si.start_time = csi.start_time;
         si.duration = csi.duration;
         MDK_SubtitleStreamCodecParameters(&csi, (mdkSubtitleCodecParameters*)&si.codec);
+        mdkStringMapEntry e{};
+        while (MDK_SubtitleStreamMetadata(&csi, &e))
+            si.metadata[e.key] = e.value;
         info->subtitle.push_back(std::move(si));
     }
 }
