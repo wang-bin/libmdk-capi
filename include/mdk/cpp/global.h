@@ -128,9 +128,9 @@ enum class SeekFlag {
 /* KeyFrame forward seek may fail(permission denied) near the end of media if there's no key frame after seek target position*/
     KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. It's accurate seek without this flag. Accurate seek is slow and implies backward seek internally.*/
     Fast        = KeyFrame,
-    InCache     = 1 << 10, // try to seek in cache first. useful for speeding up network stream seeking.  Target position must be in range (position(), position() + Player.buffered()]
+    InCache     = 1 << 10, // try to seek in memory cache first. useful for speeding up network stream seeking.  Target position must be in range (position(), position() + Player.buffered()]
 
-    Default     = KeyFrame|FromStart
+    Default     = KeyFrame|FromStart|InCache
 };
 template<> struct is_flag<SeekFlag> : std::true_type {};
 
