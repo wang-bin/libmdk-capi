@@ -183,12 +183,15 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
 /*
  keys:
  - "avutil_lib", "avcodec_lib", "avformat_lib", "swresample_lib", "avfilter_lib": path to ffmpeg runtime libraries
+ - "plugins_dir": plugins directory. MUST set before "plugins" if not in default dirs
  - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
  - "MDK_KEY": license key for your product
  - "MDK_KEY_CODE_PAGE": license key code page used internally(windows only)
  - "ffmpeg.loglevel" or "ffmpeg.log": ffmpeg log level names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
- - "logLevel" or "log": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", LogLevel)
- - "profiler.gpu": "0", "1"
+ - "ffmpeg.cpuflags": cpuflags for ffmpeg
+ - "logLevel" or "log": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", int(LogLevel))
+ - "profiler.gpu": "0" or "1"
+ - "R3DSDK_DIR": R3D dlls dir. default dir is working dir
 */
 static inline void SetGlobalOption(const char* key, const char* value)
 {
@@ -209,9 +212,15 @@ static inline bool GetGlobalOption(const char* key, const char** value)
   keys:
   - "videoout.clear_on_stop": 0/1. clear renderer using background color if playback stops
   - "videoout.buffer_frames": N. max buffered frames to in the renderer
-  - "logLevel" or "log": raw value of LogLevel
-  - "profiler.gpu": 0, 1
-  - "demuxer.io": 0, 1(default), 2
+  - "videoout.hdr": auto send hdr metadata to display. overrides Player.set(ColorSpace)
+  - "logLevel" or "log": raw int value of LogLevel
+  - "profiler.gpu": true/false, 0/1
+  - "demuxer.io": use io module for demuxer
+        - 0: use demuxer's internal io
+        - 1: default. prefer io module
+        - 2: always use io module for all protocols
+  - "demuxer.live_eos_timeout": read error if no data for the given milliseconds for a live stream. default is 5000
+
  */
 static inline void SetGlobalOption(const char* key, int value)
 {
