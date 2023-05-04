@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -23,7 +23,7 @@ struct RenderAPI {
         Vulkan = 2,
         Metal = 3,
         D3D11 = 4,
-
+        D3D12 = 5,
     };
 
     //Type type() const { return Type(type_ & 0xffff);}
@@ -114,6 +114,36 @@ struct D3D11RenderAPI : RenderAPI {
 ***/
     bool debug = false;
     int buffers = 2; /* UWP must >= 2. */
+    int adapter = 0; /* adapter index */
+    float feature_level = 0; /* 0 is the highest */
+    const char* vendor = nullptr; /* gpu vendor name */
+};
+#endif
+
+/*!
+  NOTE: include d3d12.h first to use D3D12RenderAPI
+ */
+#if defined(__d3d12_h__)// D3D12_SDK_VERSION: not defined in 19041
+struct D3D12RenderAPI : RenderAPI {
+    D3D12RenderAPI(ID3D12CommandQueue* cq = nullptr, ID3D12Resource* r = nullptr) : cmdQueue(cq), rt(r) {
+        type_ = versioned(RenderAPI::D3D12);
+    }
+/*** Render Context Resources. Foreign context (provided by user) only ***/
+    ID3D12CommandQueue* cmdQueue = nullptr; // optional. will create an internal queue if null.
+    ID3D12Resource* rt = nullptr; // optional. the render target
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {}; // optional
+    void* reserved[2] = {};
+
+    const void* opaque = nullptr; // optional. callback opaque
+    ID3D12Resource* (*currentRenderTarget)(const void* opaque, UINT* index, UINT* count, D3D12_RESOURCE_STATES* state) = nullptr; // optional. usually for on screen rendering.
+    void* reserved2[2] = {};
+
+/***
+  Render Context Creation Options.
+  as input, they are desired values to create an internal context(ignored if context is provided by user). as output, they are result values(if context is not provided by user)
+***/
+    bool debug = false;
+    int buffers = 2; /* must >= 2. */
     int adapter = 0; /* adapter index */
     float feature_level = 0; /* 0 is the highest */
     const char* vendor = nullptr; /* gpu vendor name */

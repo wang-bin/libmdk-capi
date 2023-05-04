@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  */
 // include gl, d3d, vk headers to enable RenderAPI structures
 #if defined(_WIN32)
 # include <d3d11.h>
+# include <d3d12.h>
 #endif
 #if __has_include(<vulkan/vulkan_core.h>)
 # include <vulkan/vulkan_core.h>
@@ -61,6 +62,24 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         return api;
     }
 #endif // defined(D3D11_SDK_VERSION)
+#if defined(__d3d12_h__)
+    case MDK_RenderAPI_D3D12: {
+        auto c = static_cast<mdkD3D12RenderAPI*>(data);
+        auto api = make_unique<D3D12RenderAPI>(c->cmdQueue, c->rt);
+        api->rtvHandle = c->rtvHandle;
+        api->opaque = c->opaque;
+        api->currentRenderTarget = c->currentRenderTarget;
+        //api->swapChain =
+        //api->currentCommandList = c->currentCommandList;
+
+        api->debug = c->debug;
+        api->buffers = c->buffers;
+        api->adapter = c->adapter;
+        api->feature_level = c->feature_level;
+        api->vendor = c->vendor;
+        return api;
+    }
+#endif // defined(__d3d12_h__)
 #if (VK_VERSION_1_0+0)
     case MDK_RenderAPI_Vulkan: {
         auto c = static_cast<mdkVulkanRenderAPI*>(data);
