@@ -8,6 +8,7 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
+#include <stdbool.h> /* for swift/dart ffi gen. old swift may report error if -fcxx-module and can be workaround by #import <Metal/Metal.h> ifdef __OBJC__ */
 #include <stdint.h>
 
 #define MDK_VERSION_INT(major, minor, patch) \
