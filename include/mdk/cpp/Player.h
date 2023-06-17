@@ -53,9 +53,15 @@ public:
 
     Player(const Player&) = delete;
     Player& operator=(const Player&) = delete;
-    Player() : p(mdkPlayerAPI_new()) {}
+    Player(const mdkPlayerAPI* cp = nullptr)
+        : p(cp)
+        , owner_(!cp) {
+        if (!p)
+            p = mdkPlayerAPI_new();
+    }
     ~Player() {
-        mdkPlayerAPI_delete(&p);
+        if (owner_)
+            mdkPlayerAPI_delete(&p);
     }
 
     void setMute(bool value = true) {
@@ -781,6 +787,7 @@ NOTE:
 #endif
 private:
     const mdkPlayerAPI* p = nullptr;
+    bool owner_ = true;
     bool mute_ = false;
     float volume_ = 1.0f;
     std::function<void()> current_cb_ = nullptr;
