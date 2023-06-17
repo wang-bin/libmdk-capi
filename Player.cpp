@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -472,7 +472,7 @@ void MDK_Player_setActiveTracks(mdkPlayer* p, MDK_MediaType type, const int* tra
     set<int> t;
     for (int i = 0; i < count; ++i)
         t.insert(tracks[i]);
-    p->setActiveTracks(fromC(type), set<int>(tracks, tracks + count));
+    p->setActiveTracks(fromC(type), t);
 }
 
 void MDK_Player_setFrameRate(mdkPlayer* p, float value)
