@@ -59,7 +59,7 @@ public:
         if (!p)
             p = mdkPlayerAPI_new();
     }
-    ~Player() {
+    virtual ~Player() {
         if (owner_)
             mdkPlayerAPI_delete(&p);
     }
