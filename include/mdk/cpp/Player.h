@@ -195,7 +195,7 @@ public:
   Preload a media and then becomes State::Paused. \sa PrepareCallback
   To play a media from a given position, call prepare(ms) then set(State::Playing)
   \param startPosition start from position, relative to media start position(i.e. MediaInfo.start_time)
-  \param cb same as callback of seek()
+  \param cb if startPosition > 0, same as callback of seek(), called after the first frame is decoded or load/seek/decode error. If startPosition == 0, called when media is loaded and mediaInfo is ready or load error.
   \param flags seek flag if startPosition != 0.
   For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
@@ -563,8 +563,8 @@ NOTE:
   If pos > media time range, e.g. INT64_MAX, will seek to the last frame of media for SeekFlag::AnyFrame, and the last key frame of media for SeekFlag::Fast.
   If pos > media time range with SeekFlag::AnyFrame, playback will stop unless setProperty("continue_at_end", "1") was called
   FIXME: a/v sync broken if SeekFlag::Frame|SeekFlag::FromNow.
-  \param cb if succeeded, callback is called when stream seek finished and after the 1st frame decoded, ret(>=0) is the timestamp of the 1st frame(video if exists) after seek.
-  if error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2), out of range(-4) or media unloaded(-3).
+  \param cb if succeeded, callback is called when stream seek finished and after the 1st frame decoded or decode error(e.g. video tracks disabled), ret(>=0) is the timestamp of the 1st frame(video if exists) after seek.
+  If error(io, demux, not decode) occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2), out of range(-4) or media unloaded(-3).
  */
     bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t ret)> cb = nullptr) {
         seek_cb_ = cb;
