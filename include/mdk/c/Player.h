@@ -181,7 +181,8 @@ typedef struct mdkPlayerAPI {
   \brief prepare
   Preload a media and then becomes State::Paused. \sa PrepareCallback
   To play a media from a given position, call prepare(ms) then setState(State::Playing)
-  \param startPosition start from position, relative to media start position, i.e. MediaInfo.start_time
+  \param startPosition start from position, relative to media start position(i.e. MediaInfo.start_time)
+  \param cb if startPosition > 0, same as callback of seek(), called after the first frame is decoded or load/seek/decode error. If startPosition == 0, called when media is loaded and mediaInfo is ready or load error.
   \param flags seek flag if startPosition != 0.
   For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
@@ -305,7 +306,8 @@ NOTE:
   If pos > media time range, e.g. INT64_MAX, will seek to the last frame of media for SeekFlag::AnyFrame, and the last key frame of media for SeekFlag::Fast.
   If pos > media time range with SeekFlag::AnyFrame, playback will stop unless setProperty("continue_at_end", "1") was called
   FIXME: a/v sync broken if SeekFlag::Frame|SeekFlag::FromNow.
-  \param cb callback to be invoked when seek finished(ret >= 0), error occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2)
+  \param cb if succeeded, callback is called when stream seek finished and after the 1st frame decoded or decode error(e.g. video tracks disabled), ret(>=0) is the timestamp of the 1st frame(video if exists) after seek.
+  If error(io, demux, not decode) occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2), out of range(-4) or media unloaded(-3).
  */
     bool (*seekWithFlags)(struct mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
     bool (*seek)(struct mdkPlayer*, int64_t pos, mdkSeekCallback);
@@ -365,7 +367,11 @@ NOTE:
   Predefined properties are:
   - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
   - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
-  - "continue_at_end": do not stop playback when decode and render to end of stream. only setState(State::Stopped) can stop playback
+  - "continue_at_end" or "keep_open": "0" or "1". do not stop playback when decode and render to end of stream. only set(State::Stopped) can stop playback. Useful for timeline preview.
+  - "cc": "0" or "1"(default). enable closed caption decoding and rendering.
+  - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. setActiveTracks(MediaType::Subtitle, {...}) enables decoding only.
+  - "avformat.some_name": avformat option, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option
+  - "avio.some_name": AVIOContext/URLProtocol option, e.g. "avio.user_agent"
  */
     void (*setProperty)(struct mdkPlayer*, const char* key, const char* value);
 /*!

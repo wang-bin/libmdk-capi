@@ -187,7 +187,7 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
  - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
  - "MDK_KEY": license key for your product
  - "MDK_KEY_CODE_PAGE": license key code page used internally(windows only)
- - "ffmpeg.loglevel" or "ffmpeg.log": ffmpeg log level names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet"
+ - "ffmpeg.loglevel" or "ffmpeg.log": ffmpeg log level names, "trace", "debug", "verbose", "info", "warning", "error", "fatal", "panic", "quiet", or "${level}=${avclass}" to set AVClass log level(can be multiple times), e.g. "debug=http"
  - "ffmpeg.cpuflags": cpuflags for ffmpeg
  - "logLevel" or "log": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", int(LogLevel))
  - "profiler.gpu": "0" or "1"
