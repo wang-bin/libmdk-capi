@@ -82,6 +82,10 @@ typedef struct mdkMediaStatusChangedCallback {
     void* opaque;
 } mdkMediaStatusChangedCallback;
 
+typedef struct mdkMediaStatusCallback {
+    bool (*cb)(MDK_MediaStatus oldValue, MDK_MediaStatus newValue, void* opaque);
+    void* opaque;
+} mdkMediaStatusCallback;
 /*!
   \brief The State enum
   Current playback state. Set/Get by user

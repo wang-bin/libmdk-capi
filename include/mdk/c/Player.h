@@ -211,7 +211,7 @@ typedef struct mdkPlayerAPI {
   \brief onMediaStatusChanged
   Add a callback to be invoked when MediaStatus is changed
   \param cb null to clear callbacks
-  TODO: callback token
+  DEPRECATED: use onMediaStatus instead
  */
     void (*onMediaStatusChanged)(struct mdkPlayer*, mdkMediaStatusChangedCallback);
 
@@ -483,7 +483,12 @@ NOTE:
     void (*setFrameRate)(struct mdkPlayer*, float value);
     void (*setPointMap)(struct mdkPlayer*, const float* videoRoi, const float* viewRoi, int count, void* vo_opaque);
     void (*setColorSpace)(struct mdkPlayer*, enum MDK_ColorSpace value, void* vo_opaque);
-    void* reserved[1];
+/*!
+  \brief onMediaStatus
+  Add or remove a callback to be invoked when MediaStatus is changed
+  \param cb null to clear callbacks
+ */
+    void (*onMediaStatus)(struct mdkPlayer*, mdkMediaStatusCallback cb, MDK_CallbackToken* token);
 
 /*!
   \brief size

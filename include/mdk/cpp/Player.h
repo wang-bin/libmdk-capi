@@ -71,7 +71,7 @@ public:
 
     bool isMute() const { return mute_; }
 /*!
-  \brief setChannelVolume
+  \brief setVolume
   Set audio volume level
   \param value linear volume level, range is >=0. 1.0 is source volume
   \param channel channel number, int value of AudioFormat::Channel, -1 for all channels.
@@ -260,15 +260,25 @@ public:
   Add a callback to be invoked when MediaStatus is changed
   \param cb null to clear callbacks. return true
  */
+
+#if (__cpp_attributes+0)
+//[[deprecated("use 'onMediaStatus' instead")]]
+#endif
     Player& onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
+        return onMediaStatus([cb](MediaStatus, MediaStatus newValue){
+            return cb(newValue);
+        });
+    }
+
+    Player& onMediaStatus(std::function<bool(MediaStatus oldValue, MediaStatus newValue)> cb, CallbackToken* token = nullptr) {
         status_cb_ = cb;
-        mdkMediaStatusChangedCallback callback;
-        callback.cb = [](MDK_MediaStatus value, void* opaque){
-            auto f = (std::function<bool(MediaStatus)>*)opaque;
-            return (*f)(MediaStatus(value));
+        mdkMediaStatusCallback callback;
+        callback.cb = [](MDK_MediaStatus oldValue, MDK_MediaStatus newValue, void* opaque){
+            auto p = (Player*)opaque;
+            return p->status_cb_(MediaStatus(oldValue), MediaStatus(newValue));
         };
-        callback.opaque = status_cb_ ? (void*)&status_cb_ : nullptr;
-        MDK_CALL(p, onMediaStatusChanged, callback);
+        callback.opaque = status_cb_ ? this : nullptr;
+        MDK_CALL(p, onMediaStatus, callback, token);
         return *this;
     }
 
@@ -796,7 +806,7 @@ private:
     std::function<bool(int64_t ms)> timeout_cb_ = nullptr;
     std::function<bool(int64_t position, bool* boost)> prepare_cb_ = nullptr;
     std::function<void(State)> state_cb_ = nullptr;
-    std::function<bool(MediaStatus)> status_cb_ = nullptr;
+    std::function<bool(MediaStatus, MediaStatus)> status_cb_ = nullptr;
     std::function<void(void* vo_opaque)> render_cb_ = nullptr;
     std::function<void(int64_t)> seek_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;

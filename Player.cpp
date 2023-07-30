@@ -182,12 +182,23 @@ MDK_MediaStatus MDK_Player_mediaStatus(mdkPlayer* p)
 void MDK_Player_onMediaStatusChanged(mdkPlayer* p, mdkMediaStatusChangedCallback cb)
 {
     if (!cb.opaque) {
-        p->onMediaStatusChanged(nullptr);
+        p->onMediaStatus(nullptr);
         return;
     }
-    p->onMediaStatusChanged([cb](MediaStatus value){
+    p->onMediaStatus([cb](MediaStatus old, MediaStatus value){
         return cb.cb(MDK_MediaStatus(value), cb.opaque);
     });
+}
+
+void MDK_Player_onMediaStatus(mdkPlayer* p, mdkMediaStatusCallback cb, MDK_CallbackToken* token)
+{
+    if (!cb.opaque) {
+        p->onMediaStatus(nullptr, token);
+        return;
+    }
+    p->onMediaStatus([cb](MediaStatus old, MediaStatus value){
+        return cb.cb(MDK_MediaStatus(old), MDK_MediaStatus(value), cb.opaque);
+    }, token);
 }
 
 void MDK_Player_updateNativeSurface(mdkPlayer* p, void* win, int width, int height, MDK_SurfaceType type)
@@ -512,6 +523,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(waitFor);
     SET_API(mediaStatus);
     SET_API(onMediaStatusChanged);
+    SET_API(onMediaStatus);
     SET_API(updateNativeSurface);
     SET_API(createSurface);
     SET_API(resizeSurface);
