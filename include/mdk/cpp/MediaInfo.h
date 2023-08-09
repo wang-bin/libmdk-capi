@@ -114,7 +114,7 @@ struct MediaInfo
     int64_t start_time; // ms
     int64_t duration;
     int64_t bit_rate;
-    int64_t size;
+    int64_t size; // file size. IGNORE ME!
     const char* format;
     int streams;
 
