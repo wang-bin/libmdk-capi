@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -86,6 +86,7 @@ public:
             mdkVideoFrameAPI_delete(&p);
     }
 
+// isValid() is true for EOS frame, but no data and timestamp() is TimestampEOS.
     bool isValid() const { return !!p; }
     explicit operator bool() const { return isValid();}
 

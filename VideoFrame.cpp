@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020-2023 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/VideoFrame.h"
 #include "mdk/VideoFrame.h"
@@ -186,7 +186,7 @@ void mdkVideoFrameAPI_delete(mdkVideoFrameAPI** pp)
 
 mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame)
 {
-    if (!frame) // TODO: special frames, e.g. EOS
+    if (!frame && frame.timestamp() != TimestampEOS) // TODO: special frames, e.g. EOS
         return nullptr;
     mdkVideoFrameAPI* api = new mdkVideoFrameAPI();
     api->object = new mdkVideoFrame();
