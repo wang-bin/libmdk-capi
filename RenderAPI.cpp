@@ -18,7 +18,7 @@ using namespace MDK_NS;
 
 unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
 {
-    const int version = type >> 16;
+    [[maybe_unused]] const int version = type >> 16;
     type = MDK_RenderAPI(type & 0xffff);
     switch (type) {
     case MDK_RenderAPI_OpenGL: {
