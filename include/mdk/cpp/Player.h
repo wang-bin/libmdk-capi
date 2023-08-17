@@ -265,6 +265,8 @@ public:
 //[[deprecated("use 'onMediaStatus' instead")]]
 #endif
     Player& onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
+        if (!cb)
+            return onMediaStatus(nullptr);
         return onMediaStatus([cb](MediaStatus, MediaStatus newValue){
             return cb(newValue);
         });
