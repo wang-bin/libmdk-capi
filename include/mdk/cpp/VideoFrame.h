@@ -158,6 +158,8 @@ public:
     }
 
     double timestamp() const {
+        if (!p)
+            return -1;
         return MDK_CALL(p, timestamp);
     }
 /*!
