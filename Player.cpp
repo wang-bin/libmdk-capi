@@ -473,7 +473,10 @@ void MDK_Player_setVideoEffect(mdkPlayer* p, MDK_VideoEffect effect, const float
 void MDK_Player_setColorSpace(mdkPlayer* p, MDK_ColorSpace value, void* vo_opaque)
 {
     const ColorSpace cs[] = {
-        ColorSpaceUnknown, ColorSpaceBT709, ColorSpaceBT2100_PQ, ColorSpaceBT2100_HLG
+        ColorSpaceUnknown,
+        ColorSpaceBT709,
+        ColorSpaceBT2100_PQ,
+        ColorSpaceSCRGB,
     };
     p->set(cs[(int)value], vo_opaque);
 }

@@ -136,6 +136,7 @@ enum MDK_ColorSpace {
     MDK_ColorSpace_Unknown,
     MDK_ColorSpace_BT709,
     MDK_ColorSpace_BT2100_PQ,
+    MDK_ColorSpace_scRGB,
 };
 
 MDK_API int MDK_version();
