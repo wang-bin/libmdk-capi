@@ -130,6 +130,8 @@ enum class SeekFlag {
     Fast        = KeyFrame,
     InCache     = 1 << 10, // try to seek in memory cache first. useful for speeding up network stream seeking.  Target position must be in range (position(), position() + Player.buffered()]
 
+    Backward    = 1 << 16, // for KeyFrame seek only. Accurate seek implies Backward
+
     Default     = KeyFrame|FromStart|InCache
 };
 template<> struct is_flag<SeekFlag> : std::true_type {};

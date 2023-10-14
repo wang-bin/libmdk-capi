@@ -118,6 +118,8 @@ typedef enum MDKSeekFlag {
     MDK_SeekFlag_Fast        = MDK_SeekFlag_KeyFrame,
     MDK_SeekFlag_InCache     = 1 << 10, // try to seek in memory cache first. useful for speeding up network stream seeking.  Target position must be in range (position(), position() + Player.buffered()]
 
+    MDK_SeekFlag_Backward    = 1 << 16,
+
     MDK_SeekFlag_Default     = MDK_SeekFlag_KeyFrame|MDK_SeekFlag_FromStart|MDK_SeekFlag_InCache
 } MDK_SeekFlag;
 
