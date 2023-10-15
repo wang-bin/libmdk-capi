@@ -203,6 +203,12 @@ MDK_API void MDK_setGlobalOptionString(const char* key, const char* value);
 
  */
 MDK_API void MDK_setGlobalOptionInt32(const char* key, int value);
+
+/*
+  keys:
+  - "sdr.white": sdr white level. usually it's 203, but some obs-studio default value is 300, so let user set the value
+*/
+MDK_API void MDK_setGlobalOptionFloat(const char* key, float value);
 /*
   keys:
   - "jvm", "JavaVM": JavaVM*. android only

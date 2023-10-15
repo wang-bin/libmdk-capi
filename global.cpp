@@ -53,6 +53,11 @@ void MDK_setGlobalOptionInt32(const char* key, int value)
     SetGlobalOption(key, value);
 }
 
+void MDK_setGlobalOptionFloat(const char* key, float value)
+{
+    SetGlobalOption(key, value);
+}
+
 void MDK_setGlobalOptionPtr(const char* key, void* value)
 {
     SetGlobalOption(key, value);

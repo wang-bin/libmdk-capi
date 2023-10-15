@@ -229,6 +229,15 @@ static inline void SetGlobalOption(const char* key, int value)
     MDK_setGlobalOptionInt32(key, value);
 }
 
+/*
+  keys:
+  - "sdr.white": sdr white level. usually it's 203, but some obs-studio default value is 300, so let user set the value
+*/
+static inline void SetGlobalOption(const char* key, float value)
+{
+    MDK_setGlobalOptionFloat(key, value);
+}
+
 /*!
   \return false if no such key
   keys:
