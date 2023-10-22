@@ -57,6 +57,7 @@ static void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& ou
     out.width = in.width;
     out.height = in.height;
     out.b_frames = in.b_frames;
+    out.par = in.par;
 }
 
 static void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)

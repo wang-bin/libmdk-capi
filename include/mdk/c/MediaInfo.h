@@ -34,7 +34,7 @@ typedef struct mdkAudioCodecParameters {
     int block_align;
     int frame_size; /* const samples per channel in a frame */
 
-    char reserved[128]; // color info etc.
+    char reserved[128]; /* color info etc. */
 } mdkAudioCodecParameters;
 
 typedef struct mdkAudioStreamInfo {
@@ -66,7 +66,8 @@ typedef struct mdkVideoCodecParameters {
     int height;
     int b_frames;
 
-    char reserved[132];
+    float par;
+    char reserved[128];
 } mdkVideoCodecParameters;
 
 typedef struct mdkVideoStreamInfo {
@@ -107,14 +108,14 @@ MDK_API bool MDK_SubtitleStreamMetadata(const mdkSubtitleStreamInfo*, mdkStringM
 typedef struct mdkChapterInfo {
     int64_t start_time;
     int64_t end_time;
-    const char* title; // NULL if no title
+    const char* title; /* NULL if no title */
 
     const void* priv;
 } mdkChapterInfo;
 
 typedef struct mdkProgramInfo {
     int id;
-    const int* stream; // stream index
+    const int* stream; /* stream index */
     int nb_stream;
 
     const void* priv;
@@ -124,10 +125,10 @@ MDK_API bool MDK_ProgramMetadata(const mdkProgramInfo*, mdkStringMapEntry* entry
 
 typedef struct mdkMediaInfo
 {
-    int64_t start_time; // ms
+    int64_t start_time; /* ms */
     int64_t duration;
     int64_t bit_rate;
-    int64_t size;
+    int64_t size; /* file size. IGNORE THIS */
     const char* format;
     int streams;
 

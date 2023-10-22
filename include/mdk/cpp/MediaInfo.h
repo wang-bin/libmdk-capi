@@ -57,12 +57,13 @@ struct VideoCodecParameters {
     int profile;
     int level;
     float frame_rate;
-    int format;
-    const char* format_name;
+    int format; /* pixel format */
+    const char* format_name; /* pixel format name */
 
     int width;
     int height;
     int b_frames;
+    float par;
 };
 
 struct VideoStreamInfo {
@@ -70,7 +71,7 @@ struct VideoStreamInfo {
     int64_t start_time;
     int64_t duration;
     int64_t frames;
-    int rotation;
+    int rotation; // degree need to rotate clockwise
 
 // stream language is metadata["language"]
     std::unordered_map<std::string, std::string> metadata;
