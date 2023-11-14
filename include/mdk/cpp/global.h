@@ -323,6 +323,7 @@ enum ColorSpace {
     ColorSpaceBT2100_PQ,
     ColorSpaceSCRGB,        // scRGB, linear sRGB in extended component range
     ColorSpaceExtendedLinearDisplayP3,
+    ColorSpaceExtendedSRGB, // sRGB in extended component range, sRGB transfer function
 };
 
 MDK_NS_END

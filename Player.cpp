@@ -478,6 +478,7 @@ void MDK_Player_setColorSpace(mdkPlayer* p, MDK_ColorSpace value, void* vo_opaqu
         ColorSpaceBT2100_PQ,
         ColorSpaceSCRGB,
         ColorSpaceExtendedLinearDisplayP3,
+        ColorSpaceExtendedSRGB,
     };
     p->set(cs[(int)value], vo_opaque);
 }
