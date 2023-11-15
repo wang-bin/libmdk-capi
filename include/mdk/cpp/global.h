@@ -321,9 +321,13 @@ enum ColorSpace {
     ColorSpaceUnknown,
     ColorSpaceBT709,
     ColorSpaceBT2100_PQ,
-    ColorSpaceSCRGB,        // scRGB, linear sRGB in extended component range
+// scRGB, linear sRGB in extended component range. Scene-referred white level, D65 is 80nit. Used on windows
+    ColorSpaceSCRGB,
     ColorSpaceExtendedLinearDisplayP3,
-    ColorSpaceExtendedSRGB, // sRGB in extended component range, sRGB transfer function
+// sRGB in extended component range, sRGB transfer function. Available for macOS displays
+    ColorSpaceExtendedSRGB,
+// linear sRGB in extended component range. Display-referred white level
+    ColorSpaceExtendedLinearSRGB,
 };
 
 MDK_NS_END

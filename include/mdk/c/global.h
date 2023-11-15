@@ -141,6 +141,7 @@ enum MDK_ColorSpace {
     MDK_ColorSpace_scRGB,
     MDK_ColorSpace_ExtendedLinearDisplayP3,
     MDK_ColorSpace_ExtendedSRGB,
+    MDK_ColorSpace_ExtendedLinearSRGB,
 };
 
 MDK_API int MDK_version();
