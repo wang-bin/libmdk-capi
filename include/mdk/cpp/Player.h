@@ -148,7 +148,8 @@ public:
     }
 /*!
   \brief setActiveTracks
-  \param type
+  \param type if type is MediaType::Unknown, select a program(usually for mpeg ts streams). must contains only 1 value, N, indicates using the Nth program's audio and video tracks.
+  Otherwise, select a set of tracks of given type.
   \param tracks set of active track number, from 0~N. Invalid track numbers will be ignored
  */
     void setActiveTracks(MediaType type, const std::set<int>& tracks) {
@@ -247,7 +248,10 @@ public:
         MDK_CALL(p, onStateChanged, callback);
         return *this;
     }
-
+/*!
+  \brief waitFor
+  If failed to open a media, e.g. invalid media, unsupported format, waitFor() will finish without state change
+*/
     bool waitFor(State value, long timeout = -1) {
         return MDK_CALL(p, waitFor, (MDK_State)value, timeout);
     }
@@ -369,6 +373,9 @@ public:
   - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. setActiveTracks(MediaType::Subtitle, {...}) enables decoding only.
   - "avformat.some_name": avformat option, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option
   - "avio.some_name": AVIOContext/URLProtocol option, e.g. "avio.user_agent"
+  - "audio.decoder": audio decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
+  - "video.decoder": video decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
+  - "decoder": video and audio decoder property, value is "key=value" or "key1=value1:key2=value2"
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
