@@ -27,13 +27,14 @@
 #define MDK_CALL2(p, FN, ...) (assert(p->size > 0 && offsetof(std::remove_reference<decltype(*p)>::type, FN) < (size_t)p->size && "NOT IMPLEMENTED! Upgrade your runtime library"), p->FN(p->object, ##__VA_ARGS__))
 
 MDK_NS_BEGIN
-constexpr double TimestampEOS = DBL_MAX;
-constexpr double TimeScaleForInt = 1000.0; // ms
-constexpr float IgnoreAspectRatio = 0; // stretch, ROI etc.
+// vs2013 no constexpr
+static const double TimestampEOS = DBL_MAX;
+static const double TimeScaleForInt = 1000.0; // ms
+static const float IgnoreAspectRatio = 0; // stretch, ROI etc.
 // aspect ratio > 0: keep the given aspect ratio and scale as large as possible inside target rectangle
-constexpr float KeepAspectRatio = FLT_EPSILON; // expand using original aspect ratio
+static const float KeepAspectRatio = FLT_EPSILON; // expand using original aspect ratio
 // aspect ratio < 0: keep the given aspect ratio and scale as small as possible outside renderer viewport
-constexpr float KeepAspectRatioCrop = -FLT_EPSILON; // expand and crop using original aspect ratio
+static const float KeepAspectRatioCrop = -FLT_EPSILON; // expand and crop using original aspect ratio
 
 /*!
   \brief CallbackToken
@@ -52,29 +53,28 @@ template<typename T> struct is_flag; //
 template<typename T>
 using if_flag = std::enable_if<std::is_enum<T>::value && is_flag<T>::value>;
 template<typename E, typename = if_flag<E>>
-constexpr E operator~(E e1) { return E(~typename std::underlying_type<E>::type(e1));}
+E operator~(E e1) { return E(~typename std::underlying_type<E>::type(e1));}
 template<typename E, typename = if_flag<E>>
-constexpr E operator|(E e1, E e2) { return E(typename std::underlying_type<E>::type(e1) | typename std::underlying_type<E>::type(e2));}
+E operator|(E e1, E e2) { return E(typename std::underlying_type<E>::type(e1) | typename std::underlying_type<E>::type(e2));}
 template<typename E, typename = if_flag<E>>
-constexpr E operator^(E e1, E e2) { return E(typename std::underlying_type<E>::type(e1) ^ typename std::underlying_type<E>::type(e2));}
+E operator^(E e1, E e2) { return E(typename std::underlying_type<E>::type(e1) ^ typename std::underlying_type<E>::type(e2));}
 template<typename E, typename = if_flag<E>>
-constexpr E operator&(E e1, E e2) { return E(typename std::underlying_type<E>::type(e1) & typename std::underlying_type<E>::type(e2));}
-// assign in constexpr requires c++14 for clang/gcc, but not msvc(2013+), so the following functions are not constexpr for now. check c++ version?
+E operator&(E e1, E e2) { return E(typename std::underlying_type<E>::type(e1) & typename std::underlying_type<E>::type(e2));}
 template<typename E, typename = if_flag<E>>
-constexpr E& operator|=(E& e1, E e2) { return e1 = e1 | e2;}
+E& operator|=(E& e1, E e2) { return e1 = e1 | e2;}
 template<typename E, typename = if_flag<E>>
-constexpr E& operator^=(E& e1, E e2) { return e1 = e1 ^ e2;}
+E& operator^=(E& e1, E e2) { return e1 = e1 ^ e2;}
 template<typename E, typename = if_flag<E>>
-constexpr E& operator&=(E& e1, E e2) { return e1 = e1 & e2;}
+E& operator&=(E& e1, E e2) { return e1 = e1 & e2;}
 // convenience functions to test whether a flag exists. REQUIRED by scoped enum
 template<typename E>
-constexpr bool test_flag(E e) { return typename std::underlying_type<E>::type(e);}
+bool test_flag(E e) { return typename std::underlying_type<E>::type(e);}
 template<typename E1, typename E2>
-constexpr bool test_flag(E1 e1, E2 e2) { return test_flag(e1 & e2);}
+bool test_flag(E1 e1, E2 e2) { return test_flag(e1 & e2);}
 template<typename E>
-constexpr bool flags_added(E oldFlags, E newFlags, E testFlags) { return test_flag(newFlags, testFlags) && !test_flag(oldFlags, testFlags);}
+bool flags_added(E oldFlags, E newFlags, E testFlags) { return test_flag(newFlags, testFlags) && !test_flag(oldFlags, testFlags);}
 template<typename E>
-constexpr bool flags_removed(E oldFlags, E newFlags, E testFlags) { return !test_flag(newFlags, testFlags) && test_flag(oldFlags, testFlags);}
+bool flags_removed(E oldFlags, E newFlags, E testFlags) { return !test_flag(newFlags, testFlags) && test_flag(oldFlags, testFlags);}
 
 enum class MediaType : int8_t {
     Unknown = -1,
