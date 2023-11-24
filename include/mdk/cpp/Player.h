@@ -164,7 +164,7 @@ public:
         MDK_CALL(p, setAudioBackends, s.data());
     }
 
-// see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setvideodecodersconst-stdvectorstdstring-names
+// see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setdecodersmediatype-type-const-stdvectorstdstring-names
     void setDecoders(MediaType type, const std::vector<std::string>& names) {
         std::vector<const char*> s(names.size() + 1, nullptr);
         for (size_t i = 0; i < names.size(); ++i)
@@ -373,6 +373,7 @@ public:
   - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. setActiveTracks(MediaType::Subtitle, {...}) enables decoding only.
   - "avformat.some_name": avformat option, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option
   - "avio.some_name": AVIOContext/URLProtocol option, e.g. "avio.user_agent"
+  - "avcodec.some_name": AVCodecContext option, will apply for all FFmpeg based video/audio/subtitle decoders. To set for a single decoder, use setDecoders() with options
   - "audio.decoder": audio decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
   - "video.decoder": video decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
   - "decoder": video and audio decoder property, value is "key=value" or "key1=value1:key2=value2"
@@ -695,6 +696,8 @@ NOTE:
                 e.category = me->category;
                 e.detail = me->detail;
                 e.decoder.stream = me->decoder.stream;
+                e.video.width = me->video.width;
+                e.video.height = me->video.height;
                 return (*f)(e);
             };
             callback.opaque = &event_cb_[k];

@@ -288,6 +288,8 @@ static inline void javaVM(void* vm) {
   events:
   {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd
   {error, "decoder.audio/video/subtitle", "open", stream}: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
+  {track, "decoder.video", "size", {width, height}}: video decoder output size change
+  {0, "decoder.video", decoderName, stream}: video decoder output size change
   {progress 0~100, "reader.buffering"}: error is buffering progress
   {0/1, "thread.audio/video/subtitle", stream}: decoder thread is started (error = 1) and about to exit(error = 0)
   {error, "snapshot", saved_file if no error and error string if error < 0}
@@ -303,7 +305,11 @@ public:
         struct {
             int stream;
         } decoder;
-    };
+        struct {
+            int width;
+            int height;
+        } video;
+    } /* TODO: data */;
 };
 
 /*!

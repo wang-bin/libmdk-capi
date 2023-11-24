@@ -371,6 +371,8 @@ void MDK_Player_onEvent(mdkPlayer* p, mdkMediaEventCallback cb, MDK_CallbackToke
         me.category = e.category.data();
         me.detail = e.detail.data();
         me.decoder.stream = e.decoder.stream;
+        me.video.width = e.video.width;
+        me.video.height = e.video.height;
         return cb.cb(&me, cb.opaque);
     }, token);
 }
