@@ -211,7 +211,12 @@ public:
         callback.opaque = prepare_cb_ ? (void*)&prepare_cb_ : nullptr;
         MDK_CALL(p, prepare, startPosition, callback, MDKSeekFlag(flags));
     }
-
+/*!
+  \brief mediaInfo
+  Current MediaInfo. You can call it in prepare() callback which is called when loaded or load failed.
+  Some fields can change during playback, e.g. video frame size change(via MediaEvent), live stream duration change, realtime bitrate change.
+  You may get an invalid value if mediaInfo() is called immediately after `set(State::Playing)` or `prepare()` because media is still opening but not loaded , i.e. mediaStatus() has no MediaStatus::Loaded flag.
+*/
     const MediaInfo& mediaInfo() const {
         from_c(MDK_CALL(p, mediaInfo), &info_);
         return info_;
@@ -621,16 +626,21 @@ NOTE:
 /*!
   \brief bufferRange
   set duration range of buffered data.
-  \param minMs default 1000. wait for buffered duration >= minMs when before popping a packet from to decode
-    If minMs < 0, then minMs, maxMs and drop will be reset to the default value
-  \param maxMs default 4000. max buffered duration.
+  \param minMs default 1000. wait for buffered duration >= minMs when before popping a packet.
+    If minMs < 0, then minMs, maxMs and drop will be reset to the default value.
+    If minMs > 0, when packets queue becomes empty, `MediaStatus::Buffering` will be set until queue duration >= minMs, "reader.buffering" MediaEvent
+    will be triggered.
+    If minMs == 0, decode ASAP.
+  \param maxMs default 4000. max buffered duration. Large value is recommended. Latency is not affected.
     If maxMs < 0, then maxMs and drop will be reset to the default value
     If maxMs == 0, same as INT64_MAX
-  drop = true: drop old non-key frame packets to reduce buffered duration until < maxMs.
+  drop = true:
+    drop old non-key frame packets to reduce buffered duration until < maxMs. If maxMs(!=0 or INT64_MAX) is smaller then key-frame duration, no drop effect.
+    If maxMs == 0 or INT64_MAX, always drop old packets and keep at most 1 key-frame packet
   drop = false: wait for buffered duration < maxMs before pushing packets
 
   For realtime streams like(rtp, rtsp, rtmp sdp etc.), the default range is [0, INT64_MAX, true].
-  Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, 1000, true) will decode as soon as possible when media data received, also it ensures the max delay of rendered video is 1s, and no accumulated delay.
+  Usually you don't need to call this api. This api can be used for low latency live videos, for example setBufferRange(0, INT64_MAX, true) will decode as soon as possible when media data received, and no accumulated delay.
  */
     void setBufferRange(int64_t minMs = -1, int64_t maxMs = -1, bool drop = false) {
         MDK_CALL(p, setBufferRange, minMs, maxMs, drop);
