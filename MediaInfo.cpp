@@ -248,4 +248,16 @@ bool MDK_ProgramMetadata(const mdkProgramInfo* info, mdkStringMapEntry* entry)
     return MDK_GetMetaData<ProgramInfo>(info, entry);
 }
 
+const uint8_t* MDK_VideoStreamData(const mdkVideoStreamInfo* info, int* len, int flags)
+{
+    if (flags == 0) {
+        auto vi = reinterpret_cast<const VideoStreamInfo*>(info->priv);
+        if (!vi->image)
+            return nullptr;
+        if (len)
+            *len = (int)vi->image->size();
+        return vi->image->data();
+    }
+    return nullptr;
+}
 } // extern "C"

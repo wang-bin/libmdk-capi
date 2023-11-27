@@ -78,11 +78,13 @@ typedef struct mdkVideoStreamInfo {
     int rotation;
 
     const void* priv;
+    // TODO: struct_size for ABI compatibility
 } mdkVideoStreamInfo;
 
 MDK_API void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo*, mdkVideoCodecParameters* p);
 /* see document of mdkStringMapEntry */
 MDK_API bool MDK_VideoStreamMetadata(const mdkVideoStreamInfo*, mdkStringMapEntry* entry);
+MDK_API const uint8_t* MDK_VideoStreamData(const mdkVideoStreamInfo*, int* len, int flags);
 
 typedef struct mdkSubtitleCodecParameters {
     const char* codec ;

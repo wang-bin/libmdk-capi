@@ -76,6 +76,9 @@ struct VideoStreamInfo {
 // stream language is metadata["language"]
     std::unordered_map<std::string, std::string> metadata;
     VideoCodecParameters codec;
+
+    const uint8_t* image_data = nullptr; // audio cover art image data, can be jpeg, png etc.
+    int image_size = 0;
 };
 
 struct SubtitleCodecParameters {
@@ -178,6 +181,7 @@ static void from_c(const mdkMediaInfo* cinfo, MediaInfo* info)
         mdkStringMapEntry e{};
         while (MDK_VideoStreamMetadata(&csi, &e))
             si.metadata[e.key] = e.value;
+        si.image_data = MDK_VideoStreamData(&csi, &si.image_size, 0);
         info->video.push_back(std::move(si));
     }
     for (int i = 0; i < cinfo->nb_subtitle; ++i) {
