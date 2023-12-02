@@ -30,9 +30,20 @@ struct mdkGLRenderAPI {
 /*** Render Context Resources. Foreign context (provided by user) only ***/
     int fbo; // if >=0, will draw in given fbo. no need to bind in user code
     int unused;
-    void* (*getProcAddress)(const char* name, void* opaque); /* NOT IMPLENETED */
-    void* (*getCurrentNativeContext)(void* opaque); /* NOT IMPLENETED */
-    void* opaque; /* NOT IMPLENETED */
+/*
+  \brief getProcAddress
+  optional. can be null and then standard gl libraries will be searched.
+  if not null, it's used to load gl functions
+  \param name gl function name
+  \param opaque user data, e.g. gl context handle
+*/
+    void* (*getProcAddress)(const char* name, void* opaque);
+    void* (*getCurrentNativeContext)(void* opaque);
+/*!
+  \brief opaque
+  optional. getProcAddress user data, e.g. a gl context handle.
+*/
+    void* opaque;
 
 /***
   Render Context Creation Options.
