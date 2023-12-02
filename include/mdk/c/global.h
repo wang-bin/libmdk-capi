@@ -227,6 +227,8 @@ MDK_API bool MDK_getGlobalOptionPtr(const char* key, void** value);
   {error, "decoder.audio/video/subtitle", "open", stream}: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
   {track, "decoder.video", "size", {width, height}}: video decoder output size change
   {0, "decoder.video", decoderName, stream}: video decoder output size change
+  {track, "decoder.video", "size", {width, height}}: video decoder output size change. MediaInfo.video[track].codec.width/height also changes.
+  {track, "video", "size", {width, height}}: video frame size change before rendering, e.g. change by a filter. MediaInfo.video[track].codec.width/height does not change.
   {progress 0~100, "reader.buffering"}: error is buffering progress
   {0/1, "thread.audio/video/subtitle", stream}: decoder thread is started (error = 1) and about to exit(error = 0)
   {error, "snapshot", saved_file if no error and error string if error < 0}
