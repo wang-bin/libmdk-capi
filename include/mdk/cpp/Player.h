@@ -106,10 +106,17 @@ public:
     void setMedia(const char* url) {
         MDK_CALL(p, setMedia, url);
     }
-    // Set individual source for type, e.g. audio track file. If url is not empty, an individual pipeline will be used for 'type' tracks.
-    // If url is empty, use 'type' tracks in MediaType::Video url.
-    // MUST be after main media setMedia(url).
-    // TODO: default type is Unknown
+/*!
+  \brief
+Set an individual source as track of `type`, e.g. audio track file, external subtile file. **MUST** be after main media `setMedia(url)`.
+If url is empty, use `type` tracks in MediaType::Video url.
+The url can contains other track types, e.g. you can load an external audio/subtitle track from a video file, and use `setActiveTracks()` to select a track.
+> Note: because of filesystem restrictions on some platforms(iOS, macOS, uwp), and unable to access files in a sandbox, so you have to load subtitle files manually yourself via this function.
+
+examples:
+- set subtitle file: `setMedia("name.ass", MediaType::Subtitle)`
+  TODO: default type is Unknown
+*/
     void setMedia(const char* url, MediaType type) {
         MDK_CALL(p, setMediaForType, url, (MDK_MediaType)type);
     }
@@ -382,6 +389,7 @@ public:
   - "audio.decoder": audio decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
   - "video.decoder": video decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
   - "decoder": video and audio decoder property, value is "key=value" or "key1=value1:key2=value2"
+  - "recorder.copyts": "1" or "0"(default), use input packet timestamp, or correct packet timestamp to be continuous.
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
@@ -635,7 +643,7 @@ NOTE:
     If maxMs < 0, then maxMs and drop will be reset to the default value
     If maxMs == 0, same as INT64_MAX
   drop = true:
-    drop old non-key frame packets to reduce buffered duration until < maxMs. If maxMs(!=0 or INT64_MAX) is smaller then key-frame duration, no drop effect.
+    drop old non-key frame packets to reduce buffered duration until < maxMs. If maxMs(!=0 or INT64_MAX) is smaller than key-frame interval, no drop effect.
     If maxMs == 0 or INT64_MAX, always drop old packets and keep at most 1 key-frame packet
   drop = false: wait for buffered duration < maxMs before pushing packets
 
@@ -723,8 +731,12 @@ NOTE:
 /*
   \brief record
   Start to record or stop recording current media by remuxing packets read. If media is not loaded, recorder will start when playback starts
-  \param url destination. null or the same value as recording one to stop recording
-  \param format forced format if unable to guess from url suffix
+  \param url destination. null or the same value as recording one to stop recording. can be a local file, or a network stream
+  \param format forced format. if null, guess from url. if null and format guessed from url does not support all codecs of current media, another suitable format will be used
+  examples:
+    player.record("record.mov");
+    player.record("rtmp://127.0.0.1/live/0", "flv");
+    player.record("rtsp://127.0.0.1/live/0", "rtsp");
  */
     void record(const char* url = nullptr, const char* format = nullptr) {
         MDK_CALL(p, record, url, format);
