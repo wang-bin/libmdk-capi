@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -288,7 +288,9 @@ static inline void javaVM(void* vm) {
   events:
   {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd
   {error, "decoder.audio/video/subtitle", "open", stream}: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
-  {0, "decoder.video", decoderName, stream}: video decoder output size change
+  {0, "decoder.video", decoderName, stream}: decoder of a stream is open or changed
+  {0, "decoder.audio", decoderName, stream}: decoder of a stream is open or changed
+  {0, "decoder.subtitle", decoderName, stream}: decoder of a stream is open or changed
   {track, "decoder.video", "size", {width, height}}: video decoder output size change. MediaInfo.video[track].codec.width/height also changes.
   {track, "video", "size", {width, height}}: video frame size change before rendering, e.g. change by a filter. MediaInfo.video[track].codec.width/height does not change.
   {progress 0~100, "reader.buffering"}: error is buffering progress

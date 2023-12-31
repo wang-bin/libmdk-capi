@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -26,10 +26,10 @@ enum class PixelFormat
     YUV420P10LE,
     UYVY422,
     RGB24,
-    RGBA,
-    RGBX,
-    BGRA,
-    BGRX,
+    RGBA,           // same as QImage::Format_RGBA8888
+    RGBX,           // same as QImage::Format_RGBX8888
+    BGRA,           // same as QImage::Format_ARGB32
+    BGRX,           // same as QImage::Format_RGB32
     RGB565LE,
     RGB48LE,
     RGB48 = RGB48LE,

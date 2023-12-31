@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -163,7 +163,7 @@ examples:
         std::vector<int> ts(tracks.cbegin(), tracks.cend());
         MDK_CALL(p, setActiveTracks, MDK_MediaType(type), ts.data(), ts.size());
     }
-    // backends can be: AudioQueue(Apple only), OpenSL(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
+    // backends can be: AudioQueue(Apple only), OpenSL, AudioTrack(Android only), ALSA(linux only), XAudio2(Windows only), OpenAL
     void setAudioBackends(const std::vector<std::string>& names) {
         std::vector<const char*> s(names.size() + 1, nullptr);
         for (size_t i = 0; i < names.size(); ++i)
