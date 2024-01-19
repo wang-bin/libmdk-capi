@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020-2024 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/VideoFrame.h"
 #include "mdk/VideoFrame.h"
@@ -148,6 +148,49 @@ bool MDK_VideoFrame_save(mdkVideoFrame* p, const char* fileName, const char* for
     return p->frame.save(fileName, format, quality);
 }
 
+struct mdkVideoBufferPool {
+    NativeVideoBufferPoolRef pool;
+};
+
+#if (_WIN32 + 0)
+bool MDK_VideoFrame_fromDX11(mdkVideoFrame* p, mdkVideoBufferPool** pool, const mdkDX11Resource* res, int width, int height)
+{
+    if (!pool)
+        return false;
+    if (!*pool) {
+        *pool = new mdkVideoBufferPool();
+    }
+    if (auto frame = VideoFrame::from(&(*pool)->pool, DX11Resource{
+                        .resource = res->resource,
+                        .subResource = res->subResource,
+                    })) {
+        p->frame = frame;
+        return true;
+    }
+    return false;
+}
+
+bool MDK_VideoFrame_fromDX9(mdkVideoFrame* p, mdkVideoBufferPool** pool, const mdkDX9Resource* res, int width, int height)
+{
+# if !(MDK_WINRT + 0)
+    if (!pool)
+        return false;
+    if (!*pool) {
+        *pool = new mdkVideoBufferPool();
+    }
+    if (auto frame = VideoFrame::from(&(*pool)->pool, DX9Resource{
+                        .surface = res->surface,
+                    }, width, height)) {
+        p->frame = frame;
+        return true;
+    }
+    return false;
+# else
+    return false;
+# endif // !(MDK_WINRT + 0)
+}
+#endif // _WIN32
+
 void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
 {
 #define SET_API(FN) p->FN = MDK_VideoFrame_##FN
@@ -162,6 +205,10 @@ void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
     SET_API(timestamp);
     SET_API(to);
     SET_API(save);
+#if (_WIN32 + 0)
+    SET_API(fromDX11);
+    SET_API(fromDX9);
+#endif // _WIN32
 #undef SET_API
 }
 
@@ -182,6 +229,16 @@ void mdkVideoFrameAPI_delete(mdkVideoFrameAPI** pp)
     delete *pp;
     *pp = nullptr;
 }
+
+void mdkVideoBufferPoolFree(mdkVideoBufferPool** pool)
+{
+    if (!pool || !*pool)
+        return;
+    delete *pool;
+    *pool = nullptr;
+}
+
+
 } // extern "C"
 
 mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame)

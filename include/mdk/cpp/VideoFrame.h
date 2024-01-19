@@ -14,6 +14,17 @@
 
 MDK_NS_BEGIN
 
+typedef struct DX11Resource {
+    /* ID3D11Texture2D or ID3D11VideoDecoderOutputView */
+    ID3D11DeviceChild* resource;
+    /* subresource index for texture array, 0 otherwise */
+    int subResource;
+} DX11Resource;
+
+typedef struct DX9Resource {
+    IDirect3DSurface9* surface;
+} DX9Resource;
+
 enum class PixelFormat
 {
     Unknown = 0,
@@ -189,6 +200,36 @@ public:
     bool save(const char* fileName, const char* format = nullptr, float quality = -1) const {
         return MDK_CALL(p, save, fileName, format, quality);
     }
+
+#if (_WIN32 + 0)
+/*!
+  \brief from
+  create a frame containing dx9, dx11 resource
+  \param pool if *pool not null, the pool will be used, otherwise a new pool will be created and returned. Users usually have to keep the pool object for the same resource producer, release by mdkVideoBufferPoolFree
+  \param width frame width, can be 0, then the width is the texture width
+  \param height frame height, can be 0, then the height is the texture height
+*/
+    static VideoFrame from(mdkVideoBufferPool** pool, const DX11Resource& res, int width = 0, int height = 0) {
+        mdkDX11Resource r{};
+        r.size = sizeof(r);
+        r.resource = res.resource;
+        r.subResource = res.subResource;
+        VideoFrame f(width, height, PixelFormat::Unknown);
+        if (!MDK_CALL(f.p, fromDX11, pool, &r, width, height))
+            return {};
+        return f;
+    }
+
+    static VideoFrame from(mdkVideoBufferPool** pool, const DX9Resource& res, int width = 0, int height = 0) {
+        mdkDX9Resource r{};
+        r.size = sizeof(r);
+        r.surface = res.surface;
+        VideoFrame f(width, height, PixelFormat::Unknown);
+        if (!MDK_CALL(f.p, fromDX9, pool, &r, width, height))
+            return {};
+        return f;
+    }
+#endif // (_WIN32 + 0)
 private:
     mdkVideoFrameAPI* p = nullptr;
     bool owner_ = true;

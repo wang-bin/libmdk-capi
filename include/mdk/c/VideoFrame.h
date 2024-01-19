@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020-2024 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -13,9 +13,25 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-// fromPlanarYUV(w, h, pixdesc, data, strides)
-// void* pixLayout()
-// fromGL(id, internalfmt, w, h)
+
+/* native resource import */
+struct ID3D11DeviceChild;
+struct IDirect3DSurface9;
+typedef struct mdkDX11Resource {
+    int size; /* struct size, for binary compatibility */
+    /* ID3D11Texture2D or ID3D11VideoDecoderOutputView */
+    ID3D11DeviceChild* resource;
+    /* subresource index for texture array, 0 otherwise */
+    int subResource;
+} mdkDX11Resource;
+
+typedef struct mdkDX9Resource {
+    int size; /* struct size, for binary compatibility */
+    IDirect3DSurface9* surface;
+} mdkDX9Resource;
+
+typedef struct mdkVideoBufferPool mdkVideoBufferPool;
+
 struct mdkVideoFrame;
 
 enum MDK_PixelFormat {
@@ -66,20 +82,34 @@ typedef struct mdkVideoFrameAPI {
     struct mdkVideoFrameAPI* (*to)(struct mdkVideoFrame*, enum MDK_PixelFormat format, int width/*= -1*/, int height/*= -1*/);
     bool (*save)(struct mdkVideoFrame*, const char* fileName, const char* format, float quality);
 
+    struct mdkVideoFrameAPI* (*onDestroy)(struct mdkVideoFrame*);
+/*!
+  \brief mdkVideoFrameAPI_fromDX11
+  create a frame containing dx11
+  \param pool if *pool not null, the pool will be used, otherwise a new pool will be created and returned. Users usually have to keep the pool object for the same resource producer, release by mdkVideoBufferPoolFree
+  \param width frame width, can be 0, then the width is the texture width
+  \param height frame height, can be 0, then the height is the texture height
+*/
+    bool (*fromDX11)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX11Resource* res, int width, int height);
+    bool (*fromDX9)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX9Resource* res, int width, int height);
 /* The followings are not implemented */
-    struct mdkVideoFrameAPI* (*toHost)(struct mdkVideoFrame*);
-    struct mdkVideoFrameAPI* (*fromGL)();
-    struct mdkVideoFrameAPI* (*fromMetal)();
-    struct mdkVideoFrameAPI* (*fromVk)();
-    struct mdkVideoFrameAPI* (*fromD3D9)();
-    struct mdkVideoFrameAPI* (*fromD3D11)();
-    struct mdkVideoFrameAPI* (*fromD3D12)();
-    void* reserved[13];
+    bool (*fromDX12)();
+    bool (*fromMetal)();
+    bool (*fromVk)();
+    bool (*fromGL)();
+    bool (*toHost)(struct mdkVideoFrame*);
+    void* reserved[12];
 } mdkVideoFrameAPI;
 
 
 MDK_API mdkVideoFrameAPI* mdkVideoFrameAPI_new(int width/*=0*/, int height/*=0*/, enum MDK_PixelFormat format/*=Unknown*/);
 MDK_API void mdkVideoFrameAPI_delete(struct mdkVideoFrameAPI**);
+
+/*
+  \brief mdkVideoBufferPoolFree
+  free *pool and set null
+*/
+MDK_API void mdkVideoBufferPoolFree(mdkVideoBufferPool** pool);
 
 #ifdef __cplusplus
 }
