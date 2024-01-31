@@ -194,6 +194,9 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
  - "logLevel" or "log": can be "Off", "Error", "Warning", "Info", "Debug", "All". same as SetGlobalOption("logLevel", int(LogLevel))
  - "profiler.gpu": "0" or "1"
  - "R3DSDK_DIR": R3D dlls dir. default dir is working dir
+ - "subtitle.fonts.dir": extra fonts dir for subtitle renderer
+ - "subtitle.fonts.file": default subtitle font as fallback. can be an asset path for android
+ - "subtitle.fonts.family": default subtitle font family as fallback
 */
 static inline void SetGlobalOption(const char* key, const char* value)
 {
@@ -286,7 +289,7 @@ static inline void javaVM(void* vm) {
 #endif
 /*
   events:
-  {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd
+  {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd. requires setVideoSurface() called with a valid size
   {error, "decoder.audio/video/subtitle", "open", stream}: decoder of a stream is open, or failed to open if error != 0. TODO: do not use "open"?
   {0, "decoder.video", decoderName, stream}: decoder of a stream is open or changed
   {0, "decoder.audio", decoderName, stream}: decoder of a stream is open or changed
