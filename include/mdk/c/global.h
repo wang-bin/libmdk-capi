@@ -8,13 +8,15 @@
  * in all copies or substantial portions of the Software.
  */
 #pragma once
+#ifndef __cplusplus
 #include <stdbool.h> /* for swift/dart ffi gen. old swift may report error if -fcxx-module and can be workaround by #import <Metal/Metal.h> ifdef __OBJC__ */
+#endif
 #include <stdint.h>
 
 #define MDK_VERSION_INT(major, minor, patch) \
     (((major&0xff)<<16) | ((minor&0xff)<<8) | (patch&0xff))
 #define MDK_MAJOR 0
-#define MDK_MINOR 25
+#define MDK_MINOR 26
 #define MDK_MICRO 0
 #define MDK_VERSION MDK_VERSION_INT(MDK_MAJOR, MDK_MINOR, MDK_MICRO)
 #define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c))

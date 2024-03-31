@@ -185,7 +185,7 @@ static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) 
 /*
  keys:
  - "avutil_lib", "avcodec_lib", "avformat_lib", "swresample_lib", "avfilter_lib": path to ffmpeg runtime libraries
- - "plugins_dir": plugins directory. MUST set before "plugins" if not in default dirs
+ - "plugins_dir", "plugins.dir": plugins directory. MUST set before "plugins" if not in default dirs
  - "plugins": plugin filenames or paths in pattern "p1:p2:p3"
  - "MDK_KEY": license key for your product
  - "MDK_KEY_CODE_PAGE": license key code page used internally(windows only)
@@ -262,6 +262,7 @@ static inline void SetGlobalOption(const char* key, LogLevel value)
   - "X11Display": Display*
   - "DRMDevice": drm device path, for vaapi
   - "DRMFd": drm fd, for vaapi
+  - "d3d11.device": ID3D11Device*, global d3d11 device used by decoders and renderers. if value is 1, create an internal device as global device(same decoder and renderer device may results in lower fps, e.g. amd gpu)
  */
 static inline void SetGlobalOption(const char* key, void* value)
 {
@@ -300,6 +301,8 @@ static inline void javaVM(void* vm) {
   {0/1, "thread.audio/video/subtitle", stream}: decoder thread is started (error = 1) and about to exit(error = 0)
   {error, "snapshot", saved_file if no error and error string if error < 0}
   {0, "cc"}: the 1st closed caption data is decoded. can be used in ui to show CC button.
+  {0, "metadata"}: metadata update. new metadata can be read from Player.mediaInfo().metadata
+TODO: video.thread, video.decoder, video.render
 */
 class MediaEvent {
 public:
