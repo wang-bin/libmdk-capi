@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -151,7 +151,7 @@ struct mdkVulkanRenderAPI {
   Used by offscreen rendering.
  */
     VkImage rt = VK_NULL_HANDLE; // VkImage? so can use qrhitexture.nativeTexture().object
-    VkRenderPass render_pass = VK_NULL_HANDLE; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    VkRenderPass render_pass = VK_NULL_HANDLE; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL/VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR
     void* opaque/* = nullptr*/;
 /*!
   \brief renderTargetInfo
@@ -207,7 +207,7 @@ struct mdkVulkanRenderAPI {
 ***/
     bool debug/* = false*/;
     uint8_t buffers/*  = 2*/; // 2 for double-buffering
-    int device_index/*  = -1*/;
+    int device_index/*  = 0*/;
     uint32_t max_version/*  = 0*/; // requires vulkan 1.1
     int gfx_queue_index/*  = 0*/; // OPTIONAL
     int transfer_queue_index/*  = -1*/; // OPTIONAL. if not set, will use gfx queue

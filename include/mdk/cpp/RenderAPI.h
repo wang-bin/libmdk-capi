@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -9,6 +9,7 @@
  */
 #pragma once
 #include "global.h"
+#include <array>
 #include <cstring>
 
 MDK_NS_BEGIN
@@ -38,7 +39,6 @@ protected:
 struct GLRenderAPI final: RenderAPI {
     GLRenderAPI() {
         type_ = versioned(RenderAPI::OpenGL);
-        memset(reserved, 0, sizeof(reserved));
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
     int fbo = -1; // if >=0, will draw in given fbo. no need to bind in user code
@@ -75,13 +75,12 @@ struct GLRenderAPI final: RenderAPI {
     int8_t opengles = -1; /* default -1. -1: auto. 0: no, 1: try */
     Profile profile = Profile::Core; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
     float version = 0; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
-    int8_t reserved[32];
+    std::array<int8_t, 32> reserved;
 };
 
 struct MetalRenderAPI final: RenderAPI {
     MetalRenderAPI() {
         type_ = versioned(RenderAPI::Metal);
-        memset(reserved, 0, sizeof(reserved));
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 // id<?> => void*: to be compatible with c++
@@ -93,7 +92,7 @@ struct MetalRenderAPI final: RenderAPI {
     const void* (*currentRenderTarget)(const void* opaque) = nullptr; // optional. usually for on screen rendering. return id<MTLTexture>.
     // no encoder because we need own render pass
     const void* layer = nullptr; // optional. CAMetalLayer only used for appling colorspace parameters for hdr/sdr videos.
-    const void* reserved[1];
+    std::array<const void*, 1> reserved;
 
 /***
   Render Context Creation Options.
@@ -110,7 +109,6 @@ struct MetalRenderAPI final: RenderAPI {
 struct D3D11RenderAPI : RenderAPI {
     D3D11RenderAPI(ID3D11DeviceContext* c = nullptr, ID3D11DeviceChild* r = nullptr) : context(c), rtv(r) {
         type_ = versioned(RenderAPI::D3D11);
-        memset(reserved, 0, sizeof(reserved));
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 /*
@@ -121,7 +119,7 @@ struct D3D11RenderAPI : RenderAPI {
     ID3D11DeviceContext* context = nullptr;
     // rtv or texture. usually user can provide a texture from gui easly, no d3d code to create a view
     ID3D11DeviceChild* rtv = nullptr; // optional. the render target(view). ID3D11RenderTargetView or ID3D11Texture2D. can be null if context is not null. if not null, no need to set context
-    void* reserved[2];
+    std::array<void*, 2> reserved;
 
 /***
   Render Context Creation Options.
@@ -170,8 +168,6 @@ struct D3D12RenderAPI : RenderAPI {
 struct VulkanRenderAPI final : RenderAPI {
     VulkanRenderAPI() {
         type_ = versioned(RenderAPI::Vulkan);
-        memset(reserved, 0, sizeof(reserved));
-        memset(reserved_opt, 0, sizeof(reserved_opt));
     }
 
 #if (VK_VERSION_1_0+0)
@@ -225,7 +221,7 @@ struct VulkanRenderAPI final : RenderAPI {
  */
     void (*endFrame)(void* opaque, VkSemaphore* drawSem/* = nullptr*/) = nullptr; // can be null if offscreen. wait drawSem before present
 #endif // (VK_VERSION_1_0+0)
-    void* reserved[2];
+    std::array<void*, 2> reserved;
 /*
   Set by user and used internally even if device is provided by user
  */
@@ -239,7 +235,7 @@ struct VulkanRenderAPI final : RenderAPI {
 ***/
     bool debug = false;
     uint8_t buffers = 2; // 2 for double-buffering
-    int device_index = -1;
+    int device_index = 0; // -1: dGPU > iGPU > vGPU > software > others. >=0: index
     uint32_t max_version = 0; // requires vulkan 1.1
     int gfx_queue_index = 0; // OPTIONAL
     int transfer_queue_index = -1; // OPTIONAL. if not set, will use gfx queue
@@ -247,6 +243,6 @@ struct VulkanRenderAPI final : RenderAPI {
 
     int depth = 8;
     //const char*
-    uint8_t reserved_opt[32]; // color space etc.
+    std::array<uint8_t, 32> reserved_opt; // color space etc.
 };
 MDK_NS_END
