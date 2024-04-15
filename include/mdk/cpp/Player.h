@@ -209,13 +209,17 @@ examples:
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
  */
     void prepare(int64_t startPosition = 0, PrepareCallback cb = nullptr, SeekFlag flags = SeekFlag::FromStart) {
-        prepare_cb_ = cb;
+        PrepareCallback* f = cb ? new PrepareCallback(cb) : nullptr;
         mdkPrepareCallback callback;
         callback.cb = [](int64_t position, bool* boost, void* opaque){
             auto f = (PrepareCallback*)opaque;
-            return (*f)(position, boost);
+            auto ret = true;
+            if (f)
+                ret = (*f)(position, boost);
+            delete f;
+            return ret;
         };
-        callback.opaque = prepare_cb_ ? (void*)&prepare_cb_ : nullptr;
+        callback.opaque = f;
         MDK_CALL(p, prepare, startPosition, callback, MDKSeekFlag(flags));
     }
 /*!
@@ -361,16 +365,19 @@ examples:
   So for a foreign context, if renderer's surface/window/widget is invisible or minimized, snapshot may do nothing because of system or gui toolkit painting optimization.
 */
     void snapshot(SnapshotRequest* request, SnapshotCallback cb, void* vo_opaque = nullptr) {
-        snapshot_cb_ = cb;
+        SnapshotCallback* f = cb ? new SnapshotCallback(cb) : nullptr;
         mdkSnapshotCallback callback;
         callback.cb = [](mdkSnapshotRequest* req, double frameTime, void* opaque){
             auto f = (SnapshotCallback*)opaque;
-            auto file = (*f)((SnapshotRequest*)req, frameTime);
+            std::string file;
+            if (f)
+                file = (*f)((SnapshotRequest*)req, frameTime);
+            delete f;
             if (file.empty())
                 return (char*)nullptr;
             return MDK_strdup(file.data());
         };
-        callback.opaque = snapshot_cb_ ? (void*)&snapshot_cb_ : nullptr;
+        callback.opaque = f;
         return MDK_CALL(p, snapshot, (mdkSnapshotRequest*)request, callback, vo_opaque);
     }
 
@@ -545,7 +552,7 @@ NOTE:
   \brief set
   Set output color space.
   \param value
-    - invalid (ColorSpaceUnknown): renderer will try to use the value of decoded frame, and will send hdr10 metadata when possible. i.e. hdr videos will enable hdr display. Currently only supported by metal, and `MetalRenderAPI.layer` must be a `CAMetalLayer` ([example](https://github.com/wang-bin/mdkSwift/blob/master/Player.swift#L184))
+    - invalid (ColorSpaceUnknown): renderer will try to use the value of decoded frame, and will send hdr10 metadata when possible. i.e. hdr videos will enable hdr display. Currently only supported by metal, and `MetalRenderAPI.layer` must be a `CAMetalLayer` ([example](https://github.com/wang-bin/swift-mdk/blob/master/Player.swift#L184))
     - hdr colorspace (ColorSpaceBT2100_PQ): no hdr metadata will be sent to the display, sdr will map to hdr. Can be used by the gui toolkits which support hdr swapchain but no api to change swapchain colorspace and format on the fly, see [Qt example](https://github.com/wang-bin/mdk-examples/blob/master/Qt/qmlrhi/VideoTextureNodePub.cpp#L83)
     - sdr color space (ColorSpaceBT709): the default. HDR videos will tone map to SDR.
 */
@@ -602,13 +609,15 @@ NOTE:
   If error(io, demux, not decode) occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2), out of range(-4) or media unloaded(-3).
  */
     bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t ret)> cb = nullptr) {
-        seek_cb_ = cb;
+        std::function<void(int64_t)>* f = cb ? new std::function<void(int64_t)>(cb) : nullptr;
         mdkSeekCallback callback;
         callback.cb = [](int64_t ms, void* opaque){
             auto f = (std::function<void(int64_t)>*)opaque;
-            (*f)(ms);
+            if (f)
+                (*f)(ms);
+            delete f;
         };
-        callback.opaque = seek_cb_ ? (void*)&seek_cb_ : nullptr;
+        callback.opaque = f;
         return MDK_CALL(p, seekWithFlags, pos, MDK_SeekFlag(flags), callback);
     }
 
@@ -838,13 +847,10 @@ private:
     float volume_ = 1.0f;
     std::function<void()> current_cb_ = nullptr;
     std::function<bool(int64_t ms)> timeout_cb_ = nullptr;
-    std::function<bool(int64_t position, bool* boost)> prepare_cb_ = nullptr;
     std::function<void(State)> state_cb_ = nullptr;
     std::function<bool(MediaStatus, MediaStatus)> status_cb_ = nullptr;
     std::function<void(void* vo_opaque)> render_cb_ = nullptr;
-    std::function<void(int64_t)> seek_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;
-    SnapshotCallback snapshot_cb_ = nullptr;
     std::function<int(VideoFrame&, int/*track*/)> video_cb_ = nullptr;
     std::function<double()> sync_cb_ = nullptr;
     std::map<CallbackToken, std::function<bool(const MediaEvent&)>> event_cb_; // rb tree, elements never destroyed
