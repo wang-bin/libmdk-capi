@@ -293,14 +293,31 @@ examples:
     }
 
     Player& onMediaStatus(std::function<bool(MediaStatus oldValue, MediaStatus newValue)> cb, CallbackToken* token = nullptr) {
-        status_cb_ = cb;
-        mdkMediaStatusCallback callback;
-        callback.cb = [](MDK_MediaStatus oldValue, MDK_MediaStatus newValue, void* opaque){
-            auto p = (Player*)opaque;
-            return p->status_cb_(MediaStatus(oldValue), MediaStatus(newValue));
-        };
-        callback.opaque = status_cb_ ? this : nullptr;
-        MDK_CALL(p, onMediaStatus, callback, token);
+        mdkMediaStatusCallback callback{};
+        if (!cb) {
+            MDK_CALL(p, onMediaStatus, callback, token ? &status_cb_key_[*token] : nullptr);
+            if (token) {
+                status_cb_.erase(*token);
+                status_cb_key_.erase(*token);
+            } else {
+                status_cb_.clear();
+                status_cb_key_.clear();
+            }
+        } else {
+            static CallbackToken k = 1;
+            status_cb_[k] = cb;
+            callback.cb = [](MDK_MediaStatus oldValue, MDK_MediaStatus newValue, void* opaque){
+                auto f = (std::function<bool(MediaStatus, MediaStatus)>*)opaque;
+                return (*f)(MediaStatus(oldValue), MediaStatus(newValue));
+            };
+            callback.opaque = &status_cb_[k];
+            CallbackToken t;
+            MDK_CALL(p, onMediaStatus, callback, &t);
+            status_cb_key_[k] = t;
+            if (token)
+                *token = t;
+            k++;
+        }
         return *this;
     }
 
@@ -848,7 +865,6 @@ private:
     std::function<void()> current_cb_ = nullptr;
     std::function<bool(int64_t ms)> timeout_cb_ = nullptr;
     std::function<void(State)> state_cb_ = nullptr;
-    std::function<bool(MediaStatus, MediaStatus)> status_cb_ = nullptr;
     std::function<void(void* vo_opaque)> render_cb_ = nullptr;
     std::function<void(bool)> switch_cb_ = nullptr;
     std::function<int(VideoFrame&, int/*track*/)> video_cb_ = nullptr;
@@ -857,6 +873,8 @@ private:
     std::map<CallbackToken,CallbackToken> event_cb_key_;
     std::map<CallbackToken, std::function<void(int)>> loop_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> loop_cb_key_;
+    std::map<CallbackToken, std::function<bool(MediaStatus, MediaStatus)>> status_cb_;
+    std::map<CallbackToken,CallbackToken> status_cb_key_;
 
     mutable MediaInfo info_;
 };
