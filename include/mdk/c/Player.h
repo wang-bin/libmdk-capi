@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -236,7 +236,7 @@ typedef struct mdkPlayerAPI {
   \brief getVideoFrame
   get current rendered frame, i.e. the decoded video frame rendered by renderVideo()
  */
-    void (*getVideoFrame)(); /* NOT IMPLEMENTED*/
+    void (*getVideoFrame)(struct mdkPlayer* p, struct mdkVideoFrameAPI* frame, void* vo_opaque); /* NOT IMPLEMENTED*/
 /*
   \brief setVideoSurfaceSize
   Window size, surface size or drawable size. Render callback(if exists) will be invoked if width and height > 0.

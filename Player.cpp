@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -221,7 +221,7 @@ void MDK_Player_showSurface(mdkPlayer* p)
     p->showSurface();
 }
 
-void MDK_Player_getVideoFrame(mdkPlayer* p, mdkVideoFrame* frame, void* vo_opaque);
+void MDK_Player_getVideoFrame(mdkPlayer* p, mdkVideoFrameAPI* frame, void* vo_opaque);
 
 void MDK_Player_setVideoSurfaceSize(mdkPlayer* p, int width, int height, void* vo_opaque)
 {
@@ -583,7 +583,14 @@ void mdkPlayerAPI_delete(const mdkPlayerAPI** pp)
 {
     if (!pp || !*pp)
         return;
-    delete (*pp)->object;
+    auto p = (*pp)->object;
+// reset callbacks to avoid accessing mdkPlayer.media_info in callbacks, media_info is destroyed before abi Player, reset callbacks in ~Player() is too late
+    p->setRenderCallback(nullptr);
+    p->onMediaStatus(nullptr);
+    p->onStateChanged(nullptr);
+    p->onEvent(nullptr);
+    p->onFrame<VideoFrame>(nullptr);
+    delete p;
     delete *pp;
     *pp = nullptr;
 }
