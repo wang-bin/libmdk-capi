@@ -259,6 +259,7 @@ static inline void SetGlobalOption(const char* key, LogLevel value)
 /*
   keys:
   - "jvm", "JavaVM": JavaVM*. android only. Required if not loaded by System.loadLibrary()
+  - "android.app.Application" or "android.content.Context": jobject. android only. automatically set when setting JavaVM.
   - "X11Display": Display*
   - "DRMDevice": drm device path, for vaapi
   - "DRMFd": drm fd, for vaapi

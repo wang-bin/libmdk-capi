@@ -16,7 +16,7 @@
 #define MDK_VERSION_INT(major, minor, patch) \
     (((major&0xff)<<16) | ((minor&0xff)<<8) | (patch&0xff))
 #define MDK_MAJOR 0
-#define MDK_MINOR 26
+#define MDK_MINOR 27
 #define MDK_MICRO 0
 #define MDK_VERSION MDK_VERSION_INT(MDK_MAJOR, MDK_MINOR, MDK_MICRO)
 #define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c))
@@ -217,6 +217,9 @@ MDK_API void MDK_setGlobalOptionFloat(const char* key, float value);
 /*
   keys:
   - "jvm", "JavaVM": JavaVM*. android only
+  - "android.app.Application" or "android.content.Context": jobject. android only. automatically set when setting JavaVM.
+  - "X11Display": x11 Display*
+  - "d3d11.device": ID3D11Device*, global d3d11 device used by decoders and renderers. if value is 1, create an internal device as global device
  */
 MDK_API void MDK_setGlobalOptionPtr(const char* key, void* value);
 
