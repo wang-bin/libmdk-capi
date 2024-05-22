@@ -70,7 +70,9 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->opaque = c->opaque;
         api->currentRenderTarget = c->currentRenderTarget;
         //api->swapChain =
-        //api->currentCommandList = c->currentCommandList;
+        api->currentCommandList = c->currentCommandList;
+        api->colorFormat = c->colorFormat;
+        api->depthStencilFormat = c->depthStencilFormat;
 
         api->debug = c->debug;
         api->buffers = c->buffers;

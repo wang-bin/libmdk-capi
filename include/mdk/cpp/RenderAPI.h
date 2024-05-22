@@ -145,11 +145,17 @@ struct D3D12RenderAPI : RenderAPI {
     ID3D12CommandQueue* cmdQueue = nullptr; // optional. will create an internal queue if null.
     ID3D12Resource* rt = nullptr; // optional. the render target
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {}; // optional
-    void* reserved[2] = {};
+/*!
+    \brief colorFormat
+    render pipeline's format. required if currentCommandList is used and rt is null
+*/
+    DXGI_FORMAT colorFormat = DXGI_FORMAT_UNKNOWN;
+    DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_UNKNOWN;
 
     const void* opaque = nullptr; // optional. callback opaque
     ID3D12Resource* (*currentRenderTarget)(const void* opaque, UINT* index, UINT* count, D3D12_RESOURCE_STATES* state) = nullptr; // optional. usually for on screen rendering.
-    void* reserved2[2] = {};
+    ID3D12GraphicsCommandList* (*currentCommandList)(const void* opaque); // optional. will use an internal command list if null. if not null, can be used by on screen rendering
+    void* reserved2[1] = {};
 
 /***
   Render Context Creation Options.

@@ -120,11 +120,17 @@ struct mdkD3D12RenderAPI {
     ID3D12CommandQueue* cmdQueue; // optional. will create an internal queue if null.
     ID3D12Resource* rt; // optional. the render target
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle; // optional
-    void* reserved[2];
+/*!
+    \brief colorFormat
+    render pipeline's format. required if currentCommandList is used and rt is null
+*/
+    DXGI_FORMAT colorFormat;
+    DXGI_FORMAT depthStencilFormat;
 
     const void* opaque; // optional. callback opaque
     ID3D12Resource* (*currentRenderTarget)(const void* opaque, UINT* index, UINT* count, D3D12_RESOURCE_STATES* state); // optional. usually for on screen rendering.
-    void* reserved2[2];
+    ID3D12GraphicsCommandList* (*currentCommandList)(const void* opaque); // optional. will use an internal command list if null. if not null, can be used by on screen rendering
+    void* reserved2[1];
 /***
   Render Context Creation Options.
   as input, they are desired values to create an internal context(ignored if context is provided by user). as output, they are result values(if context is not provided by user)
