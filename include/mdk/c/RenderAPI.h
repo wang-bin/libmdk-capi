@@ -65,13 +65,15 @@ struct mdkMetalRenderAPI {
 // id<?> => void*: to be compatible with c++
     const void* device; // MUST set if metal is provided by user
     const void* cmdQueue; // optional. if not null, device can be null. currentQueue callback to share the same command buffer?
-/* one of texture and currentRenderTarget MUST be set if metal is provided by user */
     const void* texture; // optional. id<MTLTexture>. if not null, device can be null. usually for offscreen rendering. render target for MTLRenderPassDescriptor if encoder is not provided by user. set once for offscreen rendering
     const void* opaque; // optional. callback opaque
     const void* (*currentRenderTarget)(const void* opaque); // optional. usually for on screen rendering. return id<MTLTexture>.
     const void* layer; // optional. CAMetalLayer only used for appling colorspace parameters for hdr/sdr videos.
-    // no encoder because we need own render pass
-    const void* reserved[1];
+/*!
+  \breif currentCommand
+  Get current MTLRenderCommandEncoder and MTLCommandBuffer. required if texture and currentRenderTarget are null. useful in an foreign render pass
+*/
+    void (*currentCommand)(const void** encoder, const void** cmdBuf, const void* opaque) = nullptr;
 
 /***
   Render Context Creation Options.
@@ -79,6 +81,12 @@ struct mdkMetalRenderAPI {
 ***/
     // device options: macOS only
     int device_index/*  = -1*/; // -1 will use system default device. callback with index+name?
+/*!
+    \brief colorFormat
+    render pipeline's pixel format. required if currentCommand is used
+*/
+    unsigned colorFormat = 0;
+    unsigned depthStencilFormat = 0;
 };
 
 /*!

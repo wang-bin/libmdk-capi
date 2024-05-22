@@ -44,8 +44,13 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->texture = c->texture;
         api->opaque = c->opaque;
         api->currentRenderTarget = c->currentRenderTarget;
+        api->currentCommand = c->currentCommand;
         api->layer = c->layer;
         api->device_index = c->device_index;
+        if (version >= (MDK_VERSION_INT(0, 28, 0) >> 8)) {
+            api->colorFormat = c->colorFormat;
+            api->depthStencilFormat = c->depthStencilFormat;
+        }
         return api;
     }
 #if defined(D3D11_SDK_VERSION)
