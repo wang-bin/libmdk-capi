@@ -73,7 +73,7 @@ struct mdkMetalRenderAPI {
   \breif currentCommand
   Get current MTLRenderCommandEncoder and MTLCommandBuffer. required if texture and currentRenderTarget are null. useful in an foreign render pass
 */
-    void (*currentCommand)(const void** encoder, const void** cmdBuf, const void* opaque) = nullptr;
+    void (*currentCommand)(const void** encoder, const void** cmdBuf, const void* opaque);
 
 /***
   Render Context Creation Options.
@@ -85,8 +85,8 @@ struct mdkMetalRenderAPI {
     \brief colorFormat
     render pipeline's pixel format. required if currentCommand is used
 */
-    unsigned colorFormat = 0;
-    unsigned depthStencilFormat = 0;
+    unsigned colorFormat;
+    unsigned depthStencilFormat;
 };
 
 /*!
@@ -164,8 +164,8 @@ struct mdkVulkanRenderAPI {
   \brief rt
   Used by offscreen rendering.
  */
-    VkImage rt = VK_NULL_HANDLE; // VkImage? so can use qrhitexture.nativeTexture().object
-    VkRenderPass render_pass = VK_NULL_HANDLE; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL/VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR
+    VkImage rt/* = VK_NULL_HANDLE*/; // VkImage? so can use qrhitexture.nativeTexture().object
+    VkRenderPass render_pass/* = VK_NULL_HANDLE*/; // optional. If null(usually for offscreen rendering), final image layout is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL/VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR
     void* opaque/* = nullptr*/;
 /*!
   \brief renderTargetInfo
