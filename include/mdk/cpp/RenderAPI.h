@@ -30,15 +30,15 @@ struct RenderAPI {
 
     //Type type() const { return Type(type_ & 0xffff);}
 protected:
-    Type type_ = Type::Invalid; // high 16 bits: major + minor version, to unbreak abi for my flawed design
+    Type type_ = Type::Invalid; // high 16 bits: 1bit(sign) 0 1bit 1(to be compatible with old lib) + 15bit struct size since 0.27.0+. major + minor version since 0.17.0, to unbreak abi for my flawed design
 
-    Type versioned(Type t) const { return Type(t | (MDK_VERSION >> 8 << 16));}
+    Type versioned(Type t, size_t sz) const { return Type(t | (1 << 30) | (sz << 16));}
 };
 
 
 struct GLRenderAPI final: RenderAPI {
     GLRenderAPI() {
-        type_ = versioned(RenderAPI::OpenGL);
+        type_ = versioned(RenderAPI::OpenGL, sizeof(*this));
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
     int fbo = -1; // if >=0, will draw in given fbo. no need to bind in user code
@@ -80,7 +80,7 @@ struct GLRenderAPI final: RenderAPI {
 
 struct MetalRenderAPI final: RenderAPI {
     MetalRenderAPI() {
-        type_ = versioned(RenderAPI::Metal);
+        type_ = versioned(RenderAPI::Metal, sizeof(*this));
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 // id<?> => void*: to be compatible with c++
@@ -116,7 +116,7 @@ struct MetalRenderAPI final: RenderAPI {
 #if defined(D3D11_SDK_VERSION)
 struct D3D11RenderAPI : RenderAPI {
     D3D11RenderAPI(ID3D11DeviceContext* c = nullptr, ID3D11DeviceChild* r = nullptr) : context(c), rtv(r) {
-        type_ = versioned(RenderAPI::D3D11);
+        type_ = versioned(RenderAPI::D3D11, sizeof(*this));
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
 /*
@@ -147,7 +147,7 @@ struct D3D11RenderAPI : RenderAPI {
 #if defined(__d3d12_h__)// D3D12_SDK_VERSION: not defined in 19041
 struct D3D12RenderAPI : RenderAPI {
     D3D12RenderAPI(ID3D12CommandQueue* cq = nullptr, ID3D12Resource* r = nullptr) : cmdQueue(cq), rt(r) {
-        type_ = versioned(RenderAPI::D3D12);
+        type_ = versioned(RenderAPI::D3D12, sizeof(*this));
     }
 /*** Render Context Resources. Foreign context (provided by user) only ***/
     ID3D12CommandQueue* cmdQueue = nullptr; // optional. will create an internal queue if null.
@@ -181,7 +181,7 @@ struct D3D12RenderAPI : RenderAPI {
 // always declare
 struct VulkanRenderAPI final : RenderAPI {
     VulkanRenderAPI() {
-        type_ = versioned(RenderAPI::Vulkan);
+        type_ = versioned(RenderAPI::Vulkan, sizeof(*this));
     }
 
 #if (VK_VERSION_1_0+0)

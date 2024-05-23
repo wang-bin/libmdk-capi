@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  */
 // include gl, d3d, vk headers to enable RenderAPI structures
 #if defined(_WIN32)
@@ -18,8 +18,11 @@ using namespace MDK_NS;
 
 unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
 {
-    [[maybe_unused]] const int version = type >> 16;
+    [[maybe_unused]] const int version = (type >> 16);
+    const int struct_sz = ((type << 2) >> 18) & 0xffff;
+    const bool is_size = (type >> 30) & 0b11;
     type = MDK_RenderAPI(type & 0xffff);
+//    assert(!is_size || version >= (MDK_VERSION_INT(0, 17, 0) >> 8));
     switch (type) {
     case MDK_RenderAPI_OpenGL: {
         auto c = static_cast<mdkGLRenderAPI*>(data);
@@ -44,10 +47,10 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         api->texture = c->texture;
         api->opaque = c->opaque;
         api->currentRenderTarget = c->currentRenderTarget;
-        api->currentCommand = c->currentCommand;
         api->layer = c->layer;
         api->device_index = c->device_index;
-        if (version >= (MDK_VERSION_INT(0, 28, 0) >> 8)) {
+        if (is_size && struct_sz >= sizeof(mdkMetalRenderAPI)) {
+            api->currentCommand = c->currentCommand;
             api->colorFormat = c->colorFormat;
             api->depthStencilFormat = c->depthStencilFormat;
         }
