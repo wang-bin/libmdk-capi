@@ -164,7 +164,7 @@ static inline void setLogLevel(LogLevel value) {
   If previous handler is set by user and not null, then call setLogHandler(nullptr) will print to stderr, and call setLogHandler(nullptr) again to silence the log
   To disable log, setLogHandler(nullptr) twice is better than simply setLogLevel(LogLevel::Off)
 */
-static inline void setLogHandler(std::function<void(LogLevel, const char*)> cb) {
+static inline void setLogHandler(const std::function<void(LogLevel, const char*)>& cb) {
     static std::function<void(LogLevel, const char*)> scb;
     scb = cb;
     mdkLogHandler h;

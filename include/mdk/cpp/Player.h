@@ -144,7 +144,7 @@ examples:
   Set a callback which is invoked when current media is stopped and a new media is about to play, or when setMedia() is called.
   Call before setMedia() to take effect.
  */
-    void currentMediaChanged(std::function<void()> cb) { // call before setMedia()
+    void currentMediaChanged(const std::function<void()>& cb) { // call before setMedia()
         {
             const std::lock_guard<std::mutex> lock(current_mtx_);
             current_cb_ = cb;
@@ -192,7 +192,7 @@ examples:
   Negative timeout infinit.
   Default timeout is 10s
  */
-    void setTimeout(int64_t ms, std::function<bool(int64_t ms)> cb = nullptr) {
+    void setTimeout(int64_t ms, const std::function<bool(int64_t ms)>& cb = nullptr) {
         {
             const std::lock_guard<std::mutex> lock(timeout_mtx_);
             timeout_cb_ = cb;
@@ -217,7 +217,7 @@ examples:
   For fast seek(has flag SeekFlag::Fast), the first frame is a key frame whose timestamp >= startPosition
   For accurate seek(no flag SeekFlag::Fast), the first frame is the nearest frame whose timestamp <= startPosition, but the position passed to callback is the key frame position <= startPosition
  */
-    void prepare(int64_t startPosition = 0, PrepareCallback cb = nullptr, SeekFlag flags = SeekFlag::FromStart) {
+    void prepare(int64_t startPosition = 0, const PrepareCallback& cb = nullptr, SeekFlag flags = SeekFlag::FromStart) {
         PrepareCallback* f = cb ? new PrepareCallback(cb) : nullptr;
         mdkPrepareCallback callback;
         callback.cb = [](int64_t position, bool* boost, void* opaque){
@@ -236,6 +236,7 @@ examples:
   Current MediaInfo. You can call it in prepare() callback which is called when loaded or load failed.
   Some fields can change during playback, e.g. video frame size change(via MediaEvent), live stream duration change, realtime bitrate change.
   You may get an invalid value if mediaInfo() is called immediately after `set(State::Playing)` or `prepare()` because media is still opening but not loaded , i.e. mediaStatus() has no MediaStatus::Loaded flag.
+  A live stream's duration is 0 in prepare() callback or when MediaStatus::Loaded is added, then duration increases current read duration.
 */
     const MediaInfo& mediaInfo() const {
         from_c(MDK_CALL(p, mediaInfo), &info_);
@@ -262,7 +263,7 @@ examples:
         return (PlaybackState)MDK_CALL(p, state);
     }
 
-    Player& onStateChanged(std::function<void(State)> cb) {
+    Player& onStateChanged(const std::function<void(State)>& cb) {
         {
             const std::lock_guard<std::mutex> lock(state_mtx_);
             state_cb_ = cb;
@@ -297,7 +298,7 @@ examples:
 #if (__cpp_attributes+0)
 //[[deprecated("use 'onMediaStatus' instead")]]
 #endif
-    Player& onMediaStatusChanged(std::function<bool(MediaStatus)> cb) {
+    Player& onMediaStatusChanged(const std::function<bool(MediaStatus)>& cb) {
         if (!cb)
             return onMediaStatus(nullptr);
         return onMediaStatus([cb](MediaStatus, MediaStatus newValue){
@@ -305,7 +306,7 @@ examples:
         });
     }
 
-    Player& onMediaStatus(std::function<bool(MediaStatus oldValue, MediaStatus newValue)> cb, CallbackToken* token = nullptr) {
+    Player& onMediaStatus(const std::function<bool(MediaStatus oldValue, MediaStatus newValue)>& cb, CallbackToken* token = nullptr) {
         mdkMediaStatusCallback callback{};
         const std::lock_guard<std::mutex> lock(status_mtx_);
         if (!cb) {
@@ -395,7 +396,7 @@ examples:
   When `snapshot()` is called, redraw is scheduled for `vo_opaque`'s renderer, then renderer will take a snapshot in rendering thread.
   So for a foreign context, if renderer's surface/window/widget is invisible or minimized, snapshot may do nothing because of system or gui toolkit painting optimization.
 */
-    void snapshot(SnapshotRequest* request, SnapshotCallback cb, void* vo_opaque = nullptr) {
+    void snapshot(SnapshotRequest* request, const SnapshotCallback& cb, void* vo_opaque = nullptr) {
         SnapshotCallback* f = cb ? new SnapshotCallback(cb) : nullptr;
         mdkSnapshotCallback callback;
         callback.cb = [](mdkSnapshotRequest* req, double frameTime, void* opaque){
@@ -424,10 +425,14 @@ examples:
   - "avformat.some_name": avformat option, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option
   - "avio.some_name": AVIOContext/URLProtocol option, e.g. "avio.user_agent"
   - "avcodec.some_name": AVCodecContext option, will apply for all FFmpeg based video/audio/subtitle decoders. To set for a single decoder, use setDecoders() with options
+  - "audio.decoders": decoder list for setDecoders(), with or without decoder properties. "name1,name2:key21=val21"
+  - "video.decoders": decoder list for setDecoders(), with or without decoder properties. "name1,name2:key21=val21"
   - "audio.decoder": audio decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
   - "video.decoder": video decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
   - "decoder": video and audio decoder property, value is "key=value" or "key1=value1:key2=value2"
   - "recorder.copyts": "1" or "0"(default), use input packet timestamp, or correct packet timestamp to be continuous.
+  - "reader.starts_with_key": "0" or "1"(default). if "1", video decoder starts with key-frame, and drop non-key packets before the first decode.
+  - "buffer" or "buffer.range": parameters setBufferRange(). value is "minMs", "minMs+maxMs", "minMs+maxMs-", "minMs-". the last '-' indicates drop mode
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
@@ -601,7 +606,7 @@ NOTE:
 
   DO NOT call renderVideo() in the callback, otherwise will results in dead lock
 */
-    void setRenderCallback(std::function<void(void* vo_opaque)> cb) { // per vo?
+    void setRenderCallback(const std::function<void(void* vo_opaque)>& cb) { // per vo?
         {
             const std::lock_guard<std::mutex> lock(render_mtx_);
             render_cb_ = cb;
@@ -625,7 +630,7 @@ NOTE:
   For most filters, 1 input frame generates 1 output frame, then return 0.
  */
     template<class Frame>
-    Player& onFrame(std::function<int(Frame&, int/*track*/)> cb);
+    Player& onFrame(const std::function<int(Frame&, int/*track*/)>& cb);
 /*!
   \brief position
   Current playback time in milliseconds. Relative to media's first timestamp, which usually is 0.
@@ -643,7 +648,7 @@ NOTE:
   \param cb if succeeded, callback is called when stream seek finished and after the 1st frame decoded or decode error(e.g. video tracks disabled), ret(>=0) is the timestamp of the 1st frame(video if exists) after seek.
   If error(io, demux, not decode) occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2), out of range(-4) or media unloaded(-3).
  */
-    bool seek(int64_t pos, SeekFlag flags, std::function<void(int64_t ret)> cb = nullptr) {
+    bool seek(int64_t pos, SeekFlag flags, const std::function<void(int64_t)>& cb = nullptr) {
         std::function<void(int64_t)>* f = cb ? new std::function<void(int64_t)>(cb) : nullptr;
         mdkSeekCallback callback;
         callback.cb = [](int64_t ms, void* opaque){
@@ -656,7 +661,7 @@ NOTE:
         return MDK_CALL(p, seekWithFlags, pos, MDK_SeekFlag(flags), callback);
     }
 
-    bool seek(int64_t pos, std::function<void(int64_t)> cb = nullptr) {
+    bool seek(int64_t pos, const std::function<void(int64_t)>& cb = nullptr) {
         return seek(pos, SeekFlag::Default, cb);
     }
 
@@ -704,7 +709,7 @@ NOTE:
   \param cb (true/false) called when finished/failed
   \param flags seek flags for the next url, accurate or fast
  */
-    void switchBitrate(const char* url, int64_t delay = -1, std::function<void(bool)> cb = nullptr) {
+    void switchBitrate(const char* url, int64_t delay = -1, const std::function<void(bool)>& cb = nullptr) {
         {
             const std::lock_guard<std::mutex> lock(switch_mtx_);
             switch_cb_ = cb;
@@ -725,7 +730,7 @@ NOTE:
  * \return false if preload immediately
  * This will not affect next media set by user
  */
-    bool switchBitrateSingleConnection(const char *url, std::function<void(bool)> cb = nullptr) {
+    bool switchBitrateSingleConnection(const char *url, const std::function<void(bool)>& cb = nullptr) {
         switch_cb_ = cb;
         SwitchBitrateCallback callback;
         callback.cb = [](bool value, void* opaque){
@@ -741,7 +746,7 @@ NOTE:
   Add/Remove a [MediaEvent](https://github.com/wang-bin/mdk-sdk/wiki/Types#class-mediaevent) listener, or remove listeners.
   callback return: true if event is processed and should stop dispatching.
  */
-    Player& onEvent(std::function<bool(const MediaEvent&)> cb, CallbackToken* token = nullptr) {
+    Player& onEvent(const std::function<bool(const MediaEvent&)>& cb, CallbackToken* token = nullptr) {
         mdkMediaEventCallback callback{};
         const std::lock_guard<std::mutex> lock(event_mtx_);
         if (!cb) {
@@ -804,7 +809,7 @@ NOTE:
   add/remove a callback which will be invoked right before a new A-B loop
   \param cb callback with current loop count elapsed
  */
-    Player& onLoop(std::function<void(int)> cb, CallbackToken* token = nullptr) {
+    Player& onLoop(const std::function<void(int)>& cb, CallbackToken* token = nullptr) {
         mdkLoopCallback callback{};
         const std::lock_guard<std::mutex> lock(loop_mtx_);
         if (!cb) {
@@ -848,7 +853,7 @@ NOTE:
   \param cb a callback invoked when about to render a frame. return expected current playback position(seconds), e.g. DBL_MAX(TimestampEOS) indicates render video frame ASAP.
   sync callback clock should handle pause, resume, seek and seek finish events
  */
-    Player& onSync(std::function<double()> cb, int minInterval = 10) {
+    Player& onSync(const std::function<double()>& cb, int minInterval = 10) {
         {
             const std::lock_guard<std::mutex> lock(sync_mtx_);
             sync_cb_ = cb;
@@ -919,7 +924,7 @@ private:
 
 
 template<>
-inline Player& Player::onFrame(std::function<int(VideoFrame&, int/*track*/)> cb)
+inline Player& Player::onFrame(const std::function<int(VideoFrame&, int/*track*/)>& cb)
 {
     {
         const std::lock_guard<std::mutex> lock(video_mtx_);
