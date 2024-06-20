@@ -504,6 +504,17 @@ void MDK_Player_enqueueVideo(mdkPlayer* p, mdkVideoFrameAPI* frame, void* vo_opa
     p->enqueue(MDK_VideoFrame_fromC(frame), vo_opaque);
 }
 
+int MDK_Player_bufferedTimeRanges(mdkPlayer* p, int64_t* t, int count)
+{
+    const auto ranges = p->bufferedTimeRanges();
+    if (t) {
+        count = std::min<int>(count, ranges.size());
+        static_assert(sizeof(TimeRange) == 2*sizeof(int64_t));
+        memcpy(t, &ranges[0], count * sizeof(TimeRange));
+    }
+    return (int)ranges.size();
+}
+
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -575,6 +586,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setPointMap);
     SET_API(setColorSpace);
     SET_API(enqueueVideo);
+    SET_API(bufferedTimeRanges);
 #undef SET_API
     return p;
 }

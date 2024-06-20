@@ -502,6 +502,15 @@ NOTE:
     };
 
     void (*enqueueVideo)(struct mdkPlayer*, struct mdkVideoFrameAPI* frame, void* vo_opaque);
+/*!
+  \brief bufferedTimeRanges
+  time(position) is relative to media start time.
+  Available if demuxer cache is enabled by property "demux.buffer.ranges" and "demux.buffer.protocols"
+  \param t time range array. can be null and returns range count, otherwise fill at most count ranges. a range is an int64_t pair {t[2n], t[2n + 1]} indicates start time(in milliseconds) and end time of the range
+  \param count number of ranges can be filled in array
+  \return total ranges count. If it's > count in array t, only count ranges will be filled
+*/
+    int (*bufferedTimeRanges)(struct mdkPlayer*, int64_t* t, int count);
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

@@ -44,6 +44,12 @@ static const float KeepAspectRatioCrop = -FLT_EPSILON; // expand and crop using 
   Null callback + null token: clear all callbacks.
  */
 using CallbackToken = uint64_t;
+
+struct TimeRange {
+    int64_t start;
+    int64_t end;
+};
+
 /*!
  * \brief is_flag
  * if enum E is of enum type, to enable flag(bit) operators, define

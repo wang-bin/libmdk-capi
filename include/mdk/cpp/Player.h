@@ -432,7 +432,11 @@ examples:
   - "decoder": video and audio decoder property, value is "key=value" or "key1=value1:key2=value2"
   - "recorder.copyts": "1" or "0"(default), use input packet timestamp, or correct packet timestamp to be continuous.
   - "reader.starts_with_key": "0" or "1"(default). if "1", video decoder starts with key-frame, and drop non-key packets before the first decode.
+  - "reader.pause": "0"(default) or "1". if "1", will try to pause/resume stream(rtsp) in set(State)
   - "buffer" or "buffer.range": parameters setBufferRange(). value is "minMs", "minMs+maxMs", "minMs+maxMs-", "minMs-". the last '-' indicates drop mode
+  - "demux.buffer.ranges": default "0". set a positive integer to enable demuxer's packet cache(if protocol is listed in property "demux.buffer.protocols"), the value is cache ranges count. Cache is useful for network streams, download data only once(if a cache range is not dropped), speedup seeking. Cache ranges are increased by seeking to a uncached position, decreased by merging ranges which are overlapped and LRU algorithm.
+  - "demux.buffer.protocols": default is "http,https". only these protocols will enable demuxer cache.
+  - "demux.max_errors": continue to demux the stream if error count is less than this value. same as global option "demuxer.max_errors"
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
@@ -671,6 +675,22 @@ NOTE:
 
     float playbackRate() const {
         return MDK_CALL(p, playbackRate);
+    }
+/*!
+  \brief bufferedTimeRanges
+  time(position) is relative to media start time.
+  Available if demuxer cache is enabled by property "demux.buffer.ranges" and "demux.buffer.protocols"
+*/
+    std::vector<TimeRange> bufferedTimeRanges() const {
+        std::vector<TimeRange> rs(16);
+        const auto count = (size_t)MDK_CALL(p, bufferedTimeRanges, (int64_t*)&rs[0], (int)rs.size());
+        if (count > rs.size()) {
+            rs.resize(count);
+            MDK_CALL(p, bufferedTimeRanges, (int64_t*)&rs[0], (int)rs.size());
+        } else {
+            rs.resize(count);
+        }
+        return rs;
     }
 /*!
  * \brief buffered
