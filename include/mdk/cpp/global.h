@@ -134,6 +134,7 @@ enum class SeekFlag {
 /* KeyFrame forward seek may fail(permission denied) near the end of media if there's no key frame after seek target position*/
     KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. It's accurate seek without this flag. Accurate seek is slow and implies backward seek internally.*/
     Fast        = KeyFrame,
+    AnyFrame    = 1<<9,
     InCache     = 1 << 10, // try to seek in memory cache first. useful for speeding up network stream seeking.  Target position must be in range (position(), position() + Player.buffered()]
 
     Backward    = 1 << 16, // for KeyFrame seek only. Accurate seek implies Backward
@@ -309,6 +310,7 @@ static inline void javaVM(void* vm) {
   {error, "snapshot", saved_file if no error and error string if error < 0}
   {0, "cc"}: the 1st closed caption data is decoded. can be used in ui to show CC button.
   {0, "metadata"}: metadata update. new metadata can be read from Player.mediaInfo().metadata
+  {count, "cache.ranges"}: buffered time ranges added, dropped or merged. count is ranges count
 TODO: video.thread, video.decoder, video.render
 */
 class MediaEvent {

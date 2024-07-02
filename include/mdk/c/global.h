@@ -117,6 +117,7 @@ typedef enum MDKSeekFlag {
     /* combine the above values with one of the following*/
 /* KeyFrame forward seek may fail(permission denied) near the end of media if there's no key frame after seek target position*/
     MDK_SeekFlag_KeyFrame    = 1<<8, /* fast key-frame seek, forward if Backward is not set. It's accurate seek without this flag. Accurate seek is slow and implies backward seek internally.*/
+    MDK_SeekFlag_AnyFrame    = 1<<9,
     MDK_SeekFlag_Fast        = MDK_SeekFlag_KeyFrame,
     MDK_SeekFlag_InCache     = 1 << 10, // try to seek in memory cache first. useful for speeding up network stream seeking.  Target position must be in range (position(), position() + Player.buffered()]
 
