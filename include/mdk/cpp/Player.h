@@ -382,21 +382,20 @@ examples:
 /* \brief SnapshotCallback
    snapshot callback.
    \param req result request. If null, snapshot failed. Otherwise req.width, height and stride are always >0, data is never null.
-   \param frameTime captured frame timestamp(seconds)
    \param opaque user data
    \returns a file path to save as a file(jpeg is recommended, other formats depends on ffmpeg runtime). or empty to do nothing.
    Returned string will be freed internally(assume allocated by malloc family apis).
    FIXME: malloc in user code and free in mdk may crash if mixed debug and release(vcrt)
    Callback is called in a dedicated thread, so time-consuming operations(encode, file io etc.) are allowed in the callback.
  */
-    using SnapshotCallback = std::function<std::string(SnapshotRequest*, double frameTime)>;
+    using SnapshotCallback = std::function<std::string(const SnapshotRequest* req, double frameTime)>;
 /*!
   \brief snapshot
   take a snapshot from current renderer. The result is in bgra format, or null on failure.
   When `snapshot()` is called, redraw is scheduled for `vo_opaque`'s renderer, then renderer will take a snapshot in rendering thread.
   So for a foreign context, if renderer's surface/window/widget is invisible or minimized, snapshot may do nothing because of system or gui toolkit painting optimization.
 */
-    void snapshot(SnapshotRequest* request, const SnapshotCallback& cb, void* vo_opaque = nullptr) {
+    void snapshot(const SnapshotRequest* request, const SnapshotCallback& cb, void* vo_opaque = nullptr) {
         SnapshotCallback* f = cb ? new SnapshotCallback(cb) : nullptr;
         mdkSnapshotCallback callback;
         callback.cb = [](mdkSnapshotRequest* req, double frameTime, void* opaque){
