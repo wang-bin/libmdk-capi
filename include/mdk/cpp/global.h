@@ -190,6 +190,7 @@ static inline void setLogHandler(const std::function<void(LogLevel, const char*)
 }
 
 /*
+  https://github.com/wang-bin/mdk-sdk/wiki/Global-Options
  keys:
  - "avutil_lib", "avcodec_lib", "avformat_lib", "swresample_lib", "avfilter_lib": path to ffmpeg runtime libraries
  - "plugins_dir", "plugins.dir": plugins directory. MUST set before "plugins" if not in default dirs

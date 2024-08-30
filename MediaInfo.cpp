@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/MediaInfo.h"
 #include "mdk/MediaInfo.h"
@@ -251,12 +251,11 @@ bool MDK_ProgramMetadata(const mdkProgramInfo* info, mdkStringMapEntry* entry)
 const uint8_t* MDK_VideoStreamData(const mdkVideoStreamInfo* info, int* len, int flags)
 {
     if (flags == 0) {
-        auto vi = reinterpret_cast<const VideoStreamInfo*>(info->priv);
-        if (!vi->image)
-            return nullptr;
-        if (len)
-            *len = (int)vi->image->size();
-        return vi->image->data();
+        if (auto i = reinterpret_cast<const VideoStreamInfo*>(info->priv)->image) {
+            if (len)
+                *len = (int)i->size();
+            return i->data();
+        }
     }
     return nullptr;
 }

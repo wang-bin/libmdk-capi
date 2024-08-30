@@ -17,7 +17,7 @@
     (((major&0xff)<<16) | ((minor&0xff)<<8) | (patch&0xff))
 #define MDK_MAJOR 0
 #define MDK_MINOR 29
-#define MDK_MICRO 0
+#define MDK_MICRO 1
 #define MDK_VERSION MDK_VERSION_INT(MDK_MAJOR, MDK_MINOR, MDK_MICRO)
 #define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c))
 
@@ -181,6 +181,7 @@ typedef struct mdkLogHandler {
 MDK_API void MDK_setLogHandler(mdkLogHandler);
 
 /*
+https://github.com/wang-bin/mdk-sdk/wiki/Global-Options
  keys for string/const char* value:
  - "avutil_lib", "avcodec_lib", "avformat_lib", "swresample_lib", "avfilter_lib": path to ffmpeg runtime libraries
  - "plugins_dir": plugins directory. MUST set before "plugins" if not in default dirs

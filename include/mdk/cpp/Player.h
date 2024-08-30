@@ -211,6 +211,7 @@ examples:
   \brief prepare
   Preload a media and then becomes State::Paused. \sa PrepareCallback
   To play a media from a given position, call prepare(ms) then set(State::Playing)
+  Must ensure playback is stopped before prepare() or new media set(State::Player): set(State::Stopped) + waitFor(State::Stopped) + prepare()
   \param startPosition start from position, relative to media start position(i.e. MediaInfo.start_time)
   \param cb if startPosition > 0, same as callback of seek(), called after the first frame is decoded or load/seek/decode error. If startPosition == 0, called when media is loaded and mediaInfo is ready or load error.
   \param flags seek flag if startPosition != 0.
@@ -413,9 +414,7 @@ examples:
     }
 
 /*
-  \brief setProperty
-  Set additional properties. Can be used to store user data, or change player behavior if the property is defined internally.
-  Predefined properties are:
+  Properties:
   - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
   - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
   - "continue_at_end" or "keep_open": "0" or "1". do not stop playback when decode and render to end of stream. only set(State::Stopped) can stop playback. Useful for timeline preview.
@@ -426,10 +425,12 @@ examples:
   - "avcodec.some_name": AVCodecContext option, will apply for all FFmpeg based video/audio/subtitle decoders. To set for a single decoder, use setDecoders() with options
   - "audio.decoders": decoder list for setDecoders(), with or without decoder properties. "name1,name2:key21=val21"
   - "video.decoders": decoder list for setDecoders(), with or without decoder properties. "name1,name2:key21=val21"
-  - "audio.decoder": audio decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
-  - "video.decoder": video decoder property, value is "key=value" or "key1=value1:key2=value2". override "decoder" property
-  - "decoder": video and audio decoder property, value is "key=value" or "key1=value1:key2=value2"
-  - "recorder.copyts": "1" or "0"(default), use input packet timestamp, or correct packet timestamp to be continuous.
+  - "audio.decoder": audio decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties
+  - "video.decoder": video decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties
+  - "decoder": video and audio decoder properties, value is "key=value" or "key1=value1:key2=value2"
+  - "record.copyts", "recorder.copyts": "1" or "0"(default), use input packet timestamp, or correct packet timestamp to be continuous.
+  - "record.$opt_name": option for recorder's muxer or io, opt_name can also be an ffmpeg option, e.g. "record.avformat.$opt_name" and "record.avio.$opt_name".
+  - "reader.decoder.$DecoderName": $DecoderName decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties
   - "reader.starts_with_key": "0" or "1"(default). if "1", video decoder starts with key-frame, and drop non-key packets before the first decode.
   - "reader.pause": "0"(default) or "1". if "1", will try to pause/resume stream(rtsp) in set(State)
   - "buffer" or "buffer.range": parameters setBufferRange(). value is "minMs", "minMs+maxMs", "minMs+maxMs-", "minMs-". the last '-' indicates drop mode
