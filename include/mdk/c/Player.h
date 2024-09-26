@@ -511,6 +511,8 @@ NOTE:
   \return total ranges count. If it's > count in array t, only count ranges will be filled
 */
     int (*bufferedTimeRanges)(struct mdkPlayer*, int64_t* t, int count);
+
+    bool (*appendBuffer)(struct mdkPlayer*, const uint8_t* data, size_t size, int options);
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();

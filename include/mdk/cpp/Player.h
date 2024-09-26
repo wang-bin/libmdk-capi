@@ -125,6 +125,13 @@ examples:
     const char* url() const {
         return MDK_CALL(p, url);
     }
+/*!
+  \brief appendBuffer
+  iff media url is "stream:"
+*/
+    bool appendBuffer(const uint8_t* data, size_t size, int options = 0) {
+        return MDK_CALL(p, appendBuffer, data, size, options);
+    }
 
     void setPreloadImmediately(bool value = true) {
         MDK_CALL(p, setPreloadImmediately, value);
@@ -440,6 +447,11 @@ examples:
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
+    }
+
+    template<typename T, typename std::enable_if<std::is_arithmetic<T>::value, bool>::type = true>
+    void setProperty(const std::string& key, T value) {
+        return setProperty(key, std::to_string(value));
     }
 
     std::string property(const std::string& key, const std::string& defaultValue = std::string()) const {

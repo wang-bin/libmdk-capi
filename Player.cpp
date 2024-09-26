@@ -518,6 +518,11 @@ int MDK_Player_bufferedTimeRanges(mdkPlayer* p, int64_t* t, int count)
     return (int)ranges.size();
 }
 
+bool MDK_Player_appendBuffer(mdkPlayer* p, const uint8_t* data, size_t size, int options)
+{
+    return p->appendBuffer(data, size, options);
+}
+
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -590,6 +595,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setColorSpace);
     SET_API(enqueueVideo);
     SET_API(bufferedTimeRanges);
+    SET_API(appendBuffer);
 #undef SET_API
     return p;
 }
