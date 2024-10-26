@@ -611,6 +611,7 @@ void mdkPlayerAPI_delete(const mdkPlayerAPI** pp)
     p->onStateChanged(nullptr);
     p->onEvent(nullptr);
     p->onFrame<VideoFrame>(nullptr);
+    p->setTimeout(0, nullptr);
     delete p;
     delete *pp;
     *pp = nullptr;
