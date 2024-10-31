@@ -280,7 +280,9 @@ examples:
         callback.cb = [](MDK_State value, void* opaque){
             auto p = (Player*)opaque;
             const std::lock_guard<std::mutex> lock(p->state_mtx_);
-            p->state_cb_(State(value));
+            if (p->state_cb_) {
+               p->state_cb_(State(value));
+            }
         };
         callback.opaque = state_cb_ ? this : nullptr;
         MDK_CALL(p, onStateChanged, callback);
