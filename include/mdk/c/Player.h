@@ -513,10 +513,16 @@ NOTE:
     int (*bufferedTimeRanges)(struct mdkPlayer*, int64_t* t, int count);
 
     bool (*appendBuffer)(struct mdkPlayer*, const uint8_t* data, size_t size, int options);
+    // TODO: updateRenderResources() // for vk, not in renderpass
 } mdkPlayerAPI;
 
 MDK_API const mdkPlayerAPI* mdkPlayerAPI_new();
 MDK_API void mdkPlayerAPI_delete(const struct mdkPlayerAPI**);
+/*
+  \brief mdkPlayerAPI_reset
+  reset callbacks, release memory
+*/
+MDK_API void mdkPlayerAPI_reset(const struct mdkPlayerAPI**, bool release);
 MDK_API void MDK_foreignGLContextDestroyed();
 
 #ifdef __cplusplus

@@ -602,6 +602,11 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
 
 void mdkPlayerAPI_delete(const mdkPlayerAPI** pp)
 {
+    mdkPlayerAPI_reset(pp, true);
+}
+
+void mdkPlayerAPI_reset(const struct mdkPlayerAPI** pp, bool release)
+{
     if (!pp || !*pp)
         return;
     auto p = (*pp)->object;
@@ -612,8 +617,12 @@ void mdkPlayerAPI_delete(const mdkPlayerAPI** pp)
     p->onEvent(nullptr);
     p->onFrame<VideoFrame>(nullptr);
     p->setTimeout(0, nullptr);
-    delete p;
-    delete *pp;
+    p->onLoop(nullptr);
+    p->onSync(nullptr);
+    if (release) {
+        delete p;
+        delete *pp;
+    }
     *pp = nullptr;
 }
 

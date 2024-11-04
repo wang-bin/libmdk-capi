@@ -61,8 +61,7 @@ public:
             p = mdkPlayerAPI_new();
     }
     virtual ~Player() {
-        if (owner_)
-            mdkPlayerAPI_delete(&p);
+        mdkPlayerAPI_reset(&p, owner_);
     }
 
     void setMute(bool value = true) {
@@ -335,7 +334,7 @@ examples:
             static CallbackToken k = 1;
             status_cb_[k] = cb;
             callback.cb = [](MDK_MediaStatus oldValue, MDK_MediaStatus newValue, void* opaque){
-                auto f = (std::function<bool(MediaStatus, MediaStatus)>*)opaque; // FIXME:
+                auto f = (std::function<bool(MediaStatus, MediaStatus)>*)opaque; // FIXME: erased
                 return (*f)(MediaStatus(oldValue), MediaStatus(newValue));
             };
             callback.opaque = &status_cb_[k]; // add/del/invoke callback(s) via c api onMediaStatus() is thread safe and can ensure address of callback is valid
