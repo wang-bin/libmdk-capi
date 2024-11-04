@@ -160,7 +160,8 @@ examples:
         callback.cb = [](void* opaque){
             auto p = (Player*)opaque;
             const std::lock_guard<std::mutex> lock(p->current_mtx_);
-            p->current_cb_();
+            if (p->current_cb_) // can be null if reset cb when executing callback.cb and before executing p->xxx_cb_
+                p->current_cb_();
         };
         callback.opaque = current_cb_ ? this : nullptr;
         MDK_CALL(p, currentMediaChanged, callback);
@@ -208,7 +209,9 @@ examples:
         callback.cb = [](int64_t ms, void* opaque){
             auto p = (Player*)opaque;
             const std::lock_guard<std::mutex> lock(p->timeout_mtx_);
-            return p->timeout_cb_(ms);
+            if (p->timeout_cb_)
+                return p->timeout_cb_(ms);
+            return true;
         };
         callback.opaque = timeout_cb_ ? this : nullptr;
         MDK_CALL(p, setTimeout, ms, callback);
@@ -332,7 +335,7 @@ examples:
             static CallbackToken k = 1;
             status_cb_[k] = cb;
             callback.cb = [](MDK_MediaStatus oldValue, MDK_MediaStatus newValue, void* opaque){
-                auto f = (std::function<bool(MediaStatus, MediaStatus)>*)opaque;
+                auto f = (std::function<bool(MediaStatus, MediaStatus)>*)opaque; // FIXME:
                 return (*f)(MediaStatus(oldValue), MediaStatus(newValue));
             };
             callback.opaque = &status_cb_[k]; // add/del/invoke callback(s) via c api onMediaStatus() is thread safe and can ensure address of callback is valid
@@ -633,7 +636,8 @@ NOTE:
         callback.cb = [](void* vo_opaque, void* opaque){
             auto p = (Player*)opaque;
             const std::lock_guard<std::mutex> lock(p->render_mtx_);
-            p->render_cb_(vo_opaque);
+            if (p->render_cb_)
+                p->render_cb_(vo_opaque);
         };
         callback.opaque = render_cb_ ? this : nullptr;
         MDK_CALL(p, setRenderCallback, callback);
@@ -752,7 +756,8 @@ NOTE:
         callback.cb = [](bool value, void* opaque){
             auto p = (Player*)opaque;
             const std::lock_guard<std::mutex> lock(p->switch_mtx_);
-            p->switch_cb_(value);
+            if (p->switch_cb_)
+                p->switch_cb_(value);
         };
         callback.opaque = switch_cb_ ? this : nullptr;
         return MDK_CALL(p, switchBitrate, url, delay, callback);
@@ -896,6 +901,8 @@ NOTE:
         callback.cb = [](void* opaque){
             auto p = (Player*)opaque;
             const std::lock_guard<std::mutex> lock(p->sync_mtx_);
+            if (!p->sync_cb_)
+                return 0.0;
             return p->sync_cb_();
         };
         callback.opaque = sync_cb_ ? this : nullptr;
@@ -970,6 +977,8 @@ inline Player& Player::onFrame(const std::function<int(VideoFrame&, int/*track*/
         frame.attach(*pFrame);
         auto p = (Player*)opaque;
         const std::lock_guard<std::mutex> lock(p->video_mtx_);
+        if (!p->video_cb_)
+            return 0;
         const auto pendings = p->video_cb_(frame, track);
         *pFrame = frame.detach();
         return pendings;
