@@ -127,6 +127,7 @@ examples:
 /*!
   \brief appendBuffer
   iff media url is "stream:"
+  setTimeout can abort current stream playback
 */
     bool appendBuffer(const uint8_t* data, size_t size, int options = 0) {
         return MDK_CALL(p, appendBuffer, data, size, options);
