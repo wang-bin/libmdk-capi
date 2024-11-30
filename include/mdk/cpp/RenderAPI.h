@@ -162,7 +162,7 @@ struct D3D12RenderAPI : RenderAPI {
 
     const void* opaque = nullptr; // optional. callback opaque
     ID3D12Resource* (*currentRenderTarget)(const void* opaque, UINT* index, UINT* count, D3D12_RESOURCE_STATES* state) = nullptr; // optional. usually for on screen rendering.
-    ID3D12GraphicsCommandList* (*currentCommandList)(const void* opaque); // optional. will use an internal command list if null. if not null, can be used by on screen rendering
+    ID3D12GraphicsCommandList* (*currentCommandList)(const void* opaque) = nullptr; // optional. will use an internal command list if null. if not null, can be used by on screen rendering
     void* reserved2[1] = {};
 
 /***
@@ -204,7 +204,7 @@ struct VulkanRenderAPI final : RenderAPI {
   NOTE: assume transition is in the same graphics queue family.
   \return (render target)image count, e.g. swapchain image count.
  */
-    int (*renderTargetInfo)(void* opaque, int* w, int* h, VkFormat* format, VkImageLayout* finalLayout); // return count
+    int (*renderTargetInfo)(void* opaque, int* w, int* h, VkFormat* format, VkImageLayout* finalLayout) = nullptr; // return count
 /*!
   \brief beginFrame
   Optional. Can be null(or not) for offscreen rendering if rt is not null.
