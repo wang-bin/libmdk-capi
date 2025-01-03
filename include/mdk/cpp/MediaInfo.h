@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -64,6 +64,7 @@ struct VideoCodecParameters {
     int height;
     int b_frames;
     float par;
+    ColorSpace color_space;
 };
 
 struct VideoStreamInfo {

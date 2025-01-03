@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -34,7 +34,7 @@ typedef struct mdkAudioCodecParameters {
     int block_align;
     int frame_size; /* const samples per channel in a frame */
 
-    char reserved[128]; /* color info etc. */
+    char reserved[128];
 } mdkAudioCodecParameters;
 
 typedef struct mdkAudioStreamInfo {
@@ -67,7 +67,8 @@ typedef struct mdkVideoCodecParameters {
     int b_frames;
 
     float par;
-    char reserved[128];
+    enum MDK_ColorSpace color_space;
+    char reserved[124];
 } mdkVideoCodecParameters;
 
 typedef struct mdkVideoStreamInfo {

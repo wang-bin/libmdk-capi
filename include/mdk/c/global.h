@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -145,6 +145,7 @@ enum MDK_ColorSpace {
     MDK_ColorSpace_ExtendedLinearDisplayP3,
     MDK_ColorSpace_ExtendedSRGB,
     MDK_ColorSpace_ExtendedLinearSRGB,
+    MDK_ColorSpace_BT2100_HLG,
 };
 
 MDK_API int MDK_version();

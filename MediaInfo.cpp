@@ -1,11 +1,40 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/MediaInfo.h"
 #include "mdk/MediaInfo.h"
 #include "mdk/VideoFormat.h"
 #include "MediaInfoInternal.h"
 #include <cassert>
+#include <algorithm>
+
+ ColorSpace kColorSpaceMap[] = {
+    ColorSpaceUnknown,
+    ColorSpaceBT709,
+    ColorSpaceBT2100_PQ,
+    ColorSpaceSCRGB,
+    ColorSpaceExtendedLinearDisplayP3,
+    ColorSpaceExtendedSRGB,
+    ColorSpaceExtendedLinearSRGB,
+    ColorSpaceBT2100_HLG,
+};
+
+MDK_ColorSpace toC(const ColorSpace& cs)
+{
+    const auto dist = [&](const ColorSpace& cs1, const ColorSpace& cs2) {
+        if (cs1 == cs2)
+            return 0;
+        if ((cs1.range == ColorSpace::Range::Extended || cs2.range == ColorSpace::Range::Extended) && cs1.range != cs2.range)
+            return 1000000;
+        if (cs1 == ColorSpaceUnknown || cs2 == ColorSpaceUnknown)
+            return 99;
+        return (cs2.primaries != cs1.primaries) * 100 + (cs2.transfer != cs1.transfer);
+    };
+    const auto it = std::min_element(std::begin(kColorSpaceMap), std::end(kColorSpaceMap), [&](const ColorSpace& cs1, const ColorSpace& cs2) {
+        return dist(cs1, cs) < dist(cs2, cs);
+    });
+    return MDK_ColorSpace(std::distance(std::begin(kColorSpaceMap), it));
+}
 
 static void from_abi(const AudioCodecParameters& in, mdkAudioCodecParameters& out)
 {
@@ -58,6 +87,7 @@ static void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& ou
     out.height = in.height;
     out.b_frames = in.b_frames;
     out.par = in.par;
+    out.color_space = toC(in.color_space);
 }
 
 static void from_abi(const VideoStreamInfo& in, mdkVideoStreamInfo& out)
