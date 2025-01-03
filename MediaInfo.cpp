@@ -245,6 +245,7 @@ void MDK_VideoStreamCodecParameters(const mdkVideoStreamInfo* info, mdkVideoCode
 {
     auto abi = reinterpret_cast<const VideoStreamInfo*>(info->priv);
     from_abi(abi->codec, *p);
+    p->dovi_profile = abi->dovi.profile;
 }
 
 void MDK_SubtitleStreamCodecParameters(const mdkSubtitleStreamInfo* info, mdkSubtitleCodecParameters* p)

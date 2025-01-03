@@ -68,7 +68,8 @@ typedef struct mdkVideoCodecParameters {
 
     float par;
     enum MDK_ColorSpace color_space;
-    char reserved[124];
+    uint8_t dovi_profile; /* dolby vision profile. 0 if not dolby vision */
+    char reserved[123];
 } mdkVideoCodecParameters;
 
 typedef struct mdkVideoStreamInfo {

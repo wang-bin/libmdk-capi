@@ -65,6 +65,7 @@ struct VideoCodecParameters {
     int b_frames;
     float par;
     ColorSpace color_space;
+    uint8_t dovi_profile = 0;
 };
 
 struct VideoStreamInfo {
