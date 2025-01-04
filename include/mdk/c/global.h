@@ -129,12 +129,15 @@ typedef enum MDKSeekFlag {
 /*!
   \brief VideoEffect
   per video renderer effect. set via Player.setVideoEffect(MDK_VideoEffect effect, const float*);
+  Only one(the last call) of ScaleChannels or ShiftChannels will be applied
  */
 enum MDK_VideoEffect {
     MDK_VideoEffect_Brightness,   /* [-1.0f, 1.0f], default 0 */
     MDK_VideoEffect_Contrast,     /* [-1.0f, 1.0f], default 0 */
     MDK_VideoEffect_Hue,          /* [-1.0f, 1.0f], default 0 */
     MDK_VideoEffect_Saturation,   /* [-1.0f, 1.0f], default 0 */
+    MDK_VideoEffect_ScaleChannels,  /* {Sr, Sg, Sb}, Sx: [0, 1.0f]. no scale: {1.0f, 1.0f, 1.0f} */
+    MDK_VideoEffect_ShiftChannels,  /* {Sr, Sg, Sb}, Sx: [-1.0f, 1.0f]. no shift: {.0f, .0f, .0f} */
 };
 
 enum MDK_ColorSpace {

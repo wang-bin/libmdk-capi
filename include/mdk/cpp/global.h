@@ -334,12 +334,15 @@ public:
 /*!
   \brief VideoEffect
   per video renderer effect. set via Player.set(VideoEffect effect, const float&);
+  Only one(the last call) of ScaleChannels or ShiftChannels will be applied
  */
 enum class VideoEffect {
     Brightness,   /* [-1.0f, 1.0f], default 0 */
     Contrast,     /* [-1.0f, 1.0f], default 0 */
     Hue,          /* [-1.0f, 1.0f], default 0 */
     Saturation,   /* [-1.0f, 1.0f], default 0 */
+    ScaleChannels,  /* {Sr, Sg, Sb}, Sx: [0, 1.0f]. no scale: {1.0f, 1.0f, 1.0f} */
+    ShiftChannels,  /* {Sr, Sg, Sb}, Sx: [-1.0f, 1.0f]. no shift: {.0f, .0f, .0f} */
 };
 
 enum ColorSpace {
