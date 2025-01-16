@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -131,6 +131,11 @@ typedef struct mdkSyncCallback {
     double (*cb)(void* opaque);
     void* opaque;
 } mdkSyncCallback;
+
+typedef struct mdkSubtitleCallback {
+    void (*cb)(const char* text, void* opaque);
+    void* opaque;
+} mdkSubtitleCallback;
 
 
 typedef struct mdkPlayerAPI {
@@ -513,6 +518,8 @@ NOTE:
     int (*bufferedTimeRanges)(struct mdkPlayer*, int64_t* t, int count);
 
     bool (*appendBuffer)(struct mdkPlayer*, const uint8_t* data, size_t size, int options);
+
+    void (*subtitleText)(struct mdkPlayer*, double time, int style, mdkSubtitleCallback cb);
     // TODO: updateRenderResources() // for vk, not in renderpass
 } mdkPlayerAPI;
 

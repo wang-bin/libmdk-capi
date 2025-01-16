@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -21,6 +21,7 @@ using namespace MDK_NS;
 extern mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame);
 extern VideoFrame MDK_VideoFrame_fromC(mdkVideoFrameAPI* p);
 extern unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data);
+extern ColorSpace kColorSpaceMap[];
 
 static inline MediaType fromC(MDK_MediaType t)
 {
@@ -477,16 +478,7 @@ void MDK_Player_setVideoEffect(mdkPlayer* p, MDK_VideoEffect effect, const float
 
 void MDK_Player_setColorSpace(mdkPlayer* p, MDK_ColorSpace value, void* vo_opaque)
 {
-    const ColorSpace cs[] = {
-        ColorSpaceUnknown,
-        ColorSpaceBT709,
-        ColorSpaceBT2100_PQ,
-        ColorSpaceSCRGB,
-        ColorSpaceExtendedLinearDisplayP3,
-        ColorSpaceExtendedSRGB,
-        ColorSpaceExtendedLinearSRGB,
-    };
-    p->set(cs[(int)value], vo_opaque);
+    p->set(kColorSpaceMap[(int)value], vo_opaque);
 }
 
 void MDK_Player_setActiveTracks(mdkPlayer* p, MDK_MediaType type, const int* tracks, size_t count)
@@ -521,6 +513,12 @@ int MDK_Player_bufferedTimeRanges(mdkPlayer* p, int64_t* t, int count)
 bool MDK_Player_appendBuffer(mdkPlayer* p, const uint8_t* data, size_t size, int options)
 {
     return p->appendBuffer(data, size, options);
+}
+
+void MDK_Player_subtitleText(mdkPlayer* p, double time, int style, mdkSubtitleCallback cb)
+{
+    const auto s = p->subtitleText(time, style);
+    cb.cb(s.empty() ? nullptr : s.data(), cb.opaque);
 }
 
 const mdkPlayerAPI* mdkPlayerAPI_new()
@@ -596,6 +594,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(enqueueVideo);
     SET_API(bufferedTimeRanges);
     SET_API(appendBuffer);
+    SET_API(subtitleText);
 #undef SET_API
     return p;
 }

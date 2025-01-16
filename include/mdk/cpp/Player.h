@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -910,6 +910,24 @@ NOTE:
         return *this;
     }
 
+/*!
+  \brief subtitleText
+  get subtitle text. only for text based subtitle, e.g. ass, srt
+  \param time in second. if < 0, get currently rendered text
+  \param style ass style option. 0: no style, plain text. 1: ass style. 2: full ass style
+*/
+    std::string subtitleText(double time = -1, int style = 0) const {
+        std::string s;
+        mdkSubtitleCallback cb;
+        cb.cb = [](const char* text, void* opaque) {
+            auto s = (std::string*)opaque;
+            if (text)
+                *s = text;
+        };
+        cb.opaque = &s;
+        MDK_CALL(p, subtitleText, time, style, cb);
+        return s;
+    }
 
 #if !MDK_VERSION_CHECK(1, 0, 0)
 #if (__cpp_attributes+0)
