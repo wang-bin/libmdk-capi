@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  */
 // include gl, d3d, vk headers to enable RenderAPI structures
 #if defined(_WIN32)
@@ -16,7 +16,7 @@
 using namespace std;
 using namespace MDK_NS;
 
-unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
+unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, const void* data)
 {
     [[maybe_unused]] const int version = (type >> 16);
     const int struct_sz = ((type << 2) >> 18) & 0xffff;
@@ -25,7 +25,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
 //    assert(!is_size || version >= (MDK_VERSION_INT(0, 17, 0) >> 8));
     switch (type) {
     case MDK_RenderAPI_OpenGL: {
-        auto c = static_cast<mdkGLRenderAPI*>(data);
+        auto c = static_cast<const mdkGLRenderAPI*>(data);
         auto api = make_unique<GLRenderAPI>();
         api->fbo = c->fbo;
         api->getProcAddress = c->getProcAddress;
@@ -40,7 +40,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
         return api;
     }
     case MDK_RenderAPI_Metal: {
-        auto c = static_cast<mdkMetalRenderAPI*>(data);
+        auto c = static_cast<const mdkMetalRenderAPI*>(data);
         auto api = make_unique<MetalRenderAPI>();
         api->device = c->device;
         api->cmdQueue = c->cmdQueue;
@@ -58,7 +58,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
     }
 #if defined(D3D11_SDK_VERSION)
     case MDK_RenderAPI_D3D11: {
-        auto c = static_cast<mdkD3D11RenderAPI*>(data);
+        auto c = static_cast<const mdkD3D11RenderAPI*>(data);
         auto api = make_unique<D3D11RenderAPI>(c->context, c->rtv);
         api->debug = c->debug;
         api->buffers = c->buffers;
@@ -72,7 +72,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
 #endif // defined(D3D11_SDK_VERSION)
 #if defined(__d3d12_h__)
     case MDK_RenderAPI_D3D12: {
-        auto c = static_cast<mdkD3D12RenderAPI*>(data);
+        auto c = static_cast<const mdkD3D12RenderAPI*>(data);
         auto api = make_unique<D3D12RenderAPI>(c->cmdQueue, c->rt);
         api->rtvHandle = c->rtvHandle;
         api->opaque = c->opaque;
@@ -92,7 +92,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data)
 #endif // defined(__d3d12_h__)
 #if (VK_VERSION_1_0+0)
     case MDK_RenderAPI_Vulkan: {
-        auto c = static_cast<mdkVulkanRenderAPI*>(data);
+        auto c = static_cast<const mdkVulkanRenderAPI*>(data);
         auto api = make_unique<VulkanRenderAPI>();
         api->instance = c->instance;
         api->phy_device = c->phy_device;

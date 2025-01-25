@@ -438,7 +438,7 @@ NOTE:
   \param api
   To release gfx resources, set null api in rendering thread/context(required by vulkan)
  */
-    void (*setRenderAPI)(struct mdkPlayer*, mdkRenderAPI* api, void* vo_opaque);
+    void (*setRenderAPI)(struct mdkPlayer*, const mdkRenderAPI* api, void* vo_opaque);
 /*!
   \brief renderApi()
   get render api. For offscreen rendering, may only api type be valid in setRenderAPI(), and other members are filled internally, and used by user after renderVideo()

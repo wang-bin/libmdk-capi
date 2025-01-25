@@ -20,7 +20,7 @@ using namespace MDK_NS;
 
 extern mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame);
 extern VideoFrame MDK_VideoFrame_fromC(mdkVideoFrameAPI* p);
-extern unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, void* data);
+extern unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, const void* data);
 extern ColorSpace kColorSpaceMap[];
 
 static inline MediaType fromC(MDK_MediaType t)
@@ -250,9 +250,9 @@ void MDK_Player_scale(mdkPlayer* p, float x, float y, void* vo_opaque)
     p->scale(x, y, vo_opaque);
 }
 
-void MDK_Player_setRenderAPI(mdkPlayer* p, mdkRenderAPI* api, void* vo_opaque)
+void MDK_Player_setRenderAPI(mdkPlayer* p, const mdkRenderAPI* api, void* vo_opaque)
 {
-    p->setRenderAPI(from_c(*reinterpret_cast<MDK_RenderAPI*>(api), api).get(), vo_opaque);
+    p->setRenderAPI(from_c(*reinterpret_cast<const MDK_RenderAPI*>(api), api).get(), vo_opaque);
 }
 
 mdkRenderAPI* MDK_Player_renderAPI(mdkPlayer* p, void* vo_opaque)

@@ -425,30 +425,58 @@ examples:
         return MDK_CALL(p, snapshot, (mdkSnapshotRequest*)request, callback, vo_opaque);
     }
 
-/*
-  Properties:
-  - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
-  - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
-  - "continue_at_end" or "keep_open": "0" or "1". do not stop playback when decode and render to end of stream. only set(State::Stopped) can stop playback. Useful for timeline preview.
-  - "cc": "0" or "1"(default). enable closed caption decoding and rendering.
-  - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. setActiveTracks(MediaType::Subtitle, {...}) enables decoding only.
-  - "avformat.some_name": avformat option, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option
-  - "avio.some_name": AVIOContext/URLProtocol option, e.g. "avio.user_agent"
-  - "avcodec.some_name": AVCodecContext option, will apply for all FFmpeg based video/audio/subtitle decoders. To set for a single decoder, use setDecoders() with options
+
+/*!
+  see https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setpropertyconst-stdstring-key-const-stdstring-value
+  Predefined properties are:
+  - "continue_at_end" or "keep_open": do not stop playback when decode and render to end of stream. Useful for [timeline preview](https://github.com/wang-bin/mdk-sdk/wiki/Typical-Usage#timeline-preview). only setState(State::Stopped) can stop playback
   - "audio.decoders": decoder list for setDecoders(), with or without decoder properties. "name1,name2:key21=val21"
   - "video.decoders": decoder list for setDecoders(), with or without decoder properties. "name1,name2:key21=val21"
-  - "audio.decoder": audio decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties
-  - "video.decoder": video decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties
-  - "decoder": video and audio decoder properties, value is "key=value" or "key1=value1:key2=value2"
+  - "audio.decoder": audio decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties. key-values can be FFmpeg options(AVOption) for ffmpeg based decoders
+  - "video.decoder": video decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties. key-values can be FFmpeg options(AVOption) for ffmpeg based decoders
+  - "decoder": video and audio decoder properties, value is "key=value" or "key1=value1:key2=value2". key-values can be FFmpeg options(AVOption) for ffmpeg based decoders
   - "record.copyts", "recorder.copyts": "1" or "0"(default), use input packet timestamp, or correct packet timestamp to be continuous.
-  - "record.$opt_name": option for recorder's muxer or io, opt_name can also be an ffmpeg option, e.g. "record.avformat.$opt_name" and "record.avio.$opt_name".
-  - "reader.decoder.$DecoderName": $DecoderName decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties
-  - "reader.starts_with_key": "0" or "1"(default). if "1", video decoder starts with key-frame, and drop non-key packets before the first decode.
-  - "reader.pause": "0"(default) or "1". if "1", will try to pause/resume stream(rtsp) in set(State)
+  - "record.$opt_name": option for recorder's muxer or io, `opt_name` can also be an ffmpeg option, e.g. "record.avformat.$opt_name" and "record.avio.$opt_name".
+  - "reader.decoder.$DecoderName": $DecoderName decoder properties, value is "key=value" or "key1=value1:key2=value2". override "decoder" properties. key-values can be FFmpeg options(AVOption) for ffmpeg based decoders
+  - "reader.starts_with_key": "0" or "1"(default). if "1", recorder and video decoder starts with key-frame, and drop non-key packets before the first decode.
   - "buffer" or "buffer.range": parameters setBufferRange(). value is "minMs", "minMs+maxMs", "minMs+maxMs-", "minMs-". the last '-' indicates drop mode
   - "demux.buffer.ranges": default "0". set a positive integer to enable demuxer's packet cache(if protocol is listed in property "demux.buffer.protocols"), the value is cache ranges count. Cache is useful for network streams, download data only once(if a cache range is not dropped), speedup seeking. Cache ranges are increased by seeking to a uncached position, decreased by merging ranges which are overlapped and LRU algorithm.
   - "demux.buffer.protocols": default is "http,https". only these protocols will enable demuxer cache.
   - "demux.max_errors": continue to demux the stream if error count is less than this value. same as global option "demuxer.max_errors"
+
+#### FFmpeg properties
+  - "avformat.$opt_name": avformat option via AVOption, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option. `video_codec_id, audio_codec_id and subtitle_codec_id` are also supported even are not AVOption, value is codec name. `video_codec_id` is useful for capture devices with multiple codecs supported.
+  - "avio.$opt_name": AVIOContext/URLProtocol option, e.g. `avio.user_agent` for UA, `avio.headers` for http headers.
+  - "avcodec.$opt_name": AVCodecContext option, will apply for all FFmpeg based video/audio/subtitle decoders. To set for a single decoder, use [setDecoders() with properties](https://github.com/wang-bin/mdk-sdk/wiki/Player-APIs#void-setdecodersmediatype-type-const-stdvectorstdstring-names).
+  - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately when playing(not paused). **ONLY WORKS WITH SOFTWARE DECODERS**
+  - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately when playing(not paused).
+
+#### Subtitle properties
+  - "cc": "0" or "1"(default). enable closed caption decoding and rendering.
+  - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. `setActiveTracks(MediaType::Subtitle, {...})` enables decoding only. if rendering is disabled, you can still use subtitleText() to draw your self
+  - "subtitle.size": non-bitmap subtitle resolution, can be "video" to use video frame size(default), otherwise use video renderer size(multiple renderers is undefined)
+
+style properties for all subtitle types(text, ass/ssa and bitmaps):
+  - "subtitle.scale": scale subtitle, default is 1, .i.e no scale.
+style properties(for srt, subrip, text etc, not ass/ssa):
+  - "subtitle.font": font name, can be empty(default)
+  - "subtitle.font.size": font size, default is 22
+  - "subtitle.font.spacing": font spacing between chars, float value string. default is "0"
+  - "subtitle.bold", "subtitle.font.bold": bold, "0"(default) or "1"
+  - "subtitle.italic", "subtitle.font.italic": italic, "0"(default) or "1"
+  - "subtitle.underline", "subtitle.font.underline": underline, "0"(default) or "1"
+  - "subtitle.strikeout", "subtitle.font.strikeout": strikeout, "0"(default) or "1"
+  - "subtitle.color": font color. rgba integer value of base 10 or 16, default is "0xffffffff"
+  - "subtitle.color.outline": outline color. rgba integer value of base 10 or 16, default is "0x000000ff"
+  - "subtitle.color.background": shadow or background box color. rgba integer value of base 10 or 16, default is "0"
+  - "subtitle.border": border size, float value, default is "1.2"
+  - "subtitle.shadow": shadow size, float value, default is "0". if < 0, will show background box if "box" value >=0
+  - "subtitle.box": background box edge width, float value, default is "0". if < 0, will show shadow if "shadow" value > 0
+  - "subtitle.alignment.x": horizontal aligment, value can be "-1": left, "0": center, "1": right
+  - "subtitle.alignment.y": vertical aligment, value can be "-1": top, "0": center, "1": bottom
+  - "subtitle.margin.x": horizontal margin, int value, default "10". no effect if align to horizontal center
+  - "subtitle.margin.y": vertical margin, int value, default "10". no effect if align to vertical center
+  - "subtitle.blur": blur size, default 0. blur border/outline and shadow.
  */
     void setProperty(const std::string& key, const std::string& value) {
         MDK_CALL(p, setProperty, key.data(), value.data());
@@ -565,8 +593,8 @@ NOTE:
   \param api
   To release gfx resources, set null api in rendering thread/context(required by vulkan)
  */
-    Player& setRenderAPI(RenderAPI* api, void* vo_opaque = nullptr) {
-        MDK_CALL(p, setRenderAPI, reinterpret_cast<mdkRenderAPI*>(api), vo_opaque);
+    Player& setRenderAPI(const RenderAPI* api, void* vo_opaque = nullptr) {
+        MDK_CALL(p, setRenderAPI, reinterpret_cast<const mdkRenderAPI*>(api), vo_opaque);
         return *this;
     }
 /*!

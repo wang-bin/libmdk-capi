@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020-2025 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/VideoFrame.h"
 #include "mdk/VideoFrame.h"
@@ -13,7 +13,7 @@ struct mdkVideoFrame {
     VideoFrame frame;
 };
 
-PixelFormat fromC(MDK_PixelFormat fmt)
+static PixelFormat fromC(MDK_PixelFormat fmt)
 {
 #define CASE_FMT(X) case MDK_PixelFormat_##X: return PixelFormat::X;
     switch (fmt) {
@@ -48,7 +48,7 @@ PixelFormat fromC(MDK_PixelFormat fmt)
 #undef CASE_FMT
 }
 
-MDK_PixelFormat toC(PixelFormat fmt)
+static MDK_PixelFormat toC(PixelFormat fmt)
 {
 #define CASE_FMT(X) case PixelFormat::X: return MDK_PixelFormat_##X;
     switch (fmt) {
