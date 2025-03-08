@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -29,6 +29,21 @@ typedef struct mdkDX9Resource {
     int size; /* struct size, for binary compatibility */
     struct IDirect3DSurface9* surface;
 } mdkDX9Resource;
+
+#ifndef VA_VERSION
+typedef unsigned int VASurfaceID;
+typedef void* VADisplay;
+#endif
+
+typedef struct mdkVAAPIResource {
+    int size; /* struct size, for binary compatibility */
+    VADisplay display;
+    VASurfaceID surface;
+    void* x11Display;   /* can be null, then global option "X11Display" is used when required*/
+    /* surface is not ref counted, so unref() is required */
+    const void* opaque;
+    void (*unref)(const void* opaque);
+} mdkVAAPIResource;
 
 typedef struct mdkVideoBufferPool mdkVideoBufferPool;
 
@@ -92,13 +107,14 @@ typedef struct mdkVideoFrameAPI {
 */
     bool (*fromDX11)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX11Resource* res, int width, int height);
     bool (*fromDX9)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX9Resource* res, int width, int height);
+    bool (*fromVAAPI)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkVAAPIResource* res, int width, int height);
 /* The followings are not implemented */
-    bool (*fromDX12)();
     bool (*fromMetal)();
     bool (*fromVk)();
     bool (*fromGL)();
+    bool (*fromDX12)();
     bool (*toHost)(struct mdkVideoFrame*);
-    void* reserved[12];
+    void* reserved[11];
 } mdkVideoFrameAPI;
 
 

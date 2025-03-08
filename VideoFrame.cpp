@@ -5,6 +5,11 @@
 #include "mdk/VideoFrame.h"
 #include <cassert>
 #include <cstdlib>
+#if __has_include(<va/va.h>)
+# if (_WIN32 + 0) || (__linux__ + 0) && !(__ANDROID__ + 0)
+#include <va/va.h>
+# endif
+#endif
 
 using namespace std;
 using namespace MDK_NS;
@@ -191,6 +196,30 @@ bool MDK_VideoFrame_fromDX9(mdkVideoFrame* p, mdkVideoBufferPool** pool, const m
 }
 #endif // _WIN32
 
+#if (VA_MAJOR_VERSION + 0) >= 1
+bool MDK_VideoFrame_fromVAAPI(mdkVideoFrame* p, mdkVideoBufferPool** pool, const mdkVAAPIResource* res, int width, int height)
+{
+    if (!pool)
+        return false;
+    if (!*pool) {
+        *pool = new mdkVideoBufferPool();
+    }
+    if (auto frame = VideoFrame::from(&(*pool)->pool, VAAPIResource{
+                        .display = res->display,
+                        .surface = res->surface,
+                        .x11Display = res->x11Display,
+                        .unref = [res]{
+                            if (res->unref)
+                                res->unref(res->opaque);
+                        },
+                    }, width, height)) {
+        p->frame = frame;
+        return true;
+    }
+    return false;
+}
+#endif
+
 void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
 {
 #define SET_API(FN) p->FN = MDK_VideoFrame_##FN
@@ -209,6 +238,9 @@ void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
     SET_API(fromDX11);
     SET_API(fromDX9);
 #endif // _WIN32
+#if (VA_MAJOR_VERSION + 0) >= 1
+    SET_API(fromVAAPI);
+#endif
 #undef SET_API
 }
 

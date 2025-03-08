@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -16,14 +16,23 @@ MDK_NS_BEGIN
 
 typedef struct DX11Resource {
     /* ID3D11Texture2D or ID3D11VideoDecoderOutputView */
-    ID3D11DeviceChild* resource;
+    ID3D11DeviceChild* resource = nullptr;
     /* subresource index for texture array, 0 otherwise */
-    int subResource;
+    int subResource = 0;
 } DX11Resource;
 
 typedef struct DX9Resource {
-    IDirect3DSurface9* surface;
+    IDirect3DSurface9* surface = nullptr;
 } DX9Resource;
+
+typedef struct VAAPIResource {
+    VADisplay display = nullptr;
+    VASurfaceID surface = {};
+    void* x11Display = nullptr;   /* can be null, then global option "X11Display" is used when required*/
+    /* surface is not ref counted, so unref() is required */
+    const void* opaque = nullptr;
+    void (*unref)(const void* opaque) = nullptr;
+} VAAPIResource;
 
 enum class PixelFormat
 {
@@ -230,6 +239,20 @@ public:
         return f;
     }
 #endif // (_WIN32 + 0)
+
+    static VideoFrame from(mdkVideoBufferPool** pool, const VAAPIResource& res, int width = 0, int height = 0) {
+        mdkVAAPIResource r{};
+        r.size = sizeof(r);
+        r.display = res.display;
+        r.surface = res.surface;
+        r.x11Display = res.x11Display;
+        r.opaque = res.opaque;
+        r.unref = res.unref;
+        VideoFrame f(width, height, PixelFormat::Unknown);
+    if (!MDK_CALL(f.p, fromVAAPI, pool, &r, width, height))
+            return {};
+        return f;
+    }
 private:
     mdkVideoFrameAPI* p = nullptr;
     bool owner_ = true;
