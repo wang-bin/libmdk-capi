@@ -37,8 +37,8 @@ typedef void* VADisplay;
 
 typedef struct mdkVAAPIResource {
     int size; /* struct size, for binary compatibility */
-    VADisplay display;
     VASurfaceID surface;
+    VADisplay display;
     void* x11Display;   /* can be null, then global option "X11Display" is used when required*/
     /* surface is not ref counted, so unref() is required */
     const void* opaque;
@@ -80,6 +80,21 @@ enum MDK_PixelFormat {
     MDK_PixelFormat_BGRAF32, // name: "bgraf32le"
 };
 
+typedef struct mdkCUDAResource {
+    int size; /* struct size, for binary compatibility */
+    void* ptr[4]; /* CUdeviceptr. ptr[0] can be null, others can */
+    int width;   /* can't be 0 */
+    int height;  /* can't be 0 */
+    int stride[4]; /* can be 0 */
+    enum MDK_PixelFormat format; /* can't be unknown */
+    void* context; /* CUcontext, can be null */
+    void* stream;  /* CUstream, can be null */
+    /* surface is not ref counted, so unref() is required */
+    const void* opaque;
+    void (*unref)(const void* opaque);
+} mdkCUDAResource;
+
+
 typedef struct mdkVideoFrameAPI {
     struct mdkVideoFrame* object;
 
@@ -108,13 +123,14 @@ typedef struct mdkVideoFrameAPI {
     bool (*fromDX11)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX11Resource* res, int width, int height);
     bool (*fromDX9)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX9Resource* res, int width, int height);
     bool (*fromVAAPI)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkVAAPIResource* res, int width, int height);
+    bool (*fromCUDA)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkCUDAResource* res, int width, int height);
 /* The followings are not implemented */
     bool (*fromMetal)();
     bool (*fromVk)();
     bool (*fromGL)();
     bool (*fromDX12)();
     bool (*toHost)(struct mdkVideoFrame*);
-    void* reserved[11];
+    void* reserved[10];
 } mdkVideoFrameAPI;
 
 

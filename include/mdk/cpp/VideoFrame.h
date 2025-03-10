@@ -26,8 +26,8 @@ typedef struct DX9Resource {
 } DX9Resource;
 
 typedef struct VAAPIResource {
-    VADisplay display = nullptr;
     VASurfaceID surface = {};
+    VADisplay display = nullptr;
     void* x11Display = nullptr;   /* can be null, then global option "X11Display" is used when required*/
     /* surface is not ref counted, so unref() is required */
     const void* opaque = nullptr;
@@ -67,6 +67,19 @@ enum class PixelFormat
 };
 
 static inline bool operator!(PixelFormat f) { return f == PixelFormat::Unknown; }
+
+struct CUDAResource {
+    void* ptr[4] = {}; // CUdeviceptr. ptr[0] can be null, others can
+    int width;   // can't be 0
+    int height;  // can't be 0
+    int stride[4] = {}; // can be 0
+    PixelFormat format; // can't be unknown
+    void* context = {}; // CUcontext, can be null
+    void* stream = {};  // CUstream, can be null
+    /* surface is not ref counted, so unref() is required */
+    const void* opaque = nullptr;
+    void (*unref)(const void* opaque) = nullptr;
+};
 
 class VideoFrame
 {
@@ -243,13 +256,33 @@ public:
     static VideoFrame from(mdkVideoBufferPool** pool, const VAAPIResource& res, int width = 0, int height = 0) {
         mdkVAAPIResource r{};
         r.size = sizeof(r);
-        r.display = res.display;
         r.surface = res.surface;
+        r.display = res.display;
         r.x11Display = res.x11Display;
         r.opaque = res.opaque;
         r.unref = res.unref;
         VideoFrame f(width, height, PixelFormat::Unknown);
-    if (!MDK_CALL(f.p, fromVAAPI, pool, &r, width, height))
+        if (!MDK_CALL(f.p, fromVAAPI, pool, &r, width, height))
+            return {};
+        return f;
+    }
+
+    static VideoFrame from(mdkVideoBufferPool** pool, const CUDAResource& res, int width = 0, int height = 0) {
+        mdkCUDAResource r{};
+        r.size = sizeof(r);
+        for (int i = 0; i < 4; ++i) {
+            r.ptr[i] = res.ptr[i];
+            r.stride[i] = res.stride[i];
+        }
+        r.format = MDK_PixelFormat(int(res.format) - 1);
+        r.width = res.width;
+        r.height = res.height;
+        r.context = res.context;
+        r.stream = res.stream;
+        r.opaque = res.opaque;
+        r.unref = res.unref;
+        VideoFrame f(width, height, PixelFormat::Unknown);
+        if (!MDK_CALL(f.p, fromCUDA, pool, &r, width, height))
             return {};
         return f;
     }

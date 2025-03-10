@@ -5,11 +5,6 @@
 #include "mdk/VideoFrame.h"
 #include <cassert>
 #include <cstdlib>
-#if __has_include(<va/va.h>)
-# if (_WIN32 + 0) || (__linux__ + 0) && !(__ANDROID__ + 0)
-#include <va/va.h>
-# endif
-#endif
 
 using namespace std;
 using namespace MDK_NS;
@@ -196,7 +191,7 @@ bool MDK_VideoFrame_fromDX9(mdkVideoFrame* p, mdkVideoBufferPool** pool, const m
 }
 #endif // _WIN32
 
-#if (VA_MAJOR_VERSION + 0) >= 1
+#if (_WIN32 + 0) || (__linux__ + 0) && !(__ANDROID__ + 0)
 bool MDK_VideoFrame_fromVAAPI(mdkVideoFrame* p, mdkVideoBufferPool** pool, const mdkVAAPIResource* res, int width, int height)
 {
     if (!pool)
@@ -205,8 +200,8 @@ bool MDK_VideoFrame_fromVAAPI(mdkVideoFrame* p, mdkVideoBufferPool** pool, const
         *pool = new mdkVideoBufferPool();
     }
     if (auto frame = VideoFrame::from(&(*pool)->pool, VAAPIResource{
-                        .display = res->display,
                         .surface = res->surface,
+                        .display = res->display,
                         .x11Display = res->x11Display,
                         .unref = [res]{
                             if (res->unref)
@@ -218,7 +213,36 @@ bool MDK_VideoFrame_fromVAAPI(mdkVideoFrame* p, mdkVideoBufferPool** pool, const
     }
     return false;
 }
-#endif
+
+bool MDK_VideoFrame_fromCUDA(mdkVideoFrame* p, mdkVideoBufferPool** pool, const mdkCUDAResource* res, int width, int height)
+{
+    if (!pool)
+        return false;
+    if (!*pool) {
+        *pool = new mdkVideoBufferPool();
+    }
+    CUDAResource r{
+        .width = res->width,
+        .height = res->height,
+        .format = fromC(res->format),
+        .context = res->context,
+        .stream = res->stream,
+        .unref = [res]{
+            if (res->unref)
+                res->unref(res->opaque);
+        },
+    };
+    for (int i = 0; i < 4; ++i) {
+        r.ptr[i] = res->ptr[i];
+        r.stride[i] = res->stride[i];
+    }
+    if (auto frame = VideoFrame::from(&(*pool)->pool, r, width, height)) {
+        p->frame = frame;
+        return true;
+    }
+    return false;
+}
+#endif // (_WIN32 + 0) || (__linux__ + 0) && !(__ANDROID__ + 0)
 
 void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
 {
@@ -238,9 +262,10 @@ void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
     SET_API(fromDX11);
     SET_API(fromDX9);
 #endif // _WIN32
-#if (VA_MAJOR_VERSION + 0) >= 1
+#if (_WIN32 + 0) || (__linux__ + 0) && !(__ANDROID__ + 0)
     SET_API(fromVAAPI);
-#endif
+    SET_API(fromCUDA);
+#endif // (_WIN32 + 0) || (__linux__ + 0) && !(__ANDROID__ + 0)
 #undef SET_API
 }
 
