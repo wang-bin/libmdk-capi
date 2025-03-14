@@ -160,8 +160,9 @@ public:
   \param stride stride of data. if <=0, it's the stride of current format at this plane
   \param buf external buffer ptr. user should ensure the buffer is alive before frame is destroyed.
   \param bufDeleter to delete buf when frame is destroyed
+  If both buf and bufDeleter are null, data is copied
  */
-    bool addBuffer(const uint8_t* data, int stride, void* buf, void (*bufDeleter)(void** pBuf), int plane = -1) {
+    bool addBuffer(const uint8_t* data, int stride, int plane = -1, void* buf = nullptr, void (*bufDeleter)(void** pBuf) = nullptr) {
         return MDK_CALL(p, addBuffer, data, stride, buf, bufDeleter, plane);
     }
 /*

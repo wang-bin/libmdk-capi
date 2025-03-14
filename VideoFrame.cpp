@@ -110,7 +110,7 @@ MDK_PixelFormat MDK_VideoFrame_format(mdkVideoFrame* p)
 
 bool MDK_VideoFrame_addBuffer(mdkVideoFrame* p, const uint8_t* data, int stride, void* buf, void (*bufDeleter)(void** pBuf), int plane)
 {
-    return p->frame.addBuffer(data, stride, buf, bufDeleter, plane);
+    return p->frame.addBuffer(data, stride, plane, buf, bufDeleter);
 }
 
 void MDK_VideoFrame_setBuffers(mdkVideoFrame* p, uint8_t const** const data, int* strides/*in/out = nullptr*/)
@@ -251,6 +251,7 @@ void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
     SET_API(width);
     SET_API(height);
     SET_API(format);
+    SET_API(addBuffer);
     SET_API(setBuffers);
     SET_API(bufferData);
     SET_API(bytesPerLine);
