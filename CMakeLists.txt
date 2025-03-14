@@ -6,6 +6,7 @@ set(SRC_C
   MediaInfo.cpp
   Player.cpp
   RenderAPI.cpp
+  AudioFrame.cpp
   VideoFrame.cpp
 )
 if(EXISTS ${Vulkan_INCLUDE_DIR}) # FindVulkan will cache Vulkan_INCLUDE_DIR even if library is not found

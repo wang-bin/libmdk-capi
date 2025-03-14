@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2020-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -9,6 +9,7 @@
  */
 #pragma once
 #include "MediaInfo.h"
+#include "AudioFrame.h"
 #include "VideoFrame.h"
 #include "RenderAPI.h"
 #include "Player.h"

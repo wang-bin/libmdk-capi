@@ -12,6 +12,7 @@
 #include "MediaInfo.h"
 #include "RenderAPI.h"
 #include "../c/Player.h"
+#include "AudioFrame.h"
 #include "VideoFrame.h"
 #include <cinttypes>
 #include <cstdlib>
@@ -992,6 +993,8 @@ private:
     std::mutex render_mtx_;
     std::function<void(bool)> switch_cb_ = nullptr;
     std::mutex switch_mtx_;
+    std::function<int(AudioFrame&, int/*track*/)> audio_cb_ = nullptr;
+    std::mutex audio_mtx_;
     std::function<int(VideoFrame&, int/*track*/)> video_cb_ = nullptr;
     std::mutex video_mtx_;
     std::function<double()> sync_cb_ = nullptr;
@@ -1031,6 +1034,30 @@ inline Player& Player::onFrame(const std::function<int(VideoFrame&, int/*track*/
     };
     callback.opaque = video_cb_ ? this : nullptr;
     MDK_CALL(p, onVideo, callback);
+    return *this;
+}
+
+template<>
+inline Player& Player::onFrame(const std::function<int(AudioFrame&, int/*track*/)>& cb)
+{
+    {
+        const std::lock_guard<std::mutex> lock(audio_mtx_);
+        audio_cb_ = cb;
+    }
+    mdkAudioCallback callback;
+    callback.cb = [](mdkAudioFrameAPI** pFrame/*in/out*/, int track, void* opaque){
+        AudioFrame frame;
+        frame.attach(*pFrame);
+        auto p = (Player*)opaque;
+        const std::lock_guard<std::mutex> lock(p->audio_mtx_);
+        if (!p->audio_cb_)
+            return 0;
+        const auto pendings = p->audio_cb_(frame, track);
+        *pFrame = frame.detach();
+        return pendings;
+    };
+    callback.opaque = audio_cb_ ? this : nullptr;
+    MDK_CALL(p, onAudio, callback);
     return *this;
 }
 

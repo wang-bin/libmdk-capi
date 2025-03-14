@@ -3,10 +3,12 @@
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
+#include "mdk/c/AudioFrame.h"
 #include "mdk/c/VideoFrame.h"
 #include "mdk/ColorSpace.h"
 #include "mdk/Player.h"
 #include "mdk/MediaInfo.h"
+#include "mdk/AudioFrame.h"
 #include "mdk/VideoFrame.h"
 #include "mdk/RenderAPI.h"
 #include "MediaInfoInternal.h"
@@ -18,6 +20,8 @@
 using namespace std;
 using namespace MDK_NS;
 
+extern mdkAudioFrameAPI* MDK_AudioFrame_toC(const AudioFrame& frame);
+extern AudioFrame MDK_AudioFrame_fromC(mdkAudioFrameAPI* p);
 extern mdkVideoFrameAPI* MDK_VideoFrame_toC(const VideoFrame& frame);
 extern VideoFrame MDK_VideoFrame_fromC(mdkVideoFrameAPI* p);
 extern unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, const void* data);
@@ -298,7 +302,22 @@ void MDK_Player_onVideo(mdkPlayer* p, mdkVideoCallback cb)
     });
 }
 
-void MDK_Player_onAudio(mdkPlayer*);
+void MDK_Player_onAudio(mdkPlayer* p, mdkAudioCallback cb)
+{
+    if (!cb.opaque) {
+        p->onFrame<AudioFrame>(nullptr);
+        return;
+    }
+    p->onFrame<AudioFrame>([cb](AudioFrame& frame, int track){
+        auto f = MDK_AudioFrame_toC(frame);
+        auto f0 = f;
+        auto ret = cb.cb(&f, track, cb.opaque);
+        if (f != f0)
+            frame = MDK_AudioFrame_fromC(f);
+        mdkAudioFrameAPI_delete(&f);
+        return ret;
+    });
+}
 
 int64_t MDK_Player_position(mdkPlayer* p)
 {
@@ -583,6 +602,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setRenderAPI);
     SET_API(renderAPI);
     SET_API(onVideo);
+    SET_API(onAudio);
     SET_API(mapPoint);
     SET_API(onSync);
     SET_API(setVideoEffect);

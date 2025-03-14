@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 struct mdkMediaInfo;
-struct mdkAudioFrame;
+struct mdkAudioFrameAPI;
 struct mdkVideoFrameAPI;
 struct mdkPlayer;
 
@@ -50,9 +50,18 @@ typedef struct mdkRenderCallback {
 } mdkRenderCallback;
 
 typedef struct mdkVideoCallback {
+/*!
+  \brief cb
+  \return pending number of frames. For most filters, 1 input frame generates 1 output frame, then return 0.
+*/
     int (*cb)(struct mdkVideoFrameAPI** pFrame/*in/out*/, int track, void* opaque);
     void* opaque;
 } mdkVideoCallback;
+
+typedef struct mdkAudioCallback {
+    int (*cb)(struct mdkAudioFrameAPI** pFrame/*in/out*/, int track, void* opaque);
+    void* opaque;
+} mdkAudioCallback;
 
 typedef struct SwitchBitrateCallback {
     void (*cb)(bool, void* opaque);
@@ -292,7 +301,7 @@ NOTE:
   Called before delivering frame to renderers. Can be used to apply filters.
  */
     void (*onVideo)(struct mdkPlayer*, mdkVideoCallback);
-    void (*onAudio)(struct mdkPlayer*); // NOT IMPLEMENTED
+    void (*onAudio)(struct mdkPlayer*, mdkAudioCallback);
 /*
   \brief beforeVideoRender
   NOT IMPLEMENTED. Called after rendering a frame on renderer of vo_opaque on rendering thread. Can be used to apply GPU filters.
