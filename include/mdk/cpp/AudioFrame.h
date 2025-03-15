@@ -92,6 +92,22 @@ public:
     SampleFormat format() const {
         return (SampleFormat)MDK_CALL(p, sampleFormat);
     }
+
+    int sampleRate() const {
+        return MDK_CALL(p, sampleRate);
+    }
+
+    int channels() const {
+        return MDK_CALL(p, channels);
+    }
+
+    uint64_t channelMask() const {
+        return MDK_CALL(p, channelMask);
+    }
+
+    int samplesPerChannel() const {
+        return MDK_CALL(p, samplesPerChannel);
+    }
 /*!
   \brief addBuffer
   Add an external buffer to nth plane, store external buffer data ptr. The old buffer will be released.
@@ -134,6 +150,10 @@ public:
         if (!p)
             return -1;
         return MDK_CALL(p, timestamp);
+    }
+
+    int duration() const {
+        return MDK_CALL(p, duration);
     }
 /*!
   \brief to
