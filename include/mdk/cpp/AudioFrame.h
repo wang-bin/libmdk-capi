@@ -152,7 +152,7 @@ public:
         return MDK_CALL(p, timestamp);
     }
 
-    int duration() const {
+    double duration() const {
         return MDK_CALL(p, duration);
     }
 /*!
