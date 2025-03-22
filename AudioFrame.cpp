@@ -13,7 +13,7 @@ struct mdkAudioFrame {
     AudioFrame frame;
 };
 
-AudioFormat::SampleFormat fromC(MDK_SampleFormat fmt)
+static AudioFormat::SampleFormat fromC(MDK_SampleFormat fmt)
 {
 #define CASE_FMT(X) case MDK_SampleFormat_##X: return AudioFormat::SampleFormat::X;
     switch (fmt) {
@@ -32,7 +32,7 @@ AudioFormat::SampleFormat fromC(MDK_SampleFormat fmt)
 #undef CASE_FMT
 }
 
-MDK_SampleFormat toC(AudioFormat::SampleFormat fmt)
+static MDK_SampleFormat toC(AudioFormat::SampleFormat fmt)
 {
 #define CASE_FMT(X) case AudioFormat::SampleFormat::X: return MDK_SampleFormat_##X;
     switch (fmt) {

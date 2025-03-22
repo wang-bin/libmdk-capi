@@ -8,7 +8,7 @@
 #include <cassert>
 #include <algorithm>
 
- ColorSpace kColorSpaceMap[] = {
+ColorSpace kColorSpaceMap[] = {
     ColorSpaceUnknown,
     ColorSpaceBT709,
     ColorSpaceBT2100_PQ,
@@ -19,7 +19,7 @@
     ColorSpaceBT2100_HLG,
 };
 
-MDK_ColorSpace toC(const ColorSpace& cs)
+static MDK_ColorSpace toC(const ColorSpace& cs)
 {
     const auto dist = [&](const ColorSpace& cs1, const ColorSpace& cs2) {
         if (cs1 == cs2)
@@ -208,7 +208,7 @@ void MediaInfoToC(const MediaInfo& abi, MediaInfoInternal* out)
 }
 
 template<class InfoAbi, class Info>
-bool MDK_GetMetaData(const Info* info, mdkStringMapEntry* entry)
+static bool MDK_GetMetaData(const Info* info, mdkStringMapEntry* entry)
 {
     if (!info)
         return false;
