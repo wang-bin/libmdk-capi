@@ -185,6 +185,7 @@ static inline void setLogHandler(const std::function<void(LogLevel, const char*)
         ~LogReset() {
             mdkLogHandler stdh{};
             MDK_setLogHandler(stdh); // reset log handler std to ensure no log go to scb after scb destroyed
+            MDK_setLogHandler(stdh); // disable log handler to ensure no log go to scb after scb destroyed
         }
     } reset;
 }
