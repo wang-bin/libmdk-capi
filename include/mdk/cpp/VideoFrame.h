@@ -225,6 +225,17 @@ public:
     }
 
 #if (_WIN32 + 0)
+    bool get(DX11Resource* res) const {
+        if (!res)
+            return false;
+        mdkDX11Resource r{};
+        r.size = sizeof(r);
+        if (!MDK_CALL(p, getDX11, &r))
+            return false;
+        res->resource = r.resource;
+        res->subResource = r.subResource;
+        return true;
+    }
 /*!
   \brief from
   create a frame containing dx9, dx11 resource

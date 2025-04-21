@@ -124,13 +124,14 @@ typedef struct mdkVideoFrameAPI {
     bool (*fromDX9)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX9Resource* res, int width, int height);
     bool (*fromVAAPI)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkVAAPIResource* res, int width, int height);
     bool (*fromCUDA)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkCUDAResource* res, int width, int height);
+    bool (*getDX11)(struct mdkVideoFrame*, mdkDX11Resource* res);
 /* The followings are not implemented */
     bool (*fromMetal)();
     bool (*fromVk)();
     bool (*fromGL)();
     bool (*fromDX12)();
     bool (*toHost)(struct mdkVideoFrame*);
-    void* reserved[10];
+    void* reserved[9];
 } mdkVideoFrameAPI;
 
 

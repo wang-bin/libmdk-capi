@@ -153,6 +153,18 @@ struct mdkVideoBufferPool {
 };
 
 #if (_WIN32 + 0)
+
+bool MDK_VideoFrame_getDX11(mdkVideoFrame* p, mdkDX11Resource* r)
+{
+    DX11Resource res;
+    if (p->frame.get(&res)) {
+        r->resource = res.resource;
+        r->subResource = res.subResource;
+        return true;
+    }
+    return false;
+}
+
 bool MDK_VideoFrame_fromDX11(mdkVideoFrame* p, mdkVideoBufferPool** pool, const mdkDX11Resource* res, int width, int height)
 {
     if (!pool)
@@ -260,6 +272,7 @@ void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
     SET_API(to);
     SET_API(save);
 #if (_WIN32 + 0)
+    SET_API(getDX11);
     SET_API(fromDX11);
     SET_API(fromDX9);
 #endif // _WIN32
