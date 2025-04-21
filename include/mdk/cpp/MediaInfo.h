@@ -22,8 +22,8 @@ struct AudioCodecParameters {
     const uint8_t* extra_data; /* without padding data */
     int extra_data_size;
     int64_t bit_rate;
-    int profile;
-    int level;
+    int profile = -99; // unknown profile
+    int level = -99;
     float frame_rate;
 
     bool is_float;
@@ -54,8 +54,8 @@ struct VideoCodecParameters {
     const uint8_t* extra_data; /* without padding data */
     int extra_data_size;
     int64_t bit_rate;
-    int profile;
-    int level;
+    int profile = -99; // unknown profile
+    int level = -99;
     float frame_rate;
     int format; /* pixel format */
     const char* format_name; /* pixel format name */
@@ -118,8 +118,8 @@ struct ProgramInfo {
 struct MediaInfo
 {
     int64_t start_time; // ms
-    int64_t duration;
-    int64_t bit_rate;
+    int64_t duration;   // ms. 0 for live streams. may change when playing a stream being recorded
+    int64_t bit_rate;   // when loaded, e.g. in prepare callback, it's the value from container. when running, it's updated to the realtime value
     int64_t size; // file size. IGNORE ME!
     const char* format;
     int streams;
