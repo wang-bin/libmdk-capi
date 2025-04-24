@@ -49,7 +49,7 @@ typedef struct mdkVideoBufferPool mdkVideoBufferPool;
 
 struct mdkVideoFrame;
 
-enum MDK_PixelFormat {
+typedef enum MDK_PixelFormat {
     MDK_PixelFormat_Unknown = -1, // TODO: 0 in next major version
     MDK_PixelFormat_YUV420P,
     MDK_PixelFormat_NV12,
@@ -78,7 +78,7 @@ enum MDK_PixelFormat {
     MDK_PixelFormat_RGBP16, // name: "rgbp16le"
     MDK_PixelFormat_RGBPF32, // name: "rgbpf32le"
     MDK_PixelFormat_BGRAF32, // name: "bgraf32le"
-};
+} MDK_PixelFormat;
 
 typedef struct mdkCUDAResource {
     int size; /* struct size, for binary compatibility */
@@ -135,8 +135,10 @@ typedef struct mdkVideoFrameAPI {
 } mdkVideoFrameAPI;
 
 
-MDK_API mdkVideoFrameAPI* mdkVideoFrameAPI_new(int width/*=0*/, int height/*=0*/, enum MDK_PixelFormat format/*=Unknown*/);
-MDK_API void mdkVideoFrameAPI_delete(struct mdkVideoFrameAPI**);
+MDK_API mdkVideoFrameAPI* mdkVideoFrameAPI_new(int width/*=0*/, int height/*=0*/, MDK_PixelFormat format/*=Unknown*/);
+MDK_API void mdkVideoFrameAPI_delete(mdkVideoFrameAPI**);
+MDK_API mdkVideoFrameAPI* mdkVideoFrameAPI_ref(mdkVideoFrameAPI* p);
+MDK_API void mdkVideoFrameAPI_unref(mdkVideoFrameAPI** pp);
 
 /*
   \brief mdkVideoBufferPoolFree

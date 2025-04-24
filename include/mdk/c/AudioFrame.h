@@ -17,7 +17,7 @@ extern "C" {
 
 struct mdkAudioFrame;
 
-enum MDK_SampleFormat {
+typedef enum MDK_SampleFormat {
     MDK_SampleFormat_Unknown,
     MDK_SampleFormat_U8,
     MDK_SampleFormat_U8P,
@@ -29,7 +29,7 @@ enum MDK_SampleFormat {
     MDK_SampleFormat_F32P,
     MDK_SampleFormat_F64,
     MDK_SampleFormat_F64P,
-};
+} MDK_SampleFormat;
 
 typedef struct mdkAudioFrameAPI {
     struct mdkAudioFrame* object;
@@ -55,7 +55,9 @@ typedef struct mdkAudioFrameAPI {
 } mdkAudioFrameAPI;
 
 MDK_API mdkAudioFrameAPI* mdkAudioFrameAPI_new(enum MDK_SampleFormat format, int channels, int sampleRate, int samples);
-MDK_API void mdkAudioFrameAPI_delete(struct mdkAudioFrameAPI**);
+MDK_API void mdkAudioFrameAPI_delete(mdkAudioFrameAPI**);
+MDK_API mdkAudioFrameAPI* mdkAudioFrameAPI_ref(mdkAudioFrameAPI* p);
+MDK_API void mdkAudioFrameAPI_unref(mdkAudioFrameAPI** pp);
 
 #ifdef __cplusplus
 }

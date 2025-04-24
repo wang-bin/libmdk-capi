@@ -3,6 +3,7 @@
  */
 #include "mdk/c/AudioFrame.h"
 #include "mdk/AudioFrame.h"
+#include <atomic>
 #include <cassert>
 #include <cstdlib>
 
@@ -11,6 +12,7 @@ using namespace MDK_NS;
 
 struct mdkAudioFrame {
     AudioFrame frame;
+    atomic<int> ref = 1;
 };
 
 static AudioFormat::SampleFormat fromC(MDK_SampleFormat fmt)
@@ -93,13 +95,27 @@ mdkAudioFrameAPI* mdkAudioFrameAPI_new(enum MDK_SampleFormat format, int channel
 
 void mdkAudioFrameAPI_delete(mdkAudioFrameAPI** pp)
 {
-    if (!pp || !*pp)
-        return;
-    delete (*pp)->object;
-    delete *pp;
-    *pp = nullptr;
+    mdkAudioFrameAPI_unref(pp);
 }
 
+mdkAudioFrameAPI* mdkAudioFrameAPI_ref(mdkAudioFrameAPI* p)
+{
+    if (p)
+        p->object->ref++;
+    return p;
+}
+
+void mdkAudioFrameAPI_unref(mdkAudioFrameAPI** pp)
+{
+    if (!pp || !*pp)
+        return;
+    auto p = *pp;
+    if (--p->object->ref == 0) {
+        delete p->object;
+        delete p;
+    }
+    *pp = nullptr;
+}
 } // extern "C"
 
 mdkAudioFrameAPI* MDK_AudioFrame_toC(const AudioFrame& frame)

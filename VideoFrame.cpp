@@ -3,6 +3,7 @@
  */
 #include "mdk/c/VideoFrame.h"
 #include "mdk/VideoFrame.h"
+#include <atomic>
 #include <cassert>
 #include <cstdlib>
 
@@ -11,6 +12,7 @@ using namespace MDK_NS;
 
 struct mdkVideoFrame {
     VideoFrame frame;
+    atomic<int> ref = 1;
 };
 
 static PixelFormat fromC(MDK_PixelFormat fmt)
@@ -294,10 +296,25 @@ mdkVideoFrameAPI* mdkVideoFrameAPI_new(int width/*=0*/, int height/*=0*/, MDK_Pi
 
 void mdkVideoFrameAPI_delete(mdkVideoFrameAPI** pp)
 {
+    mdkVideoFrameAPI_unref(pp);
+}
+
+mdkVideoFrameAPI* mdkVideoFrameAPI_ref(mdkVideoFrameAPI* p)
+{
+    if (p)
+        p->object->ref++;
+    return p;
+}
+
+void mdkVideoFrameAPI_unref(mdkVideoFrameAPI** pp)
+{
     if (!pp || !*pp)
         return;
-    delete (*pp)->object;
-    delete *pp;
+    auto p = *pp;
+    if (--p->object->ref == 0) {
+        delete p->object;
+        delete p;
+    }
     *pp = nullptr;
 }
 

@@ -34,15 +34,19 @@ static inline bool operator!(SampleFormat f) { return f == SampleFormat::Unknown
 class AudioFrame
 {
 public:
-    AudioFrame(const AudioFrame&) = delete;
-    AudioFrame& operator=(const AudioFrame&) = delete;
+    AudioFrame(const AudioFrame& that) : p(mdkAudioFrameAPI_ref(that.p)) {}
+
+    AudioFrame& operator=(const AudioFrame& that) {
+        mdkAudioFrameAPI_unref(&p);
+        p = mdkAudioFrameAPI_ref(that.p);
+        return *this;
+    }
+
     AudioFrame(AudioFrame&& that) {
         std::swap(p, that.p);
-        std::swap(owner_, that.owner_);
     }
     AudioFrame& operator=(AudioFrame&& that)  {
         std::swap(p, that.p);
-        std::swap(owner_, that.owner_);
         return *this;
     }
 
@@ -59,11 +63,10 @@ public:
         p = mdkAudioFrameAPI_new(MDK_SampleFormat(format), channels, sampleRate, samplesPerChannel);
     }
 
-    AudioFrame(mdkAudioFrameAPI* pp) : p(pp) {}
+    AudioFrame(mdkAudioFrameAPI* pp) : p(mdkAudioFrameAPI_ref(pp)) {}
 
     ~AudioFrame() {
-        if (owner_)
-            mdkAudioFrameAPI_delete(&p);
+        mdkAudioFrameAPI_delete(&p);
     }
 
 // isValid() is true for EOS frame, but no data and timestamp() is TimestampEOS.
@@ -71,10 +74,8 @@ public:
     explicit operator bool() const { return isValid();}
 
     void attach(mdkAudioFrameAPI* api) {
-        if (owner_)
-            mdkAudioFrameAPI_delete(&p);
+        mdkAudioFrameAPI_delete(&p);
         p = api;
-        owner_ = false;
     }
 
     mdkAudioFrameAPI* detach() {
@@ -170,7 +171,6 @@ public:
     }
 private:
     mdkAudioFrameAPI* p = nullptr;
-    bool owner_ = true;
 };
 
 MDK_NS_END

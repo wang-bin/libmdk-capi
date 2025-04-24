@@ -20,12 +20,12 @@ struct mdkAudioFrameAPI;
 struct mdkVideoFrameAPI;
 struct mdkPlayer;
 
-enum MDK_SurfaceType {
+typedef enum MDK_SurfaceType {
     MDK_SurfaceType_Auto, /* platform default type */
     MDK_SurfaceType_X11,
     MDK_SurfaceType_GBM,
     MDK_SurfaceType_Wayland,
-};
+} MDK_SurfaceType;
 
 typedef struct mdkCurrentMediaChangedCallback {
     void (*cb)(void* opaque);
@@ -117,10 +117,10 @@ typedef struct mdkSnapshotRequest {
     bool subtitle; // not supported yet
 } mdkSnapshotRequest;
 
-enum MDK_MapDirection {
+typedef enum MDK_MapDirection {
     MDK_MapDirection_FrameToViewport, // left-hand
     MDK_MapDirection_ViewportToFrame, // left-hand
-};
+} MDK_MapDirection;
 
 typedef struct mdkSnapshotCallback {
 /* \brief cb

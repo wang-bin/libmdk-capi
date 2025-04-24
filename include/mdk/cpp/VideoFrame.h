@@ -84,15 +84,18 @@ struct CUDAResource {
 class VideoFrame
 {
 public:
-    VideoFrame(const VideoFrame&) = delete;
-    VideoFrame& operator=(const VideoFrame&) = delete;
+    VideoFrame(const VideoFrame& that) : p(mdkVideoFrameAPI_ref(that.p)) {}
+
+    VideoFrame& operator=(const VideoFrame& that) {
+        mdkVideoFrameAPI_unref(&p);
+        p = mdkVideoFrameAPI_ref(that.p);
+        return *this;
+    }
     VideoFrame(VideoFrame&& that) {
         std::swap(p, that.p);
-        std::swap(owner_, that.owner_);
     }
     VideoFrame& operator=(VideoFrame&& that)  {
         std::swap(p, that.p);
-        std::swap(owner_, that.owner_);
         return *this;
     }
 
@@ -112,11 +115,10 @@ public:
             MDK_CALL(p, setBuffers, data, strides);
     }
 
-    VideoFrame(mdkVideoFrameAPI* pp) : p(pp) {}
+    VideoFrame(mdkVideoFrameAPI* pp) : p(mdkVideoFrameAPI_ref(pp)) {}
 
     ~VideoFrame() {
-        if (owner_)
-            mdkVideoFrameAPI_delete(&p);
+        mdkVideoFrameAPI_delete(&p);
     }
 
 // isValid() is true for EOS frame, but no data and timestamp() is TimestampEOS.
@@ -124,10 +126,8 @@ public:
     explicit operator bool() const { return isValid();}
 
     void attach(mdkVideoFrameAPI* api) {
-        if (owner_)
-            mdkVideoFrameAPI_delete(&p);
+        mdkVideoFrameAPI_delete(&p);
         p = api;
-        owner_ = false;
     }
 
     mdkVideoFrameAPI* detach() {
@@ -300,7 +300,6 @@ public:
     }
 private:
     mdkVideoFrameAPI* p = nullptr;
-    bool owner_ = true;
 };
 
 MDK_NS_END

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -10,14 +10,14 @@
 #pragma once
 #include "global.h"
 
-enum MDK_RenderAPI {
+typedef enum MDK_RenderAPI {
     MDK_RenderAPI_Invalid,
     MDK_RenderAPI_OpenGL = 1,
     MDK_RenderAPI_Vulkan = 2,
     MDK_RenderAPI_Metal = 3,
     MDK_RenderAPI_D3D11 = 4,
     MDK_RenderAPI_D3D12 = 5,
-};
+} MDK_RenderAPI;
 
 /*!
   \brief mdkRenderAPI

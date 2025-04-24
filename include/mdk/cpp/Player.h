@@ -1022,8 +1022,7 @@ inline Player& Player::onFrame(const std::function<int(VideoFrame&, int/*track*/
     }
     mdkVideoCallback callback;
     callback.cb = [](mdkVideoFrameAPI** pFrame/*in/out*/, int track, void* opaque){
-        VideoFrame frame;
-        frame.attach(*pFrame);
+        VideoFrame frame(*pFrame);
         auto p = (Player*)opaque;
         const std::lock_guard<std::mutex> lock(p->video_mtx_);
         if (!p->video_cb_)
@@ -1046,8 +1045,7 @@ inline Player& Player::onFrame(const std::function<int(AudioFrame&, int/*track*/
     }
     mdkAudioCallback callback;
     callback.cb = [](mdkAudioFrameAPI** pFrame/*in/out*/, int track, void* opaque){
-        AudioFrame frame;
-        frame.attach(*pFrame);
+        AudioFrame frame(*pFrame);
         auto p = (Player*)opaque;
         const std::lock_guard<std::mutex> lock(p->audio_mtx_);
         if (!p->audio_cb_)
