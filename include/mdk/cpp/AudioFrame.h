@@ -37,8 +37,11 @@ public:
     AudioFrame(const AudioFrame& that) : p(mdkAudioFrameAPI_ref(that.p)) {}
 
     AudioFrame& operator=(const AudioFrame& that) {
-        mdkAudioFrameAPI_unref(&p);
-        p = mdkAudioFrameAPI_ref(that.p);
+        if (this != &that) {
+            if (owner_)
+                mdkAudioFrameAPI_unref(&p);
+            p = mdkAudioFrameAPI_ref(that.p);
+        }
         return *this;
     }
 
@@ -66,7 +69,8 @@ public:
     AudioFrame(mdkAudioFrameAPI* pp) : p(mdkAudioFrameAPI_ref(pp)) {}
 
     ~AudioFrame() {
-        mdkAudioFrameAPI_delete(&p);
+        if (owner_)
+            mdkAudioFrameAPI_delete(&p);
     }
 
 // isValid() is true for EOS frame, but no data and timestamp() is TimestampEOS.
@@ -74,8 +78,10 @@ public:
     explicit operator bool() const { return isValid();}
 
     void attach(mdkAudioFrameAPI* api) {
-        mdkAudioFrameAPI_delete(&p);
+        if (owner_)
+            mdkAudioFrameAPI_delete(&p);
         p = api;
+        owner_ = false;
     }
 
     mdkAudioFrameAPI* detach() {
@@ -171,6 +177,7 @@ public:
     }
 private:
     mdkAudioFrameAPI* p = nullptr;
+    bool owner_ = true;
 };
 
 MDK_NS_END

@@ -295,9 +295,11 @@ void MDK_Player_onVideo(mdkPlayer* p, mdkVideoCallback cb)
         auto f = MDK_VideoFrame_toC(frame);
         auto f0 = f;
         auto ret = cb.cb(&f, track, cb.opaque);
-        if (f != f0)
+        if (f != f0) {
             frame = MDK_VideoFrame_fromC(f);
-        mdkVideoFrameAPI_delete(&f);
+            mdkVideoFrameAPI_delete(&f);
+        }
+        mdkVideoFrameAPI_delete(&f0);
         return ret;
     });
 }
@@ -312,9 +314,11 @@ void MDK_Player_onAudio(mdkPlayer* p, mdkAudioCallback cb)
         auto f = MDK_AudioFrame_toC(frame);
         auto f0 = f;
         auto ret = cb.cb(&f, track, cb.opaque);
-        if (f != f0)
+        if (f != f0) {
             frame = MDK_AudioFrame_fromC(f);
-        mdkAudioFrameAPI_delete(&f);
+            mdkAudioFrameAPI_delete(&f);
+        }
+        mdkAudioFrameAPI_delete(&f0);
         return ret;
     });
 }

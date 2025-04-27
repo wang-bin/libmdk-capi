@@ -15,7 +15,7 @@
 MDK_NS_BEGIN
 
 typedef struct DX11Resource {
-    /* ID3D11Texture2D or ID3D11VideoDecoderOutputView */
+    /* ID3D11Texture2D or ID3D11VideoDecoderOutputView as input, ID3D11Texture2D as output */
     ID3D11DeviceChild* resource = nullptr;
     /* subresource index for texture array, 0 otherwise */
     int subResource = 0;
@@ -87,8 +87,11 @@ public:
     VideoFrame(const VideoFrame& that) : p(mdkVideoFrameAPI_ref(that.p)) {}
 
     VideoFrame& operator=(const VideoFrame& that) {
-        mdkVideoFrameAPI_unref(&p);
-        p = mdkVideoFrameAPI_ref(that.p);
+        if (this != &that) {
+            if (owner_)
+                mdkVideoFrameAPI_unref(&p);
+            p = mdkVideoFrameAPI_ref(that.p);
+        }
         return *this;
     }
     VideoFrame(VideoFrame&& that) {
@@ -118,7 +121,8 @@ public:
     VideoFrame(mdkVideoFrameAPI* pp) : p(mdkVideoFrameAPI_ref(pp)) {}
 
     ~VideoFrame() {
-        mdkVideoFrameAPI_delete(&p);
+        if (owner_)
+            mdkVideoFrameAPI_delete(&p);
     }
 
 // isValid() is true for EOS frame, but no data and timestamp() is TimestampEOS.
@@ -126,8 +130,10 @@ public:
     explicit operator bool() const { return isValid();}
 
     void attach(mdkVideoFrameAPI* api) {
-        mdkVideoFrameAPI_delete(&p);
+        if (owner_)
+            mdkVideoFrameAPI_delete(&p);
         p = api;
+        owner_ = false;
     }
 
     mdkVideoFrameAPI* detach() {
@@ -300,6 +306,7 @@ public:
     }
 private:
     mdkVideoFrameAPI* p = nullptr;
+    bool owner_ = true;
 };
 
 MDK_NS_END

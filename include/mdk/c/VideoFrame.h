@@ -19,7 +19,7 @@ struct ID3D11DeviceChild;
 struct IDirect3DSurface9;
 typedef struct mdkDX11Resource {
     int size; /* struct size, for binary compatibility */
-    /* ID3D11Texture2D or ID3D11VideoDecoderOutputView */
+    /* ID3D11Texture2D or ID3D11VideoDecoderOutputView as input, ID3D11Texture2D as output */
     struct ID3D11DeviceChild* resource;
     /* subresource index for texture array, 0 otherwise */
     int subResource;
