@@ -24,8 +24,8 @@ typedef struct mdkDX11Resource {
     struct ID3D11DeviceChild* resource;
     /* subresource index for texture array, 0 otherwise */
     int subResource;
-    struct ID3D11Texture2D* plane[4] = {};  // ID3D11Texture2D for each plane. plane[0] == resource. usually each plane is an array indexed by subResource
-    int planeCount = 0;                     // plane count
+    struct ID3D11Texture2D* plane[4];  // ID3D11Texture2D for each plane. plane[0] == resource. usually each plane is an array indexed by subResource
+    int planeCount;                     // plane count
 } mdkDX11Resource;
 
 typedef struct mdkDX9Resource {
