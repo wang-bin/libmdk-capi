@@ -156,12 +156,16 @@ struct mdkVideoBufferPool {
 
 #if (_WIN32 + 0)
 
-bool MDK_VideoFrame_getDX11(mdkVideoFrame* p, mdkDX11Resource* r)
+bool MDK_VideoFrame_getDX11(mdkVideoFrame* p, mdkDX11Resource* r, ID3D11Device* dev)
 {
     DX11Resource res;
-    if (p->frame.get(&res)) {
+    if (p->frame.get(&res, dev)) {
         r->resource = res.resource;
         r->subResource = res.subResource;
+        r->planeCount = res.planeCount;
+        for (int i = 0; i < res.planeCount; ++i) {
+            r->plane[i] = res.plane[i];
+        }
         return true;
     }
     return false;

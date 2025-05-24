@@ -19,6 +19,8 @@ typedef struct DX11Resource {
     ID3D11DeviceChild* resource = nullptr;
     /* subresource index for texture array, 0 otherwise */
     int subResource = 0;
+    ID3D11Texture2D* plane[4] = {};         // ID3D11Texture2D for each plane. plane[0] == resource. usually each plane is an array indexed by subResource
+    int planeCount = 0;                     // plane count
 } DX11Resource;
 
 typedef struct DX9Resource {
@@ -231,15 +233,19 @@ public:
     }
 
 #if (_WIN32 + 0)
-    bool get(DX11Resource* res) const {
+    bool get(DX11Resource* res, ID3D11Device* dev = nullptr) const {
         if (!res)
             return false;
         mdkDX11Resource r{};
         r.size = sizeof(r);
-        if (!MDK_CALL(p, getDX11, &r))
+        if (!MDK_CALL(p, getDX11, &r, dev))
             return false;
         res->resource = r.resource;
         res->subResource = r.subResource;
+        res->planeCount = r.planeCount;
+        for (int i = 0; i < r.planeCount; ++i) {
+            res->plane[i] = r.plane[i];
+        }
         return true;
     }
 /*!
@@ -254,6 +260,10 @@ public:
         r.size = sizeof(r);
         r.resource = res.resource;
         r.subResource = res.subResource;
+        r.planeCount = res.planeCount;
+        for (int i = 0; i < res.planeCount; ++i) {
+            r.plane[i] = res.plane[i];
+        }
         VideoFrame f(width, height, PixelFormat::Unknown);
         if (!MDK_CALL(f.p, fromDX11, pool, &r, width, height))
             return {};

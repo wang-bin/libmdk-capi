@@ -15,6 +15,7 @@ extern "C" {
 #endif
 
 /* native resource import */
+struct ID3D11Device;
 struct ID3D11DeviceChild;
 struct IDirect3DSurface9;
 typedef struct mdkDX11Resource {
@@ -23,6 +24,8 @@ typedef struct mdkDX11Resource {
     struct ID3D11DeviceChild* resource;
     /* subresource index for texture array, 0 otherwise */
     int subResource;
+    struct ID3D11Texture2D* plane[4] = {};  // ID3D11Texture2D for each plane. plane[0] == resource. usually each plane is an array indexed by subResource
+    int planeCount = 0;                     // plane count
 } mdkDX11Resource;
 
 typedef struct mdkDX9Resource {
@@ -124,7 +127,7 @@ typedef struct mdkVideoFrameAPI {
     bool (*fromDX9)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkDX9Resource* res, int width, int height);
     bool (*fromVAAPI)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkVAAPIResource* res, int width, int height);
     bool (*fromCUDA)(struct mdkVideoFrame*, mdkVideoBufferPool** pool, const mdkCUDAResource* res, int width, int height);
-    bool (*getDX11)(struct mdkVideoFrame*, mdkDX11Resource* res);
+    bool (*getDX11)(struct mdkVideoFrame*, mdkDX11Resource* res, struct ID3D11Device* dev);
 /* The followings are not implemented */
     bool (*fromMetal)();
     bool (*fromVk)();
