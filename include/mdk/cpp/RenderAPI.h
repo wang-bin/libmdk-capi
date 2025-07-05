@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -68,14 +68,14 @@ struct GLRenderAPI final: RenderAPI {
         Compatibility,
     };
 
-    bool debug = false; /* default false. NOT IMPLENETED */
+    bool debug = false; /* default false */
     int8_t egl = -1; /* default -1. -1: auto. 0: no, 1: try */
 /* if any one of opengl and opengles is 0, then another is treated as 1 */
     int8_t opengl = -1; /* default -1. -1: auto. 0: no, 1: try */
     int8_t opengles = -1; /* default -1. -1: auto. 0: no, 1: try */
     Profile profile = Profile::Core; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
     float version = 0; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
-    std::array<int8_t, 32> reserved;
+    std::array<int8_t, 32> reserved = {};
 };
 
 struct MetalRenderAPI final: RenderAPI {
@@ -126,8 +126,9 @@ struct D3D11RenderAPI : RenderAPI {
  */
     ID3D11DeviceContext* context = nullptr;
     // rtv or texture. usually user can provide a texture from gui easly, no d3d code to create a view
+    // can be texture 2d array, then starts from 0 after setRenderAPI(), and increases when renderVideo() renders a new frame(returned timestamp changes).
     ID3D11DeviceChild* rtv = nullptr; // optional. the render target(view). ID3D11RenderTargetView or ID3D11Texture2D. can be null if context is not null. if not null, no need to set context
-    std::array<void*, 2> reserved;
+    std::array<void*, 2> reserved = {};
 
 /***
   Render Context Creation Options.
@@ -235,7 +236,7 @@ struct VulkanRenderAPI final : RenderAPI {
  */
     void (*endFrame)(void* opaque, VkSemaphore* drawSem/* = nullptr*/) = nullptr; // can be null if offscreen. wait drawSem before present
 #endif // (VK_VERSION_1_0+0)
-    std::array<void*, 2> reserved;
+    std::array<void*, 2> reserved = {};
 /*
   Set by user and used internally even if device is provided by user
  */
@@ -257,6 +258,6 @@ struct VulkanRenderAPI final : RenderAPI {
 
     int depth = 8;
     //const char*
-    std::array<uint8_t, 32> reserved_opt; // color space etc.
+    std::array<uint8_t, 32> reserved_opt = {};
 };
 MDK_NS_END
