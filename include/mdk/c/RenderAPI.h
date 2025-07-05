@@ -49,7 +49,7 @@ struct mdkGLRenderAPI {
   Render Context Creation Options.
   as input, they are desired values to create an internal context(ignored if context is provided by user). as output, they are result values(if context is not provided by user)
 ***/
-    bool debug; /* default false. NOT IMPLENETED */
+    bool debug; /* default false */
     int8_t egl; /* default -1. -1: auto. 0: no, 1: yes */
 /* if any one of opengl and opengles is 0, then another is treated as 1 */
     int8_t opengl; /* default -1. -1: auto. 0: no, 1: yes */
