@@ -204,6 +204,11 @@ public:
             return -1;
         return MDK_CALL(p, timestamp);
     }
+
+    int rotation() const {
+        int r;
+        return MDK_CALL(p, rotation);
+    }
 /*!
   \brief to
   The result frame data is always on host memory. If it's already on host memory and the same as target format, return the current frame.

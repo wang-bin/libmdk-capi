@@ -150,6 +150,13 @@ bool MDK_VideoFrame_save(mdkVideoFrame* p, const char* fileName, const char* for
     return p->frame.save(fileName, format, quality);
 }
 
+int MDK_VideoFrame_rotation(mdkVideoFrame* p)
+{
+    int r;
+    p->frame.rotation(&r);
+    return r;
+}
+
 struct mdkVideoBufferPool {
     NativeVideoBufferPoolRef pool;
 };
@@ -277,6 +284,7 @@ void init_mdkVideoFrameAPI(mdkVideoFrameAPI* p)
     SET_API(timestamp);
     SET_API(to);
     SET_API(save);
+    SET_API(rotation);
 #if (_WIN32 + 0)
     SET_API(getDX11);
     SET_API(fromDX11);
