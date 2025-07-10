@@ -120,7 +120,7 @@ public:
             MDK_CALL(p, setBuffers, data, strides);
     }
 
-    VideoFrame(mdkVideoFrameAPI* pp) : p(mdkVideoFrameAPI_ref(pp)) {}
+    VideoFrame(mdkVideoFrameAPI* pp) : p(pp) {}
 
     ~VideoFrame() {
         if (owner_)

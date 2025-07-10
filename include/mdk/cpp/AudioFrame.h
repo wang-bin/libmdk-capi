@@ -66,7 +66,7 @@ public:
         p = mdkAudioFrameAPI_new(MDK_SampleFormat(format), channels, sampleRate, samplesPerChannel);
     }
 
-    AudioFrame(mdkAudioFrameAPI* pp) : p(mdkAudioFrameAPI_ref(pp)) {}
+    AudioFrame(mdkAudioFrameAPI* pp) : p(pp) {}
 
     ~AudioFrame() {
         if (owner_)
