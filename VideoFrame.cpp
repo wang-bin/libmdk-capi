@@ -152,9 +152,7 @@ bool MDK_VideoFrame_save(mdkVideoFrame* p, const char* fileName, const char* for
 
 int MDK_VideoFrame_rotation(mdkVideoFrame* p)
 {
-    int r;
-    p->frame.rotation(&r);
-    return r;
+    return p->frame.rotation();
 }
 
 struct mdkVideoBufferPool {

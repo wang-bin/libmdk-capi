@@ -206,7 +206,6 @@ public:
     }
 
     int rotation() const {
-        int r;
         return MDK_CALL(p, rotation);
     }
 /*!
