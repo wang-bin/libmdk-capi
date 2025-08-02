@@ -544,6 +544,11 @@ void MDK_Player_subtitleText(mdkPlayer* p, double time, int style, mdkSubtitleCa
     cb.cb(s.empty() ? nullptr : s.data(), cb.opaque);
 }
 
+void MDK_Player_setAudioMix(struct mdkPlayer* p, const float* mat, int rows, int cols)
+{
+    p->setAudioMix(mat, rows, cols);
+}
+
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -619,6 +624,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(bufferedTimeRanges);
     SET_API(appendBuffer);
     SET_API(subtitleText);
+    SET_API(setAudioMix);
 #undef SET_API
     return p;
 }

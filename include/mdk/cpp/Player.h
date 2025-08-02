@@ -88,6 +88,10 @@ public:
     }
 
     float volume() const { return volume_; }
+
+    void setAudioMix(const float* mat, int rows, int cols) {
+        MDK_CALL2(p, setAudioMix, mat, rows, cols);
+    }
 /*!
   \brief setFrameRate
   Set frame rate, frames per seconds
@@ -131,7 +135,7 @@ examples:
   setTimeout can abort current stream playback
 */
     bool appendBuffer(const uint8_t* data, size_t size, int options = 0) {
-        return MDK_CALL(p, appendBuffer, data, size, options);
+        return MDK_CALL2(p, appendBuffer, data, size, options);
     }
 
     void setPreloadImmediately(bool value = true) {
@@ -730,10 +734,10 @@ NOTE:
 */
     std::vector<TimeRange> bufferedTimeRanges() const {
         std::vector<TimeRange> rs(16);
-        const auto count = (size_t)MDK_CALL(p, bufferedTimeRanges, (int64_t*)&rs[0], (int)rs.size());
+        const auto count = (size_t)MDK_CALL2(p, bufferedTimeRanges, (int64_t*)&rs[0], (int)rs.size());
         if (count > rs.size()) {
             rs.resize(count);
-            MDK_CALL(p, bufferedTimeRanges, (int64_t*)&rs[0], (int)rs.size());
+            MDK_CALL2(p, bufferedTimeRanges, (int64_t*)&rs[0], (int)rs.size());
         } else {
             rs.resize(count);
         }
@@ -954,7 +958,7 @@ NOTE:
                 *s = text;
         };
         cb.opaque = &s;
-        MDK_CALL(p, subtitleText, time, style, cb);
+        MDK_CALL2(p, subtitleText, time, style, cb);
         return s;
     }
 

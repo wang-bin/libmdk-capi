@@ -529,6 +529,14 @@ NOTE:
     bool (*appendBuffer)(struct mdkPlayer*, const uint8_t* data, size_t size, int options);
 
     void (*subtitleText)(struct mdkPlayer*, double time, int style, mdkSubtitleCallback cb);
+/*!
+  \brief setAudioMix
+  Audio channel map or remix.
+  \param mat map or mix coefficients matrix. matrix[i + stride * o] is the weight of input channel i in output channel o.
+  \param rows mat rows, output channel count
+  \param cols mat colums, input channel count to use
+*/
+    void (*setAudioMix)(struct mdkPlayer*, const float* mat, int rows, int cols);
     // TODO: updateRenderResources() // for vk, not in renderpass
 } mdkPlayerAPI;
 
