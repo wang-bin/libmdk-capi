@@ -532,7 +532,7 @@ NOTE:
 /*!
   \brief setAudioMix
   Audio channel map or remix.
-  \param mat map or mix coefficients matrix. matrix[i + stride * o] is the weight of input channel i in output channel o.
+  \param mat map or mix coefficients matrix. matrix[i + cols * o] is the weight of input channel i in output channel o.
   \param rows mat rows, output channel count
   \param cols mat colums, input channel count to use
 */
