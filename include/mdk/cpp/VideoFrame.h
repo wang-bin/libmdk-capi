@@ -208,6 +208,11 @@ public:
     int rotation() const {
         return MDK_CALL(p, rotation);
     }
+
+    const char* metadata(const char* key, int* size = nullptr) const {
+        return MDK_CALL(p, metadata, key, size);
+    }
+
 /*!
   \brief to
   The result frame data is always on host memory. If it's already on host memory and the same as target format, return the current frame.

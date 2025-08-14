@@ -130,7 +130,7 @@ typedef struct mdkVideoFrameAPI {
     bool (*getDX11)(struct mdkVideoFrame*, mdkDX11Resource* res, struct ID3D11Device* dev);
 /* The followings are not implemented */
     int (*rotation)(struct mdkVideoFrame*);
-    bool (*fromMetal)();
+    const char* (*metadata)(struct mdkVideoFrame*, const char* key, int* size);
     bool (*fromVk)();
     bool (*fromGL)();
     bool (*fromDX12)();
