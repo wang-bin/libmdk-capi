@@ -65,7 +65,7 @@ void MDK_setGlobalOptionPtr(const char* key, void* value)
 
 bool MDK_getGlobalOptionString(const char* key, const char** value)
 {
-    const auto v = GetGlobalOption(key);
+    decltype(auto) v = GetGlobalOption(key);
     if (auto pv = std::get_if<std::string>(&v)) {
         if (value)
             *value = pv->data();
@@ -76,7 +76,7 @@ bool MDK_getGlobalOptionString(const char* key, const char** value)
 
 bool MDK_getGlobalOptionInt32(const char* key, int* value)
 {
-    const auto v = GetGlobalOption(key);
+    decltype(auto) v = GetGlobalOption(key);
     if (auto pv = std::get_if<int>(&v)) {
         if (value)
             *value = *pv;
@@ -87,7 +87,7 @@ bool MDK_getGlobalOptionInt32(const char* key, int* value)
 
 bool MDK_getGlobalOptionPtr(const char* key, void** value)
 {
-    const auto v = GetGlobalOption(key);
+    decltype(auto) v = GetGlobalOption(key);
     if (auto pv = std::get_if<void*>(&v)) {
         if (value)
             *value = *pv;
