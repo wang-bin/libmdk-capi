@@ -218,7 +218,7 @@ examples:
                 return p->timeout_cb_(ms);
             return true;
         };
-        callback.opaque = timeout_cb_ ? this : nullptr;
+        callback.opaque = cb ? this : nullptr;
         MDK_CALL(p, setTimeout, ms, callback);
     }
 
@@ -292,7 +292,7 @@ examples:
                p->state_cb_(State(value));
             }
         };
-        callback.opaque = state_cb_ ? this : nullptr;
+        callback.opaque = cb ? this : nullptr;
         MDK_CALL(p, onStateChanged, callback);
         return *this;
     }
@@ -962,6 +962,29 @@ NOTE:
         return s;
     }
 
+    Player& onSubtitleText(const std::function<void(double start, double end, const std::vector<std::string>& text)>& cb, bool plainText = true) {
+        {
+            const std::lock_guard<std::mutex> lock(subtitle_mtx_);
+            subtitle_cb_ = cb;
+        }
+        mdkSubtitleCallback callback;
+        callback.cb2 = [](double start, double end, const char* texts[], int textCount, void* opaque) {
+            std::vector<std::string> s;
+            s.reserve(textCount);
+            for (int i = 0; i < textCount; i++) {
+                if (texts[i])
+                    s.emplace_back(texts[i]);
+            }
+            auto p = (Player*)opaque;
+            const std::lock_guard<std::mutex> lock(p->subtitle_mtx_);
+            if (p->subtitle_cb_)
+                p->subtitle_cb_(start, end, s);
+        };
+        callback.opaque = cb ? this : nullptr;;
+        MDK_CALL(p, onSubtitleText, callback, plainText, nullptr);
+        return *this;
+    }
+
 #if !MDK_VERSION_CHECK(1, 0, 0)
 #if (__cpp_attributes+0)
 [[deprecated("use setDecoders(MediaType::Audio, names) instead")]]
@@ -1003,6 +1026,8 @@ private:
     std::mutex video_mtx_;
     std::function<double()> sync_cb_ = nullptr;
     std::mutex sync_mtx_;
+    std::function<void(double start, double end, const std::vector<std::string>& text)> subtitle_cb_ = nullptr;
+    std::mutex subtitle_mtx_;
     std::map<CallbackToken, std::function<bool(const MediaEvent&)>> event_cb_; // rb tree, elements never destroyed
     std::map<CallbackToken,CallbackToken> event_cb_key_;
     std::mutex event_mtx_;

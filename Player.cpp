@@ -549,6 +549,17 @@ void MDK_Player_setAudioMix(struct mdkPlayer* p, const float* mat, int rows, int
     p->setAudioMix(mat, rows, cols);
 }
 
+void MDK_Player_onSubtitleText(struct mdkPlayer* p, mdkSubtitleCallback cb, bool plainText, MDK_CallbackToken* token)
+{
+    p->onSubtitleText([cb](double start, double end, const std::vector<std::string>& text){
+        vector<const char*> s;
+        s.reserve(text.size());
+        for (const auto& t : text)
+            s.push_back(t.data());
+        cb.cb2(start, end, s.empty() ? nullptr : s.data(), s.size(), cb.opaque);
+    }, plainText);
+}
+
 const mdkPlayerAPI* mdkPlayerAPI_new()
 {
     mdkPlayerAPI* p = new mdkPlayerAPI();
@@ -625,6 +636,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(appendBuffer);
     SET_API(subtitleText);
     SET_API(setAudioMix);
+    SET_API(onSubtitleText);
 #undef SET_API
     return p;
 }

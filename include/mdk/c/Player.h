@@ -144,6 +144,7 @@ typedef struct mdkSyncCallback {
 typedef struct mdkSubtitleCallback {
     void (*cb)(const char* text, void* opaque);
     void* opaque;
+    void (*cb2)(double start, double end, const char* texts[], int textCount, void* opaque);
 } mdkSubtitleCallback;
 
 
@@ -537,6 +538,7 @@ NOTE:
   \param cols mat colums, input channel count to use
 */
     void (*setAudioMix)(struct mdkPlayer*, const float* mat, int rows, int cols);
+    void (*onSubtitleText)(struct mdkPlayer*, mdkSubtitleCallback cb, bool plainText, MDK_CallbackToken* token);
     // TODO: updateRenderResources() // for vk, not in renderpass
 } mdkPlayerAPI;
 
