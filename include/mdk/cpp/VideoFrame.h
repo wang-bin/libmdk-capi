@@ -93,14 +93,17 @@ public:
             if (owner_)
                 mdkVideoFrameAPI_unref(&p);
             p = mdkVideoFrameAPI_ref(that.p);
+            owner_ = true;
         }
         return *this;
     }
     VideoFrame(VideoFrame&& that) {
         std::swap(p, that.p);
+        std::swap(owner_, that.owner_);
     }
     VideoFrame& operator=(VideoFrame&& that)  {
         std::swap(p, that.p);
+        std::swap(owner_, that.owner_);
         return *this;
     }
 
