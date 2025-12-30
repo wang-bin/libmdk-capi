@@ -211,7 +211,10 @@ public:
     int rotation() const {
         return MDK_CALL(p, rotation);
     }
-
+/*!
+  \brief metadata
+  - requires decoder property "sei=1", i.e. `Player.setProperty("video.decoder", "sei=1")`. key ".sei.$type" metadata returns rbsp data of SEI type if exists, for example user data unregistered SEI message type 5 is ".sei.5".
+*/
     const char* metadata(const char* key, int* size = nullptr) const {
         return MDK_CALL(p, metadata, key, size);
     }
