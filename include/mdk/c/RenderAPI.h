@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -56,7 +56,8 @@ struct mdkGLRenderAPI {
     int8_t opengles; /* default -1. -1: auto. 0: no, 1: yes */
     uint8_t profile; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
     float version; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
-    int8_t reserved[32];
+    int8_t depth;  /* create render target with requested channel depth. <= 0: auto, may change for sdr hdr switch. currently only supported by egl */
+    int8_t reserved[31];
 };
 
 struct mdkMetalRenderAPI {

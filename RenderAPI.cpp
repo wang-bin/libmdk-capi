@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
  */
 // include gl, d3d, vk headers to enable RenderAPI structures
 #if defined(_WIN32)
@@ -37,6 +37,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, const void* data)
         api->opengles = c->opengles;
         api->profile = GLRenderAPI::Profile(c->profile);
         api->version = c->version;
+        api->depth = c->depth;
         return api;
     }
     case MDK_RenderAPI_Metal: {
