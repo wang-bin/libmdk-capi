@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/global.h"
 #include "mdk/global.h"
@@ -43,7 +43,7 @@ void MDK_setGlobalOptionString(const char* key, const char* value)
 #if (_MSC_VER + 0)
     SetGlobalOption("UserAddress", _ReturnAddress());
 #else
-    SetGlobalOption("UserAddress", __builtin_return_address(0));
+    SetGlobalOption("UserAddress", __builtin_extract_return_addr(__builtin_return_address(0)));
 #endif
     SetGlobalOption(key, string(value));
 }
