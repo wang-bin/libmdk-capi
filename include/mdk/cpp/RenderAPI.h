@@ -75,7 +75,8 @@ struct GLRenderAPI final: RenderAPI {
     int8_t opengles = -1; /* default -1. -1: auto. 0: no, 1: try */
     Profile profile = Profile::Core; /* default 3. 0: no profile, 1: core profile, 2: compatibility profile */
     float version = 0; /* default 0, ignored if < 2.0. requested version major.minor. result version may < requested version if not supported */
-    int8_t depth;  /* create render target with requested channel depth. <= 0: auto, may change for sdr hdr switch. currently only supported by egl */
+    int8_t depth = 0;  /* create render target with requested channel depth. <= 0: auto, may change for sdr hdr switch. currently only supported by egl */
+    std::array<int8_t, 31> reserved = {};
 };
 
 struct MetalRenderAPI final: RenderAPI {
@@ -128,6 +129,7 @@ struct D3D11RenderAPI : RenderAPI {
     // rtv or texture. usually user can provide a texture from gui easly, no d3d code to create a view
     // can be texture 2d array, then starts from 0 after setRenderAPI(), and increases when renderVideo() renders a new frame(returned timestamp changes).
     ID3D11DeviceChild* rtv = nullptr; // optional. the render target(view). ID3D11RenderTargetView or ID3D11Texture2D. can be null if context is not null. if not null, no need to set context
+    std::array<void*, 2> reserved = {};
 
 /***
   Render Context Creation Options.
@@ -163,6 +165,7 @@ struct D3D12RenderAPI : RenderAPI {
     const void* opaque = nullptr; // optional. callback opaque
     ID3D12Resource* (*currentRenderTarget)(const void* opaque, UINT* index, UINT* count, D3D12_RESOURCE_STATES* state) = nullptr; // optional. usually for on screen rendering.
     ID3D12GraphicsCommandList* (*currentCommandList)(const void* opaque) = nullptr; // optional. will use an internal command list if null. if not null, can be used by on screen rendering
+    void* reserved2[1] = {};
 
 /***
   Render Context Creation Options.
@@ -234,6 +237,7 @@ struct VulkanRenderAPI final : RenderAPI {
  */
     void (*endFrame)(void* opaque, VkSemaphore* drawSem/* = nullptr*/) = nullptr; // can be null if offscreen. wait drawSem before present
 #endif // (VK_VERSION_1_0+0)
+    std::array<void*, 2> reserved = {};
 /*
   Set by user and used internally even if device is provided by user
  */
@@ -255,5 +259,6 @@ struct VulkanRenderAPI final : RenderAPI {
 
     int depth = 8;
     //const char*
+    std::array<uint8_t, 32> reserved_opt = {};
 };
 MDK_NS_END
