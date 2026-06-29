@@ -154,9 +154,8 @@ typedef enum MDK_ColorSpace {
 MDK_API int MDK_version();
 /*!
   \brief javaVM
-  deprecated. use MDK_setGlobalOptionPtr("jvm",..) or MDK_setGlobalOptionPtr("JavaVM",..) instead
-  Set/Get current java vm
-  \param vm null to get current vm
+  Set/Get current java vm. Must set javaVM(vm) before any api, or call System.loadLibrary("mdk") in static initializer.
+  \param vm null to get current vm, non-null to set current vm
   \return vm before set
  */
 MDK_API void* MDK_javaVM(void* vm);

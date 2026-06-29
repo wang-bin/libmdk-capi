@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -286,18 +286,13 @@ static inline bool GetGlobalOption(const char* key, void** value)
 
 /*!
   \brief javaVM
-  Set/Get current java vm
-  \param vm null to get current vm
+  Set/Get current java vm. Must set javaVM(vm) before any api, or call System.loadLibrary("mdk") in static initializer.
+  \param vm null to get current vm, non-null to set current vm
   \return vm before set
  */
-#if !MDK_VERSION_CHECK(1, 0, 0)
-#if (__cpp_attributes+0)
-[[deprecated("use SetGlobalOption(\"jvm\", ptr) instead")]]
-#endif
-static inline void javaVM(void* vm) {
-    return SetGlobalOption("jvm", vm);
+static inline void* javaVM(void* vm) {
+    return MDK_javaVM(vm);
 }
-#endif
 /*
   events:
   {timestamp(ms), "render.video", "1st_frame"}: when the first frame is rendererd. requires setVideoSurface() called with a valid size
