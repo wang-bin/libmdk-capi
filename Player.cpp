@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -489,6 +489,10 @@ void MDK_Player_setPointMap(mdkPlayer* p, const float* videoRoi, const float* vi
 
 void MDK_Player_onSync(mdkPlayer* p, mdkSyncCallback cb, int minInterval)
 {
+    if (!cb.opaque) {
+        p->onSync(nullptr, minInterval);
+        return;
+    }
     p->onSync([cb]{
         return cb.cb(cb.opaque);
     }, minInterval);
@@ -525,7 +529,7 @@ void MDK_Player_enqueueVideo(mdkPlayer* p, mdkVideoFrameAPI* frame, void* vo_opa
 int MDK_Player_bufferedTimeRanges(mdkPlayer* p, int64_t* t, int count)
 {
     const auto ranges = p->bufferedTimeRanges();
-    if (t) {
+    if (t && !ranges.empty()) {
         count = std::min<int>(count, ranges.size());
         static_assert(sizeof(TimeRange) == 2*sizeof(int64_t));
         memcpy(t, &ranges[0], count * sizeof(TimeRange));
@@ -551,6 +555,10 @@ void MDK_Player_setAudioMix(struct mdkPlayer* p, const float* mat, int rows, int
 
 void MDK_Player_onSubtitleText(struct mdkPlayer* p, mdkSubtitleCallback cb, bool plainText, MDK_CallbackToken* token)
 {
+    if (!cb.opaque) {
+        p->onSubtitleText(nullptr, plainText);
+        return;
+    }
     p->onSubtitleText([cb](double start, double end, const std::vector<std::string>& text){
         vector<const char*> s;
         s.reserve(text.size());
