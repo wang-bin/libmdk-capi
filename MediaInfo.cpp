@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
  */
 #include "mdk/c/MediaInfo.h"
 #include "mdk/MediaInfo.h"
@@ -45,7 +45,7 @@ static void from_abi(const AudioCodecParameters& in, mdkAudioCodecParameters& ou
         out.extra_data_size = (int)in.extra->size();
     }
     out.bit_rate = in.bit_rate;
-    out.profile = in.profile;
+    out.profile = std::to_underlying(in.profile);
     out.level = in.level;
     out.frame_rate = in.frame_rate;
 
@@ -77,7 +77,7 @@ static void from_abi(const VideoCodecParameters& in, mdkVideoCodecParameters& ou
         out.extra_data_size = (int)in.extra->size();
     }
     out.bit_rate = in.bit_rate;
-    out.profile = in.profile;
+    out.profile = std::to_underlying(in.profile);
     out.level = in.level;
     out.frame_rate = in.frame_rate;
 
