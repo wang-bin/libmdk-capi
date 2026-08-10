@@ -16,7 +16,7 @@
 #define MDK_VERSION_INT(major, minor, patch) \
     (((major&0xff)<<16) | ((minor&0xff)<<8) | (patch&0xff))
 #define MDK_MAJOR 0
-#define MDK_MINOR 37
+#define MDK_MINOR 38
 #define MDK_MICRO 0
 #define MDK_VERSION MDK_VERSION_INT(MDK_MAJOR, MDK_MINOR, MDK_MICRO)
 #define MDK_VERSION_CHECK(a, b, c) (MDK_VERSION >= MDK_VERSION_INT(a, b, c))
@@ -125,6 +125,18 @@ typedef enum MDKSeekFlag {
 
     MDK_SeekFlag_Default     = MDK_SeekFlag_KeyFrame|MDK_SeekFlag_FromStart|MDK_SeekFlag_InCache
 } MDK_SeekFlag;
+
+/* Values passed to seek callbacks when ret < 0. Success returns a non-negative timestamp (ms). */
+typedef enum MDKSeekError {
+    MDK_SeekError_Failed = -1,         /* io/demux error, or unspecified seek failure */
+    MDK_SeekError_Cancelled = -2,      /* superseded by a newer seek, or unfinished previous seek dropped */
+    MDK_SeekError_Unloaded = -3,       /* media unloaded while seeking */
+    MDK_SeekError_OutOfRange = -4,     /* target outside A-B range (or past track duration) */
+    MDK_SeekError_DecodeLoopExit = -5, /* decode loop exited while seeking (e.g. stop / decoder switch) */
+    MDK_SeekError_NotReady = -6,       /* not loaded, stop requested, or no streams */
+    MDK_SeekError_NoDecoder = -7,      /* no active decode loop to complete seek/step */
+    MDK_SeekError_EosReached = -8,     /* EOS while seeking; no frame produced at target */
+} MDK_SeekError;
 
 /*!
   \brief VideoEffect

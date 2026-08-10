@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2025 WangBin <wbsecg1 at gmail.com>
+ * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -322,7 +322,7 @@ NOTE:
   If pos > media time range with SeekFlag::AnyFrame, playback will stop unless setProperty("continue_at_end", "1") was called
   FIXME: a/v sync broken if SeekFlag::Frame|SeekFlag::FromNow.
   \param cb if succeeded, callback is called when stream seek finished and after the 1st frame decoded or decode error(e.g. video tracks disabled), ret(>=0) is the timestamp of the 1st frame(video if exists) after seek.
-  If error(io, demux, not decode) occured(ret < 0, usually -1) or skipped because of unfinished previous seek(ret == -2), out of range(-4) or media unloaded(-3).
+  If failed, ret is a SeekError: Failed(-1), Cancelled(-2), Unloaded(-3), OutOfRange(-4), DecodeLoopExit(-5), NotReady(-6), NoDecoder(-7), EosReached(-8).
  */
     bool (*seekWithFlags)(struct mdkPlayer*, int64_t pos, MDK_SeekFlag flags, mdkSeekCallback);
     bool (*seek)(struct mdkPlayer*, int64_t pos, mdkSeekCallback);
@@ -380,8 +380,9 @@ NOTE:
   \brief setProperty
   Set additional properties. Can be used to store user data, or change player behavior if the property is defined internally.
   Predefined properties are:
-  - "video.avfilter": ffmpeg avfilter filter graph string for video track. take effect immediately
-  - "audio.avfilter": ffmpeg avfilter filter graph string for audio track. take effect immediately
+  - "video.avfilter": ffmpeg avfilter filter graph for video. take effect immediately when playing(not paused). Soft decode input required for now. Input link labels ending with digits map to track index (e.g. `[in0]`/`[vi0]`/`[v:0]`); bare `[in]` → track 0. Single output: any label or unlabeled (e.g. `[out]`/`[vo]`). Multi-input example: setActiveTracks(Video,{0,1}) and `[vi0][vi1]vstack=inputs=2[vo]`. Trailing digits are track indices. Extra active tracks not named in the graph are not presented; missing labeled inputs fail graph init. Hw filters (`hwupload`, `scale_vulkan`, …) need FFmpeg 6.0+ and usually `video.avfilter.hwdevice`; end with `hwdownload` plus a supported software format (e.g. `format=yuv420p`) for system-memory output.
+  - "video.avfilter.hwdevice": hw device specs for hw filters in `video.avfilter`, same as ffmpeg `-init_hw_device`. Multiple devices split by ';': `type[=id][:device[,key=value...]];...` (e.g. `vulkan`, `cuda:1`, `vaapi=va:/dev/dri/renderD128`, `vaapi:,kernel_driver=i915;cuda:0`). Optional if the backend type can be inferred from filter names (e.g. `scale_vulkan` → `vulkan`); set it for unsuffixed filters like `hwupload`/`hwmap`/`hwdownload`, or to choose device/options. Requires FFmpeg 6.0+.
+  - "audio.avfilter": ffmpeg avfilter filter graph for audio. take effect immediately. Pads: track i → [ai{i}], output [ao]. Multi-input e.g. [ai0][ai1]amix[ao].
   - "continue_at_end" or "keep_open": "0" or "1". do not stop playback when decode and render to end of stream. only set(State::Stopped) can stop playback. Useful for timeline preview.
   - "cc": "0" or "1"(default). enable closed caption decoding and rendering.
   - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. setActiveTracks(MediaType::Subtitle, {...}) enables decoding only.

@@ -143,6 +143,21 @@ enum class SeekFlag {
 };
 template<> struct is_flag<SeekFlag> : std::true_type {};
 
+/*!
+  Values passed to seek() callbacks when ret < 0.
+  Success returns a non-negative timestamp (ms). Numeric values are ABI-stable.
+ */
+enum class SeekError : int64_t {
+    Failed = -1,         ///< io/demux error, or unspecified seek failure
+    Cancelled = -2,      ///< superseded by a newer seek, or unfinished previous seek dropped
+    Unloaded = -3,       ///< media unloaded while seeking
+    OutOfRange = -4,     ///< target outside A-B range (or past track duration)
+    DecodeLoopExit = -5, ///< decode loop exited while seeking (e.g. stop / decoder switch)
+    NotReady = -6,       ///< not loaded, stop requested, or no streams
+    NoDecoder = -7,      ///< no active decode loop to complete seek/step
+    EosReached = -8,     ///< EOS while seeking; no frame produced at target
+};
+
 static inline int version() {
     return MDK_version();
 }
