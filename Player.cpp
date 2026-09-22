@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
+ * AI participated
  */
 #include "mdk/c/Player.h"
 #include "mdk/c/MediaInfo.h"
@@ -508,6 +509,11 @@ void MDK_Player_setColorSpace(mdkPlayer* p, MDK_ColorSpace value, void* vo_opaqu
     p->set(kColorSpaceMap[(int)value], vo_opaque);
 }
 
+void MDK_Player_setVideoLayers(mdkPlayer* p, MDK_VideoLayers layers, void* vo_opaque)
+{
+    p->setLayers(VideoLayers(layers), vo_opaque);
+}
+
 void MDK_Player_setActiveTracks(mdkPlayer* p, MDK_MediaType type, const int* tracks, size_t count)
 {
     set<int> t;
@@ -645,6 +651,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(subtitleText);
     SET_API(setAudioMix);
     SET_API(onSubtitleText);
+    SET_API(setVideoLayers);
 #undef SET_API
     return p;
 }

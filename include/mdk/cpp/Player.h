@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
+ * AI participated
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -649,6 +650,16 @@ NOTE:
 */
     Player& set(ColorSpace value, void* vo_opaque = nullptr) {
         MDK_CALL(p, setColorSpace, MDK_ColorSpace(value), vo_opaque);
+        return *this;
+    }
+
+/*!
+  \brief setLayers
+  Select which video layers to render.
+  Enhancement renders the enhancement layer alone; All renders the full frame.
+ */
+    Player& setLayers(VideoLayers layers, void* vo_opaque = nullptr) {
+        MDK_CALL2(p, setVideoLayers, MDK_VideoLayers(layers), vo_opaque);
         return *this;
     }
 

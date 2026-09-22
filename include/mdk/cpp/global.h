@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
+ * AI participated
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -340,6 +341,17 @@ public:
             int height;
         } video;
     } /* TODO: data */;
+};
+
+/*!
+  \brief VideoLayers
+  Select which video layers to render. Enhancement renders the enhancement layer alone.
+ */
+enum class VideoLayers : uint8_t {
+    None = MDK_VideoLayers_None,
+    Base = MDK_VideoLayers_Base,
+    Enhancement = MDK_VideoLayers_Enhancement,
+    All = MDK_VideoLayers_All,
 };
 
 /*!

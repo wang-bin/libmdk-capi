@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
+ * AI participated
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -162,6 +163,17 @@ typedef enum MDK_ColorSpace {
     MDK_ColorSpace_ExtendedLinearSRGB,
     MDK_ColorSpace_BT2100_HLG,
 } MDK_ColorSpace;
+
+/*!
+  \brief Video layer output selection
+  Enhancement renders the enhancement layer alone; All renders the full frame.
+ */
+typedef enum MDK_VideoLayers {
+    MDK_VideoLayers_None = 0,
+    MDK_VideoLayers_Base = 1,
+    MDK_VideoLayers_Enhancement = 2,
+    MDK_VideoLayers_All = 3,
+} MDK_VideoLayers;
 
 MDK_API int MDK_version();
 /*!

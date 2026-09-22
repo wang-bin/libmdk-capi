@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
+ * AI participated
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -540,6 +541,12 @@ NOTE:
 */
     void (*setAudioMix)(struct mdkPlayer*, const float* mat, int rows, int cols);
     void (*onSubtitleText)(struct mdkPlayer*, mdkSubtitleCallback cb, bool plainText, MDK_CallbackToken* token);
+/*!
+  \brief setVideoLayers
+  Select which video layers to render.
+  \param layers one of MDK_VideoLayers_None, Base, Enhancement, or All
+*/
+    void (*setVideoLayers)(struct mdkPlayer*, MDK_VideoLayers layers, void* vo_opaque);
     // TODO: updateRenderResources() // for vk, not in renderpass
 } mdkPlayerAPI;
 
