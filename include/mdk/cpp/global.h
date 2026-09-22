@@ -348,7 +348,7 @@ public:
   Select which video layers to render. Enhancement renders the enhancement layer alone.
  */
 enum class VideoLayers : uint8_t {
-    None = MDK_VideoLayers_None,
+    NoLayer = MDK_VideoLayers_None,
     Base = MDK_VideoLayers_Base,
     Enhancement = MDK_VideoLayers_Enhancement,
     All = MDK_VideoLayers_All,
