@@ -449,6 +449,8 @@ examples:
   - "demux.buffer.ranges": default "0". set a positive integer to enable demuxer's packet cache(if protocol is listed in property "demux.buffer.protocols"), the value is cache ranges count. Cache is useful for network streams, download data only once(if a cache range is not dropped), speedup seeking. Cache ranges are increased by seeking to a uncached position, decreased by merging ranges which are overlapped and LRU algorithm.
   - "demux.buffer.protocols": default is "http,https". only these protocols will enable demuxer cache.
   - "demux.max_errors": continue to demux the stream if error count is less than this value. same as global option "demuxer.max_errors"
+  - "demux.el.attach": "0" or "1"(default). for multi-track Dolby Vision (separate base and enhancement tracks), attach enhancement-layer packets to the matching base-layer packets by timestamp so dual decode can use them together.
+  - "demux.el.pass": "0" or "1"(default). if "1", also keep emitting the original enhancement-layer packets (e.g. to decode or inspect that track alone).
 
 #### FFmpeg properties
   - "avformat.$opt_name": avformat option via AVOption, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option. `video_codec_id, audio_codec_id and subtitle_codec_id` are also supported even are not AVOption, value is codec name. `video_codec_id` is useful for capture devices with multiple codecs supported.
