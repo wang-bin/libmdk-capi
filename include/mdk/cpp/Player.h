@@ -463,6 +463,7 @@ examples:
 #### Subtitle properties
   - "cc": "0" or "1"(default). enable closed caption decoding and rendering.
   - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. `setActiveTracks(MediaType::Subtitle, {...})` enables decoding only. if rendering is disabled, you can still use subtitleText() to draw your self
+  - "subtitle.delay": subtitle delay in floating-point seconds. Positive values display subtitles later; negative values display them earlier.
   - "subtitle.size": non-bitmap subtitle resolution, can be "video" to use video frame size(default), otherwise use video renderer size(multiple renderers is undefined)
 
 style properties for all subtitle types(text, ass/ssa and bitmaps):

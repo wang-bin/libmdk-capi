@@ -387,6 +387,7 @@ NOTE:
   - "continue_at_end" or "keep_open": "0" or "1". do not stop playback when decode and render to end of stream. only set(State::Stopped) can stop playback. Useful for timeline preview.
   - "cc": "0" or "1"(default). enable closed caption decoding and rendering.
   - "subtitle": "0" or "1"(default). enable subtitle(including cc) rendering. setActiveTracks(MediaType::Subtitle, {...}) enables decoding only.
+  - "subtitle.delay": subtitle delay in floating-point seconds. Positive values display subtitles later; negative values display them earlier.
   - "avformat.some_name": avformat option, e.g. {"avformat.fpsprobesize": "0"}. if global option "demuxer.io=0", it also can be AVIOContext/URLProtocol option
   - "avio.some_name": AVIOContext/URLProtocol option, e.g. "avio.user_agent"
  */
