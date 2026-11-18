@@ -509,6 +509,11 @@ void MDK_Player_setColorSpace(mdkPlayer* p, MDK_ColorSpace value, void* vo_opaqu
     p->set(kColorSpaceMap[(int)value], vo_opaque);
 }
 
+void MDK_Player_setMaxLuma(mdkPlayer* p, float nits, void* vo_opaque)
+{
+    p->setMaxLuma(nits, vo_opaque);
+}
+
 void MDK_Player_setVideoLayers(mdkPlayer* p, MDK_VideoLayers layers, void* vo_opaque)
 {
     p->setLayers(VideoLayers(layers), vo_opaque);
@@ -652,6 +657,7 @@ const mdkPlayerAPI* mdkPlayerAPI_new()
     SET_API(setAudioMix);
     SET_API(onSubtitleText);
     SET_API(setVideoLayers);
+    SET_API(setMaxLuma);
 #undef SET_API
     return p;
 }

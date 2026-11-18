@@ -657,6 +657,17 @@ NOTE:
     }
 
 /*!
+  \brief setMaxLuma
+  Set the PQ/HLG target luminance in nits for one video output, overriding gpu.target_peak.
+  Changes take effect on the next draw, including when paused.
+  \param nits zero clears the override. Negative values are ignored.
+*/
+    Player& setMaxLuma(float nits, void* vo_opaque = nullptr) {
+        MDK_CALL2(p, setMaxLuma, nits, vo_opaque);
+        return *this;
+    }
+
+/*!
   \brief setLayers
   Select which video layers to render.
   Enhancement renders the enhancement layer alone; All renders the full frame.

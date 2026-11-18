@@ -548,6 +548,13 @@ NOTE:
   \param layers one of MDK_VideoLayers_None, Base, Enhancement, or All
 */
     void (*setVideoLayers)(struct mdkPlayer*, MDK_VideoLayers layers, void* vo_opaque);
+/*!
+  \brief setMaxLuma
+  Set the PQ/HLG target luminance in nits for one video output, overriding gpu.target_peak.
+  Changes take effect on the next draw, including when paused.
+  \param nits zero clears the override. Negative values are ignored.
+*/
+    void (*setMaxLuma)(struct mdkPlayer*, float nits, void* vo_opaque);
     // TODO: updateRenderResources() // for vk, not in renderpass
 } mdkPlayerAPI;
 
