@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
+ * AI participated
  */
 // include gl, d3d, vk headers to enable RenderAPI structures
 #if defined(_WIN32)
@@ -117,6 +118,7 @@ unique_ptr<RenderAPI> from_c(MDK_RenderAPI type, const void* data)
         api->gfx_queue_index = c->gfx_queue_index;
         api->transfer_queue_index = c->transfer_queue_index;
         api->compute_queue_index = c->compute_queue_index;
+        api->export_metal_device = c->export_metal_device;
         api->depth = c->depth;
         return api;
     }

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2026 WangBin <wbsecg1 at gmail.com>
+ * AI participated
  * This file is part of MDK
  * MDK SDK: https://github.com/wang-bin/mdk-sdk
  * Free for opensource softwares or non-commercial use.
@@ -258,7 +259,9 @@ struct VulkanRenderAPI final : RenderAPI {
     int compute_queue_index = -1; // OPTIONAL. if not set, will use gfx queue
 
     int depth = 8;
+// Set to 1 when the foreign instance declared Metal device export and the device enabled VK_EXT_metal_objects.
+    uint8_t export_metal_device = 0;
     //const char*
-    std::array<uint8_t, 32> reserved_opt = {};
+    std::array<uint8_t, 31> reserved_opt = {};
 };
 MDK_NS_END
