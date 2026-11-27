@@ -658,7 +658,7 @@ NOTE:
 
 /*!
   \brief setMaxLuma
-  Set the PQ/HLG target luminance in nits for one video output, overriding gpu.target_peak.
+  Set the target luminance in nits for one PQ, HLG or extended-range video output, overriding gpu.target_peak.
   Changes take effect on the next draw, including when paused.
   \param nits zero clears the override. Negative values are ignored.
 */
